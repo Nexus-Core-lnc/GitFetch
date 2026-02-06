@@ -132,7 +132,40 @@
         </div>
     </div>
 
-    <script src = "{{ url_for("static", filename= "js/register.js")}}">
-    </script>
+    <!-- Modale d'erreur -->
+    <div class="modal" id="errorModal">
+        <div class="modal-content">
+            <div class="modal-header error">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Erreur de validation</h3>
+                <button class="close-modal" onclick="closeErrorModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="errorMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn modal-btn" onclick="closeErrorModal()">Compris</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale de succès -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="modal-header success">
+                <i class="fas fa-check-circle"></i>
+                <h3>Inscription réussie</h3>
+                <button class="close-modal" onclick="closeSuccessModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>✓ Inscription réussie ! Vous pouvez maintenant exporter vos informations.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn modal-btn" onclick="closeSuccessModal()">Continuer</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/register.js') }}"></script>
 </body>
 </html>
