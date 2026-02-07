@@ -99,10 +99,11 @@
                 </div>
                 
                 <div class="alternative-login">
-                    <button type="button" class="btn secondary google-btn">
+                    <button type="button" class="btn secondary google-btn" onclick="window.location.href='{{ url_for('main.social_login', name='google') }}'">
                         <i class="fab fa-google"></i> Continuer avec Google
                     </button>
-                    <button type="button" class="btn secondary github-btn">
+
+                    <button type="button" class="btn secondary github-btn" onclick="window.location.href='{{ url_for('main.social_login', name='github') }}'">
                         <i class="fab fa-github"></i> Continuer avec GitHub
                     </button>
                 </div>
