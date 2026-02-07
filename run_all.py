@@ -5,8 +5,9 @@ import time
 
 # Configuration des services : { "Nom": "Chemin du script run.py" }
 SERVICES = {
-    "AUTH-SERVICE": "auth_services/run.py",
-    # "SCRAPER-SERVICE": "scraper_services/run.py",
+    "AUTH-SERVICE": "auth/run.py",
+    "ADMIN-SERVICE": "admin/run.py",
+    "PORTFOLIO-SERVICE": "portfolio/run.py"
 }
 
 processus_actifs = []
@@ -20,7 +21,7 @@ def demarrer_services():
             # On lance chaque service comme un processus indépendant
             p = subprocess.Popen([sys.executable, chemin])
             processus_actifs.append(p)
-            time.sleep(1)  # Pause pour éviter les conflits au démarrage
+            time.sleep(1)
         else:
             print(f"[!] Erreur : Le fichier {chemin} est introuvable.")
 

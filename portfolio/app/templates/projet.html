@@ -1,0 +1,834 @@
+{% extends "master.html" %}
+
+{% block title %}Projets - GitFetch{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Projets - TECH_PORTFOLIO</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/portfolio.css')}}">
+    <style>
+        /* Styles spécifiques à la page Projets */
+        .projects-hero {
+            background: linear-gradient(135deg, #0a192f 0%, #112240 100%);
+            padding: 120px 0;
+            position: relative;
+            overflow: hidden;
+            color: #fff;
+        }
+        
+        .projects-hero::before {
+            content: "";
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: rgba(255, 193, 7, 0.03);
+            border-radius: 50%;
+            top: -300px;
+            right: -200px;
+        }
+        
+        .hero-content-projects {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .projects-grid-full {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            padding: 80px 0;
+        }
+        
+        .project-card-full {
+            background: #fff;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .project-card-full.animated {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        .project-card-full:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+        
+        .project-image-full {
+            height: 250px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .project-image-full::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(transparent 50%, rgba(0, 0, 0, 0.7));
+        }
+        
+        .project-content-full {
+            padding: 30px;
+        }
+        
+        .project-content-full h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #0a192f;
+        }
+        
+        .project-content-full p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.7;
+            font-size: 15px;
+        }
+        
+        .project-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .project-category {
+            padding: 6px 15px;
+            background: rgba(255, 193, 7, 0.1);
+            border-radius: 20px;
+            font-size: 13px;
+            color: #ffc107;
+            font-weight: 600;
+        }
+        
+        .project-date {
+            color: #999;
+            font-size: 14px;
+        }
+        
+        .project-tags-full {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 25px;
+        }
+        
+        .tag-full {
+            padding: 6px 14px;
+            background: #f5f5f5;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #666;
+            transition: all 0.3s;
+        }
+        
+        .tag-full:hover {
+            background: #ffc107;
+            color: #000;
+            transform: scale(1.05);
+        }
+        
+        .project-footer-full {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn-small-full {
+            padding: 10px 22px;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-small-full.primary {
+            background: #ffc107;
+            color: #000;
+        }
+        
+        .btn-small-full.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 193, 7, 0.3);
+        }
+        
+        .btn-small-full.secondary {
+            background: transparent;
+            border: 2px solid #ffc107;
+            color: #ffc107;
+        }
+        
+        .btn-small-full.secondary:hover {
+            background: rgba(255, 193, 7, 0.1);
+        }
+        
+        .filter-section {
+            background: #f9f9f9;
+            padding: 60px 0 40px;
+        }
+        
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-tab {
+            padding: 12px 28px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: #666;
+        }
+        
+        .filter-tab:hover {
+            border-color: #ffc107;
+            color: #ffc107;
+        }
+        
+        .filter-tab.active {
+            background: #ffc107;
+            border-color: #ffc107;
+            color: #000;
+        }
+        
+        /* SECTION STATS BIEN ALIGNÉE */
+        .project-stats {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            padding: 80px 0;
+            background: #f9f9f9;
+            margin: 0 auto;
+        }
+        
+        .project-stats .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            width: 100%;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            opacity: 0;
+            transform: translateY(30px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+        
+        .stat-card.animated {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        }
+        
+        .stat-number {
+            font-size: 48px;
+            font-weight: 800;
+            color: #ffc107;
+            margin-bottom: 10px;
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+        
+        .project-featured {
+            padding: 80px 0;
+        }
+        
+        .featured-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            margin-bottom: 60px;
+        }
+        
+        .featured-image {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .featured-image img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .featured-image:hover img {
+            transform: scale(1.05);
+        }
+        
+        .featured-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 25px 0;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .projects-grid-full {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .hero-content-projects {
+                grid-template-columns: 1fr;
+            }
+            
+            .featured-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                max-width: 800px;
+                margin: 0 auto;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .projects-grid-full {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+                gap: 20px;
+            }
+            
+            .stat-card {
+                padding: 30px 20px;
+            }
+            
+            .stat-number {
+                font-size: 40px;
+            }
+            
+            .filter-tabs {
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+            
+            .project-footer-full {
+                flex-direction: column;
+            }
+            
+            .btn-small-full {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stat-number {
+                font-size: 36px;
+            }
+            
+            .stat-label {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="projects-hero">
+        <div class="container">
+            <div class="hero-content-projects">
+                <div class="hero-text">
+                    <h1>MES <span class="highlight">PROJETS</span></h1>
+                    <p>Une collection de réalisations techniques qui illustrent mon expertise, ma créativité et ma capacité à résoudre des problèmes complexes. Chaque projet raconte une histoire d'innovation.</p>
+                    <a href="#featured" class="btn">
+                        <i class="fas fa-star"></i>
+                        Projet phare
+                    </a>
+                    <a href="#projects" class="btn btn-secondary">
+                        <i class="fas fa-list"></i>
+                        Voir tous
+                    </a>
+                </div>
+                <div class="hero-image">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Dashboard de projets">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistiques BIEN ALIGNÉES -->
+    <section class="project-stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" data-target="42">0</div>
+                    <div class="stat-label">Projets Réalisés</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" data-target="18">0</div>
+                    <div class="stat-label">Clients Satisfaits</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" data-target="3">0</div>
+                    <div class="stat-label">Prix d'Excellence</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" data-target="100">0</div>
+                    <div class="stat-label">Bugs Critiques Résolus</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filtres -->
+    <section class="filter-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>EXPLORER PAR <span class="highlight">CATÉGORIE</span></h2>
+                <p>Filtrez les projets selon votre centre d'intérêt</p>
+            </div>
+            
+            <div class="filter-tabs">
+                <div class="filter-tab active" data-filter="all">Tous les projets</div>
+                <div class="filter-tab" data-filter="web">Développement Web</div>
+                <div class="filter-tab" data-filter="mobile">Applications Mobile</div>
+                <div class="filter-tab" data-filter="cloud">Cloud & DevOps</div>
+                <div class="filter-tab" data-filter="security">Cybersécurité</div>
+                <div class="filter-tab" data-filter="ai">IA & Data Science</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projet Phare -->
+    <section class="project-featured" id="featured">
+        <div class="container">
+            <div class="section-header">
+                <h2>PROJET <span class="highlight">PHARE</span></h2>
+                <p>Une réalisation qui illustre parfaitement mon approche technique et créative</p>
+            </div>
+            
+            <div class="featured-content">
+                <div class="featured-image">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="CyberSentinel Dashboard">
+                </div>
+                <div class="featured-text">
+                    <h3>CyberSentinel Pro</h3>
+                    <p class="project-date">2023 - Projet en cours</p>
+                    <p>Plateforme complète de sécurité informatique offrant une surveillance en temps réel, une analyse comportementale et une réponse automatisée aux incidents. Système utilisé par plus de 50 entreprises pour protéger leurs infrastructures critiques.</p>
+                    
+                    <div class="featured-tags">
+                        <span class="tag-full">REACT</span>
+                        <span class="tag-full">TYPESCRIPT</span>
+                        <span class="tag-full">NODE.JS</span>
+                        <span class="tag-full">PYTHON</span>
+                        <span class="tag-full">DOCKER</span>
+                        <span class="tag-full">AWS</span>
+                    </div>
+                    
+                    <div class="project-meta">
+                        <span class="project-category">SÉCURITÉ & CLOUD</span>
+                        <span class="project-date">6 mois de développement</span>
+                    </div>
+                    
+                    <div class="project-footer-full">
+                        <a href="#" class="btn-small-full primary">
+                            <i class="fas fa-eye"></i>
+                            Voir la démo
+                        </a>
+                        <a href="#" class="btn-small-full secondary">
+                            <i class="fas fa-code"></i>
+                            Code source
+                        </a>
+                        <a href="#" class="btn-small-full secondary">
+                            <i class="fas fa-file-alt"></i>
+                            Documentation
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tous les Projets -->
+    <section class="projects" id="projects">
+        <div class="container">
+            <div class="section-header">
+                <h2>TOUS MES <span class="highlight">PROJETS</span></h2>
+                <p>Une sélection représentative de mon travail à travers différentes technologies et domaines</p>
+            </div>
+            
+            <div class="projects-grid-full" id="projects-grid">
+                <!-- Projet 1 -->
+                <div class="project-card-full" data-category="web,cloud">
+                    <div class="project-image-full" style="background-image: url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')"></div>
+                    <div class="project-content-full">
+                        <h3>E-Commerce Scalable</h3>
+                        <div class="project-meta">
+                            <span class="project-category">E-COMMERCE</span>
+                            <span class="project-date">2023</span>
+                        </div>
+                        <p>Plateforme de e-commerce haute performance avec système de recommandation IA, paiements sécurisés et infrastructure auto-scalable sur AWS.</p>
+                        
+                        <div class="project-tags-full">
+                            <span class="tag-full">NEXT.JS</span>
+                            <span class="tag-full">STRIPE</span>
+                            <span class="tag-full">MONGODB</span>
+                            <span class="tag-full">AWS LAMBDA</span>
+                        </div>
+                        
+                        <div class="project-footer-full">
+                            <a href="#" class="btn-small-full primary">
+                                <i class="fas fa-eye"></i>
+                                Démo
+                            </a>
+                            <a href="#" class="btn-small-full secondary">
+                                <i class="fas fa-code"></i>
+                                Code
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Projet 2 -->
+                <div class="project-card-full" data-category="mobile">
+                    <div class="project-image-full" style="background-image: url('https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')"></div>
+                    <div class="project-content-full">
+                        <h3>HealthTracker Mobile</h3>
+                        <div class="project-meta">
+                            <span class="project-category">SANTÉ</span>
+                            <span class="project-date">2023</span>
+                        </div>
+                        <p>Application de suivi santé avec synchronisation d'appareils IoT, analyse de données biométriques et alertes intelligentes.</p>
+                        
+                        <div class="project-tags-full">
+                            <span class="tag-full">REACT NATIVE</span>
+                            <span class="tag-full">GRAPHQL</span>
+                            <span class="tag-full">FIREBASE</span>
+                            <span class="tag-full">BLE</span>
+                        </div>
+                        
+                        <div class="project-footer-full">
+                            <a href="#" class="btn-small-full primary">
+                                <i class="fas fa-eye"></i>
+                                Démo
+                            </a>
+                            <a href="#" class="btn-small-full secondary">
+                                <i class="fas fa-lock"></i>
+                                Privé
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Projet 3 -->
+                <div class="project-card-full" data-category="cloud,security">
+                    <div class="project-image-full" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')"></div>
+                    <div class="project-content-full">
+                        <h3>InfraSecure Cloud</h3>
+                        <div class="project-meta">
+                            <span class="project-category">DEVOPS</span>
+                            <span class="project-date">2022</span>
+                        </div>
+                        <p>Solution d'infrastructure as Code avec sécurité intégrée, monitoring avancé et déploiement automatisé sur multi-cloud.</p>
+                        
+                        <div class="project-tags-full">
+                            <span class="tag-full">TERRAFORM</span>
+                            <span class="tag-full">KUBERNETES</span>
+                            <span class="tag-full">ANSIBLE</span>
+                            <span class="tag-full">PROMETHEUS</span>
+                        </div>
+                        
+                        <div class="project-footer-full">
+                            <a href="#" class="btn-small-full primary">
+                                <i class="fas fa-eye"></i>
+                                Démo
+                            </a>
+                            <a href="#" class="btn-small-full secondary">
+                                <i class="fas fa-code"></i>
+                                Code
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Projet 4 -->
+                <div class="project-card-full" data-category="ai">
+                    <div class="project-image-full" style="background-image: url('https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')"></div>
+                    <div class="project-content-full">
+                        <h3>DataVision AI</h3>
+                        <div class="project-meta">
+                            <span class="project-category">DATA SCIENCE</span>
+                            <span class="project-date">2022</span>
+                        </div>
+                        <p>Plateforme d'analyse prédictive et de visualisation de données avec algorithmes de machine learning customisés.</p>
+                        
+                        <div class="project-tags-full">
+                            <span class="tag-full">PYTHON</span>
+                            <span class="tag-full">TENSORFLOW</span>
+                            <span class="tag-full">D3.JS</span>
+                            <span class="tag-full">FASTAPI</span>
+                        </div>
+                        
+                        <div class="project-footer-full">
+                            <a href="#" class="btn-small-full primary">
+                                <i class="fas fa-eye"></i>
+                                Démo
+                            </a>
+                            <a href="#" class="btn-small-full secondary">
+                                <i class="fas fa-code"></i>
+                                Code
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Projet 5 -->
+                <div class="project-card-full" data-category="web">
+                    <div class="project-image-full" style="background-image: url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')"></div>
+                    <div class="project-content-full">
+                        <h3>FinTech Dashboard</h3>
+                        <div class="project-meta">
+                            <span class="project-category">FINANCE</span>
+                            <span class="project-date">2022</span>
+                        </div>
+                        <p>Dashboard analytique pour institutions financières avec visualisation en temps réel et reporting automatisé.</p>
+                        
+                        <div class="project-tags-full">
+                            <span class="tag-full">VUE.JS</span>
+                            <span class="tag-full">D3.JS</span>
+                            <span class="tag-full">WEBSOCKET</span>
+                            <span class="tag-full">POSTGRESQL</span>
+                        </div>
+                        
+                        <div class="project-footer-full">
+                            <a href="#" class="btn-small-full primary">
+                                <i class="fas fa-eye"></i>
+                                Démo
+                            </a>
+                            <a href="#" class="btn-small-full secondary">
+                                <i class="fas fa-lock"></i>
+                                Privé
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Projet 6 -->
+                <div class="project-card-full" data-category="security">
+                    <div class="project-image-full" style="background-image: url('https://images.unsplash.com/photo-1560732488-6b0df240254a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')"></div>
+                    <div class="project-content-full">
+                        <h3>AuthGuard Pro</h3>
+                        <div class="project-meta">
+                            <span class="project-category">SÉCURITÉ</span>
+                            <span class="project-date">2021</span>
+                        </div>
+                        <p>Système d'authentification multi-facteurs avec détection d'anomalies et intégration SSO pour entreprises.</p>
+                        
+                        <div class="project-tags-full">
+                            <span class="tag-full">NODE.JS</span>
+                            <span class="tag-full">JWT</span>
+                            <span class="tag-full">OATH2</span>
+                            <span class="tag-full">REDIS</span>
+                        </div>
+                        
+                        <div class="project-footer-full">
+                            <a href="#" class="btn-small-full primary">
+                                <i class="fas fa-eye"></i>
+                                Démo
+                            </a>
+                            <a href="#" class="btn-small-full secondary">
+                                <i class="fas fa-code"></i>
+                                Code
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="discover-more">
+                <a href="#" class="btn btn-dark">
+                    <i class="fas fa-sync-alt"></i>
+                    Charger plus de projets
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <h2>UN PROJET <span class="light">SIMILAIRE</span> EN TÊTE ?</h2>
+            <p>Discutons de vos besoins techniques et construisons ensemble la solution parfaite pour votre entreprise.</p>
+            <a href="#" class="btn btn-dark">
+                <i class="fas fa-rocket"></i>
+                DÉMARRER UN PROJET
+            </a>
+        </div>
+    </section>
+
+    <script src="{{ url_for('static',filename='js/portfolio.js')}}"></script>
+    <script>
+        // Animation des éléments au scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const animatedElements = document.querySelectorAll('.project-card-full, .stat-card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animated');
+                        
+                        // Animation des nombres pour les statistiques
+                        if (entry.target.classList.contains('stat-card')) {
+                            const statNumber = entry.target.querySelector('.stat-number');
+                            const target = parseInt(statNumber.getAttribute('data-target'));
+                            animateCounter(statNumber, target);
+                        }
+                        
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+            
+            animatedElements.forEach(el => {
+                observer.observe(el);
+            });
+            
+            // Animation des cartes avec délai
+            document.querySelectorAll('.project-card-full').forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+            
+            // Filtrage des projets
+            const filterTabs = document.querySelectorAll('.filter-tab');
+            const projectCards = document.querySelectorAll('.project-card-full');
+            
+            filterTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Retirer la classe active de tous les onglets
+                    filterTabs.forEach(t => t.classList.remove('active'));
+                    // Ajouter la classe active à l'onglet cliqué
+                    tab.classList.add('active');
+                    
+                    const filter = tab.getAttribute('data-filter');
+                    
+                    projectCards.forEach(card => {
+                        if (filter === 'all' || card.getAttribute('data-category').includes(filter)) {
+                            card.style.display = 'block';
+                            setTimeout(() => {
+                                card.style.opacity = '1';
+                                card.style.transform = 'translateY(0)';
+                            }, 100);
+                        } else {
+                            card.style.opacity = '0';
+                            card.style.transform = 'translateY(20px)';
+                            setTimeout(() => {
+                                card.style.display = 'none';
+                            }, 300);
+                        }
+                    });
+                });
+            });
+            
+            // Fonction d'animation des compteurs
+            function animateCounter(element, target) {
+                let current = 0;
+                const increment = target / 100;
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        element.textContent = target + (target === 100 ? '%' : '+');
+                        clearInterval(timer);
+                    } else {
+                        element.textContent = Math.floor(current);
+                    }
+                }, 20);
+            }
+            
+            // Animation initiale des statistiques visibles
+            document.querySelectorAll('.stat-card').forEach(card => {
+                if (card.classList.contains('animated')) {
+                    const statNumber = card.querySelector('.stat-number');
+                    const target = parseInt(statNumber.getAttribute('data-target'));
+                    animateCounter(statNumber, target);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+{% endblock %}

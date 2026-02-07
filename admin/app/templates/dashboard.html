@@ -1,0 +1,309 @@
+<style>
+    /* Sidebar avec palette jaune/noir/gris et scroll */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    width: 280px;
+    background: linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 100%);
+    backdrop-filter: blur(10px);
+    padding: 20px 0;
+    position: fixed;
+    height: 100vh;
+    z-index: 1000;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.4);
+    border-right: 3px solid #FFD700;
+}
+
+.sidebar-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 2px solid #333;
+    margin-bottom: 15px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.logo-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1a1a1a;
+    font-size: 24px;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-text h2 {
+    color: #FFD700;
+    font-size: 1.2rem;
+    font-weight: 800;
+    margin-bottom: 2px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.logo-text p {
+    color: #999;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+/* Navigation avec scroll */
+.nav-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 15px;
+}
+
+.nav-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.nav-container::-webkit-scrollbar-track {
+    background: #333;
+    border-radius: 10px;
+}
+
+.nav-container::-webkit-scrollbar-thumb {
+    background: #FFD700;
+    border-radius: 10px;
+}
+
+.nav-container::-webkit-scrollbar-thumb:hover {
+    background: #FFA500;
+}
+
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    color: #ccc;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.95rem;
+    font-weight: 500;
+    background: #2a2a2a;
+    border: 1px solid #3a3a3a;
+}
+
+.nav-item:hover {
+    background: linear-gradient(90deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.1));
+    color: #FFD700;
+    transform: translateX(5px);
+    border-color: #FFD700;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);
+}
+
+.nav-item.active {
+    background: linear-gradient(90deg, #FFD700, #FFA500);
+    color: #1a1a1a;
+    transform: translateX(5px);
+    border-color: #FFD700;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+    font-weight: 700;
+}
+
+.nav-item i {
+    width: 24px;
+    text-align: center;
+    font-size: 1.1rem;
+    color: #FFD700;
+}
+
+.nav-item.active i {
+    color: #1a1a1a;
+}
+
+.nav-item:hover i {
+    color: #FFD700;
+    transform: scale(1.1);
+}
+
+/* Sidebar footer */
+.sidebar-footer {
+    padding: 20px;
+    border-top: 2px solid #333;
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.logout-btn,
+.share-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: 1px solid transparent;
+}
+
+.logout-btn {
+    background: linear-gradient(135deg, #333, #444);
+    color: #ff6b6b;
+}
+
+.logout-btn:hover {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    color: white;
+    border-color: #dc2626;
+    transform: translateY(-2px);
+}
+
+.share-btn {
+    background: linear-gradient(135deg, #333, #444);
+    color: #FFD700;
+}
+
+.share-btn:hover {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1));
+    color: #FFD700;
+    border-color: #FFD700;
+    transform: translateY(-2px);
+}
+
+/* Indicateur de scroll */
+.scroll-indicator {
+    text-align: center;
+    color: #FFD700;
+    font-size: 12px;
+    padding: 10px;
+    opacity: 0.6;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+    100% { opacity: 0.4; }
+}
+
+/* Badge pour les notifications */
+.nav-badge {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: auto;
+    animation: pulse 2s infinite;
+}
+
+/* Responsive */
+@media (max-height: 600px) {
+    .nav-container {
+        max-height: 400px;
+    }
+}
+
+@media (max-height: 500px) {
+    .nav-container {
+        max-height: 300px;
+    }
+}
+</style>
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-hand-holding-usd"></i>
+            </div>
+            <div class="logo-text">
+                <h2>Gestion Tontine</h2>
+                <p>Version 1.0</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-container">
+        <nav class="nav-menu">
+            <a href="dashboard.php" class="nav-item active">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Tableau de Bord</span>
+            </a>
+            <a href="membre.php" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Membres</span>
+                <span class="nav-badge">3</span>
+            </a>
+            <a href="tontine.php" class="nav-item">
+                <i class="fas fa-hand-holding-usd"></i>
+                <span>Tontines</span>
+            </a>
+            <a href="seance.php" class="nav-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Séances</span>
+            </a>
+            <a href="cotisation.php" class="nav-item">
+                <i class="fas fa-money-bill-wave"></i>
+                <span>Cotisations</span>
+                <span class="nav-badge">5</span>
+            </a>
+            <a href="credit.php" class="nav-item">
+                <i class="fas fa-credit-card"></i>
+                <span>Crédits</span>
+            </a>
+            <a href="gestion_credits.php" class="nav-item">
+                <i class="fas fa-credit-card"></i>
+                <span>Gestion Crédits</span>
+            </a>
+            <a href="projets_fiac.php" class="nav-item">
+                <i class="fas fa-project-diagram"></i>
+                <span>Projets FIAC</span>
+            </a>
+            <a href="rapports.php" class="nav-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Rapports</span>
+            </a>
+            <a href="parametres.php" class="nav-item">
+                <i class="fas fa-cog"></i>
+                <span>Paramètres</span>
+            </a>
+            <!-- Plus d'éléments si besoin -->
+        </nav>
+        
+        <div class="scroll-indicator">
+            <i class="fas fa-chevron-up"></i> Défiler <i class="fas fa-chevron-down"></i>
+        </div>
+    </div>
+
+    <div class="sidebar-footer">
+        <a href="#" class="share-btn" onclick="openShareModal()">
+            <i class="fas fa-share-alt"></i>
+            <span>Partager</span>
+        </a>
+        <a href="logout.php" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Déconnexion</span>
+        </a>
+    </div>
+</aside>

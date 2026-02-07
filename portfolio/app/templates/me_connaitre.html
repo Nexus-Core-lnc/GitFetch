@@ -1,0 +1,513 @@
+{% extends "master.html" %}
+
+{% block title %}À propos - GitFetch{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>À propos - TECH_PORTFOLIO</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/portfolio.css')}}">
+    <style>
+        /* Styles spécifiques à la page À propos */
+        .formation-parcours {
+            padding: 120px 0;
+            background: #f9f9f9;
+        }
+        
+        .formation-item {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 40px;
+            margin-bottom: 60px;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: transform 0.3s;
+        }
+        
+        .formation-item.animated {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        .formation-item:hover {
+            transform: translateY(-10px);
+        }
+        
+        .formation-year {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: #ffc107;
+            display: flex;
+            align-items: center;
+        }
+        
+        .formation-year::before {
+            content: '';
+            width: 40px;
+            height: 4px;
+            background: #ffc107;
+            margin-right: 15px;
+        }
+        
+        .formation-content h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #0a192f;
+        }
+        
+        .formation-content p {
+            color: #666;
+            line-height: 1.8;
+        }
+        
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .value-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .value-card.animated {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        .value-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        }
+        
+        .value-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 193, 7, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 32px;
+            color: #ffc107;
+        }
+        
+        .certifications {
+            background: #fff;
+        }
+        
+        .cert-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .cert-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 5px solid #ffc107;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .cert-card.animated {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        .cert-card h4 {
+            color: #0a192f;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+        
+        .cert-card .issuer {
+            color: #ffc107;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .philosophy-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            margin-top: 50px;
+        }
+        
+        .quote-box {
+            background: #0a192f;
+            padding: 40px;
+            border-radius: 15px;
+            color: white;
+            position: relative;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.3s forwards;
+        }
+        
+        .quote-box::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 30px;
+            font-size: 80px;
+            font-family: 'Montserrat', sans-serif;
+            color: rgba(255, 193, 7, 0.2);
+        }
+        
+        .quote-text {
+            font-size: 20px;
+            font-style: italic;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .quote-author {
+            color: #ffc107;
+            font-weight: 600;
+        }
+        
+        /* Styles pour l'alternance des images */
+        .image-right {
+            order: 2;
+        }
+        
+        .image-left {
+            order: 1;
+        }
+        
+        .content-right {
+            order: 1;
+        }
+        
+        .content-left {
+            order: 2;
+        }
+        
+        .image-container {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            animation: fadeIn 1s ease-out 0.6s forwards;
+        }
+        
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .image-container:hover img {
+            transform: scale(1.05);
+        }
+        
+        /* Section avec alternance */
+        .alternating-section {
+            padding: 120px 0;
+        }
+        
+        .alternating-section:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        .alternating-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .alternating-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .image-right, .image-left, .content-right, .content-left {
+                order: initial;
+            }
+            
+            .philosophy-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        p{
+            text-align : justify;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text content-left">
+                    <h1>PLUS QU'UN <span class="highlight">DÉVELOPPEUR</span></h1>
+                    <p>Une passion pour l'innovation, une rigueur d'ingénieur et une vision stratégique. Découvrez le parcours et les valeurs qui façonnent mon approche technologique.</p>
+                    <a href="#formation" class="btn">
+                        <i class="fas fa-graduation-cap"></i>
+                        Mon parcours
+                    </a>
+                    <a href="#contact" class="btn btn-secondary">
+                        <i class="fas fa-handshake"></i>
+                        Échanger ensemble
+                    </a>
+                </div>
+                <div class="hero-image image-right">
+                    <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Espace de travail">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Philosophie Section - Image à droite -->
+    <section class="alternating-section">
+        <div class="container">
+            <div class="alternating-content">
+                <div class="about-text content-left">
+                    <h2>MA <span class="highlight">PHILOSOPHIE</span></h2>
+                    <h3>L'humain au centre de la technologie</h3>
+                    <p>Je crois fermement que la technologie doit être au service des personnes, et non l'inverse. Chaque ligne de code, chaque architecture, chaque solution doit répondre à un besoin humain concret.</p>
+                    <p>Mon approche combine expertise technique et empathie utilisateur pour créer des solutions qui non seulement fonctionnent parfaitement, mais qui améliorent véritablement l'expérience et la productivité.</p>
+                    
+                    <div class="values-grid">
+                        <div class="value-card">
+                            <div class="value-icon">
+                                <i class="fas fa-lightbulb"></i>
+                            </div>
+                            <h4>Innovation</h4>
+                            <p>Toujours à la recherche de nouvelles solutions pour résoudre des problèmes anciens</p>
+                        </div>
+                        <div class="value-card">
+                            <div class="value-icon">
+                                <i class="fas fa-handshake"></i>
+                            </div>
+                            <h4>Collaboration</h4>
+                            <p>Les meilleures solutions naissent de l'intelligence collective et du partage</p>
+                        </div>
+                        <div class="value-card">
+                            <div class="value-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h4>Excellence</h4>
+                            <p>La qualité comme standard minimal, jamais comme objectif ultime</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="image-container image-right">
+                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Philosophie">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Formation & Parcours Section - Image à gauche -->
+    <section class="formation-parcours alternating-section" id="formation">
+        <div class="container">
+            <div class="alternating-content">
+                <div class="image-container image-left">
+                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Formation et parcours">
+                </div>
+                <div class="content-right">
+                    <div class="section-header">
+                        <h2>FORMATION & <span class="highlight">PARCOURS</span></h2>
+                        <p>10 ans d'évolution technique, de défis relevés et d'expertise construite pas à pas.</p>
+                    </div>
+                    
+                    <div class="formation-item">
+                        <div class="formation-year">2022 - Présent</div>
+                        <div class="formation-content">
+                            <h3>Architecte Solutions Cloud Senior</h3>
+                            <p>Conception et déploiement d'architectures micro-services évolutives pour des entreprises du CAC40. Leadership technique d'équipes pluridisciplinaires et mise en place de stratégies DevOps.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="formation-item">
+                        <div class="formation-year">2018 - 2022</div>
+                        <div class="formation-content">
+                            <h3>Lead Developer Full-Stack</h3>
+                            <p>Développement d'applications web complexes avec React/Node.js. Implémentation de pratiques de sécurité avancées et optimisation des performances. Mentorat de développeurs juniors.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="formation-item">
+                        <div class="formation-year">2015 - 2018</div>
+                        <div class="formation-content">
+                            <h3>Développeur Backend</h3>
+                            <p>Spécialisation dans les API REST et les bases de données distribuées. Participation à des projets internationaux nécessitant une haute disponibilité et une forte scalabilité.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Compétences Section - Image à droite -->
+    <section class="alternating-section">
+        <div class="container">
+            <div class="alternating-content">
+                <div class="content-left">
+                    <div class="section-header">
+                        <h2>COMPÉTENCES <span class="highlight">CLÉS</span></h2>
+                        <p>Une expertise technique diversifiée pour répondre aux défis complexes.</p>
+                    </div>
+                    
+                    <div class="skills-grid">
+                        <div class="skill-item">
+                            <div class="skill-icon">
+                                <i class="fas fa-cloud"></i>
+                            </div>
+                            <span>ARCHITECTURE CLOUD</span>
+                            <p>Design d'architectures évolutives sur AWS, Azure et GCP</p>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <span>SÉCURITÉ APPLICATIVE</span>
+                            <p>Mise en place de protocoles de sécurité avancés et audits</p>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-icon">
+                                <i class="fas fa-server"></i>
+                            </div>
+                            <span>DEVOPS & CI/CD</span>
+                            <p>Automatisation des déploiements et gestion d'infrastructure</p>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <span>DÉVELOPPEMENT FULL-STACK</span>
+                            <p>Expertise React, Node.js, Python et bases de données</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="image-container image-right">
+                    <img src="https://images.unsplash.com/photo-1457305237443-44c3d5a30b89?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Compétences techniques">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Certifications Section - Image à gauche -->
+    <section class="certifications alternating-section">
+        <div class="container">
+            <div class="alternating-content">
+                <div class="image-container image-left">
+                    <img src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Certifications">
+                </div>
+                <div class="content-right">
+                    <div class="section-header">
+                        <h2>CERTIFICATIONS <span class="highlight">RECONNUES</span></h2>
+                        <p>Un apprentissage continu pour rester à la pointe des technologies émergentes.</p>
+                    </div>
+                    
+                    <div class="cert-grid">
+                        <div class="cert-card">
+                            <h4>AWS Solutions Architect Professional</h4>
+                            <span class="issuer">Amazon Web Services</span>
+                            <p>Architectures cloud avancées, optimisation des coûts, sécurité et conformité.</p>
+                        </div>
+                        
+                        <div class="cert-card">
+                            <h4>Certified Kubernetes Administrator</h4>
+                            <span class="issuer">Cloud Native Computing Foundation</span>
+                            <p>Orchestration de conteneurs, gestion de clusters et déploiement d'applications cloud-native.</p>
+                        </div>
+                        
+                        <div class="cert-card">
+                            <h4>React Professional Certification</h4>
+                            <span class="issuer">Meta</span>
+                            <p>Développement d'applications React performantes, patterns avancés et bonnes pratiques.</p>
+                        </div>
+                        
+                        <div class="cert-card">
+                            <h4>Cybersecurity Specialist</h4>
+                            <span class="issuer">ISC2</span>
+                            <p>Sécurité des applications web, tests d'intrusion et conformité aux standards de sécurité.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta" id="contact">
+        <div class="container">
+            <h2>PARLONS DE <span class="light">VOS PROJETS</span></h2>
+            <p>Chaque grande collaboration commence par une conversation. Partagez vos idées et construisons ensemble l'avenir numérique.</p>
+            <a href="{{url_for("portfolio.contact")}}" class="btn btn-dark">
+                <i class="fas fa-comments"></i>
+                COMMENCER LA DISCUSSION
+            </a>
+        </div>
+    </section>
+
+    <script src="{{ url_for('static',filename='js/portfolio.js')}}"></script>
+    <script>
+        // Animation des éléments au scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const animatedElements = document.querySelectorAll('.formation-item, .value-card, .cert-card, .image-container');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        if (entry.target.classList.contains('formation-item') || 
+                            entry.target.classList.contains('value-card') || 
+                            entry.target.classList.contains('cert-card')) {
+                            entry.target.classList.add('animated');
+                        } else if (entry.target.classList.contains('image-container')) {
+                            entry.target.style.animation = 'fadeIn 1s ease-out forwards';
+                        }
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+            
+            animatedElements.forEach(el => {
+                observer.observe(el);
+            });
+            
+            // Animation des cartes de valeurs avec délai
+            document.querySelectorAll('.value-card').forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.2}s`;
+            });
+            
+            // Animation des items de formation avec délai
+            document.querySelectorAll('.formation-item').forEach((item, index) => {
+                item.style.animationDelay = `${index * 0.15}s`;
+            });
+        });
+    </script>
+</body>
+</html>
+{% endblock %}

@@ -1,0 +1,263 @@
+{% extends "master.html" %}
+
+{% block title %}GitFetch{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TECH_PORTFOLIO - Expert IT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/portfolio.css')}}">
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>CONSTRUIRE LE <span class="highlight">FUTUR</span> DU CODE</h1>
+                    <p>Expert en ingénierie logicielle, cybersécurité et architectures cloud. Je transforme des idées complexes en infrastructures robustes et évolutives.</p>
+                    <a href="{{ url_for('portfolio.projets') }}" class="btn">
+                        <i class="fas fa-code"></i>
+                        Voir mes projets
+                    </a>
+                    <a href="{{ url_for('portfolio.contact') }}" class="btn btn-secondary">
+                        <i class="fas fa-envelope"></i>
+                        Me contacter
+                    </a>
+                </div>
+                <div class="hero-image">
+                    <img src="https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Workspace IT">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="apropos">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-image">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Profile">
+                </div>
+                <div class="about-text">
+                    <h2>Spécialiste IT multi-domaines</h2>
+                    <h3>Précision. Performance. Innovation.</h3>
+                    <p>Avec plus de 10 ans d'expérience dans l'écosystème technologique, j'accompagne les entreprises dans leur transformation numérique. Mon approche combine rigueur technique et vision stratégique pour délivrer des solutions à la hauteur de vos ambitions.</p>
+                    <div class="skills-grid">
+                        <div class="skill-item">
+                            <div class="skill-icon">
+                                <i class="fas fa-sitemap"></i>
+                            </div>
+                            <span>ARCHITECTURE</span>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <span>SÉCURITÉ</span>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-icon">
+                                <i class="fas fa-globe"></i>
+                            </div>
+                            <span>WEB SCALABLE</span>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-icon">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <span>DATA, BIG DATA</span>
+                        </div>
+                    </div>
+                    <a href="#" class="more-link">
+                        EN SAVOIR PLUS SUR MON PARCOURS
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack Section -->
+    <section class="tech-stack">
+        <div class="container">
+            <div class="section-header">
+                <h2>STACK <span class="highlight">TECHNIQUE</span></h2>
+                <p>Une maîtrise approfondie des technologies modernes pour répondre aux défis techniques complexes de l'industrie informatique.</p>
+            </div>
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <h3>
+                        <span><i class="fab fa-react"></i> React / Next.js</span>
+                        <span class="tech-percentage" data-target="90">0%</span>
+                    </h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" data-width="90"></div>
+                    </div>
+                    <p class="tech-categories">CATÉGORIES : TECH PRO</p>
+                </div>
+                <div class="tech-card">
+                    <h3>
+                        <span><i class="fab fa-js-square"></i> TypeScript</span>
+                        <span class="tech-percentage" data-target="95">0%</span>
+                    </h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" data-width="95"></div>
+                    </div>
+                    <p class="tech-categories">CATÉGORIES : PRO PRO</p>
+                </div>
+                <div class="tech-card">
+                    <h3>
+                        <span><i class="fas fa-paint-brush"></i> Tailwind CSS</span>
+                        <span class="tech-percentage" data-target="95">0%</span>
+                    </h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" data-width="95"></div>
+                    </div>
+                    <p class="tech-categories">CATÉGORIES : PRO PRO</p>
+                </div>
+                <div class="tech-card">
+                    <h3>
+                        <span><i class="fab fa-node-js"></i> Node.js / Express</span>
+                        <span class="tech-percentage" data-target="85">0%</span>
+                    </h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" data-width="85"></div>
+                    </div>
+                    <p class="tech-categories">CATÉGORIES : BACK END</p>
+                </div>
+                <div class="tech-card">
+                    <h3>
+                        <span><i class="fas fa-database"></i> PostgreSQL / Supabase</span>
+                        <span class="tech-percentage" data-target="80">0%</span>
+                    </h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" data-width="80"></div>
+                    </div>
+                    <p class="tech-categories">CATÉGORIES : BDD & API / STORAGE</p>
+                </div>
+                <div class="tech-card">
+                    <h3>
+                        <span><i class="fab fa-docker"></i> Docker & Kubernetes</span>
+                        <span class="tech-percentage" data-target="75">0%</span>
+                    </h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" data-width="75"></div>
+                    </div>
+                    <p class="tech-citations">CATÉGORIES : VE. RESO. DEV. / OPS</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="projects" id="projets">
+        <div class="container">
+            <div class="section-header">
+                <h2>PROJETS <span class="highlight">RÉCENTS</span></h2>
+                <p>Découvrez une sélection de mes derniers projets, illustrant mon expertise technique et ma capacité à gérer des projets complexes.</p>
+            </div>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-image"></div>
+                    <div class="project-content">
+                        <h3>CyberSentinel Dashboard</h3>
+                        <p>Plateforme de monitoring en temps réel pour la détection d'intrusions réseau, visualisant les menaces potentielles et permettant une réponse rapide.</p>
+                        <div class="project-tags">
+                            <span class="tag">REACT</span>
+                            <span class="tag">WEBSOCKET</span>
+                            <span class="tag">CHARTJS</span>
+                            <span class="tag">FASTAPI</span>
+                        </div>
+                        <div class="project-footer">
+                            <a href="#" class="btn btn-small btn-secondary">
+                                <i class="fas fa-code"></i>
+                                CODE
+                            </a>
+                            <a href="#" class="btn btn-small">
+                                <i class="fas fa-eye"></i>
+                                DÉMO
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image"></div>
+                    <div class="project-content">
+                        <h3>CloudStack Automation</h3>
+                        <p>Infrastructure as Code pour le déploiement automatisé d'architecture micro-services sur AWS via Terraform et Ansible.</p>
+                        <div class="project-tags">
+                            <span class="tag">TERRAFORM</span>
+                            <span class="tag">AWS</span>
+                            <span class="tag">DOCKER</span>
+                            <span class="tag">PYTHON</span>
+                        </div>
+                        <div class="project-footer">
+                            <a href="#" class="btn btn-small btn-secondary">
+                                <i class="fas fa-code"></i>
+                                CODE
+                            </a>
+                            <a href="#" class="btn btn-small">
+                                <i class="fas fa-eye"></i>
+                                DÉMO
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image"></div>
+                    <div class="project-content">
+                        <h3>NeoBank Mobile</h3>
+                        <p>Application mobile bancaire avec gestion de portefeuille crypto et authentification biométrique pour une sécurité maximale.</p>
+                        <div class="project-tags">
+                            <span class="tag">REACT NATIVE</span>
+                            <span class="tag">TYPESCRIPT</span>
+                            <span class="tag">NODE JS</span>
+                            <span class="tag">RASA</span>
+                        </div>
+                        <div class="project-footer">
+                            <a href="#" class="btn btn-small btn-secondary">
+                                <i class="fas fa-lock"></i>
+                                PRIVÉ
+                            </a>
+                            <a href="#" class="btn btn-small">
+                                <i class="fas fa-eye"></i>
+                                DÉMO
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="discover-more">
+                <a href="{{ url_for('portfolio.projets') }}" class="btn btn-dark">
+                    <i class="fas fa-folder-open"></i>
+                    Découvrir tous les projets
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta" id="contact">
+        <div class="container">
+            <h2>PRÊT À LANCER VOTRE <span class="light">PROCHAIN PROJET</span></h2>
+            <p>Que vous ayez besoin d'une architecture cloud, d'un audit de sécurité ou d'un développement complexe, je suis là pour vous accompagner.</p>
+            <a href="{{ url_for('portfolio.contact') }}" class="btn btn-dark">
+                <i class="fas fa-rocket"></i>
+                DÉMARRER LA DISCUSSION
+            </a>
+        </div>
+    </section>
+
+    <script src="{{ url_for('static',filename='js/portfolio.js')}}">
+    </script>
+</body>
+</html>
+{% endblock %}

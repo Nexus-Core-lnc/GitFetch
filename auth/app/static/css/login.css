@@ -4,7 +4,7 @@
   box-sizing: border-box;
 }
 
-body {
+.body {
   font-family: "Poppins", sans-serif;
   min-height: 100vh;
   display: flex;
@@ -253,9 +253,9 @@ body::before {
 }
 
 .logo {
-  width: 200px;
-  height: 200px;
-  background: rgba(0, 0, 0, 0.2);
+  width: 100%;
+  height: auto;
+  background: rgba(0, 0, 0, 0.5);
   border-radius: 30px;
   margin: 0 auto 30px;
   display: flex;
@@ -276,7 +276,6 @@ body::before {
   object-fit: contain;
   border-radius: 20px;
 }
-
 @keyframes float {
   0%,
   100% {

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+{% extends "master.html" %}
+
+{% block title %}Accueil - Mon Site{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - Tech Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href = "{{url_for("static",filename = "css/register.css")}}">
+</head>
+<body>
+    <!-- Icônes GitHub flottantes subtiles en arrière-plan -->
+    <div class="body">
+        <div class="github-icons">
+        <i class="fab fa-github github-icon"></i>
+        <i class="fab fa-github github-icon"></i>
+        <i class="fab fa-github github-icon"></i>
+        <i class="fab fa-github github-icon"></i>
+        <i class="fab fa-github github-icon"></i>
+        <i class="fab fa-github github-icon"></i>
+    </div>
+
+    <div class="main-container">
+        <!-- Icône GitHub à l'intérieur du main-container -->
+        <i class="fab fa-github github-container-icon"></i>
+
+        <!-- Section Branding (Gauche) -->
+        <div class="branding-section">
+            <div class="logo-container">
+                <div class="logo">
+                    <!-- Remplacez par votre image -->
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="logo du site">
+                </div>
+                <h1>CREATEUR DE PORTFOLIO</h1>
+                <h2>Créez des portfolios avec des designs modernes</h2>
+                <p>
+                    Transformez vos idées en portfolios professionnels et captivants. 
+                    Notre plateforme vous permet de créer des sites web uniques avec des designs 
+                    modernes et responsives en quelques clics.
+                </p>
+                <div class="features">
+                    <div class="feature-item">
+                        <i class="fas fa-check"></i>
+                        Templates modernes et personnalisables
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check"></i>
+                        Design responsive et optimisé
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check"></i>
+                        Interface intuitive et facile à utiliser
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check"></i>
+                        Hébergement sécurisé inclus
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Formulaire (Droite - Agrandie) -->
+        <div class="form-section">
+            <div class="form-header">
+                <h3>Créer un compte</h3>
+                <p>Commencez à créer votre portfolio dès aujourd'hui</p>
+            </div>
+
+            <div class="success-message" id="successMessage">
+                <i class="fas fa-check-circle"></i>
+                Informations exportées avec succès !
+            </div>
+
+            <form id="registerForm" method="POST" action="{{ url_for('main.register') }}">
+                <div class="form-group">
+                    <label for="email"><i class="fas fa-envelope"></i> Adresse e-mail</label>
+                    <input type="email" id="email" name="email" required placeholder="votre@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> Mot de passe</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password" name="password" required placeholder="••••••••">
+                        <i class="fas fa-eye toggle-password" onclick="togglePassword('password')" id="togglePassword1"></i>
+                    </div>
+                    
+                    <div class="password-criteria" id="passwordCriteria">
+                        <h4><i class="fas fa-clipboard-check"></i> Critères du mot de passe :</h4>
+                        <div class="criterion" id="length">
+                            <i class="fas fa-times"></i>
+                            Au moins 8 caractères
+                        </div>
+                        <div class="criterion" id="uppercase">
+                            <i class="fas fa-times"></i>
+                            Au moins 1 majuscule
+                        </div>
+                        <div class="criterion" id="lowercase">
+                            <i class="fas fa-times"></i>
+                            Au moins 1 minuscule
+                        </div>
+                        <div class="criterion" id="number">
+                            <i class="fas fa-times"></i>
+                            Au moins 1 chiffre
+                        </div>
+                        <div class="criterion" id="special">
+                            <i class="fas fa-times"></i>
+                            Au moins 1 caractère spécial
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword"><i class="fas fa-lock"></i> Confirmer le mot de passe</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="••••••••">
+                        <i class="fas fa-eye toggle-password" onclick="togglePassword('confirmPassword')" id="togglePassword2"></i>
+                    </div>
+                    <div class="match-indicator" id="matchIndicator"></div>
+                </div>
+
+                <button type="submit" class="btn" id="submitBtn">
+                    <i class="fas fa-user-plus"></i> S'inscrire
+                </button>
+                
+                <div class="divider">
+                    <span>OU</span>
+                </div>
+                
+                <button type="button" class="btn secondary" onclick="exportCredentials()">
+                    <i class="fas fa-download"></i> Exporter les informations (TXT)
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modale d'erreur -->
+    <div class="modal" id="errorModal">
+        <div class="modal-content">
+            <div class="modal-header error">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Erreur de validation</h3>
+                <button class="close-modal" onclick="closeErrorModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="errorMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn modal-btn" onclick="closeErrorModal()">Compris</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale de succès -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="modal-header success">
+                <i class="fas fa-check-circle"></i>
+                <h3>Inscription réussie</h3>
+                <button class="close-modal" onclick="closeSuccessModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>✓ Inscription réussie ! Vous pouvez maintenant exporter vos informations.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn modal-btn" onclick="closeSuccessModal()">Continuer</button>
+            </div>
+        </div>
+    </div>
+
+    </div>
+    <script src="{{ url_for('static', filename='js/register.js') }}"></script>
+</body>
+</html>
+{% endblock content %}
