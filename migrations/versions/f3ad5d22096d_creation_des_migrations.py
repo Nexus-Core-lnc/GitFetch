@@ -1,8 +1,8 @@
-"""Initialisation des tables
+"""creation des migrations
 
-Revision ID: 5939659c4161
+Revision ID: f3ad5d22096d
 Revises: 
-Create Date: 2026-02-06 23:15:21.690113
+Create Date: 2026-02-10 13:05:42.397063
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '5939659c4161'
+revision = 'f3ad5d22096d'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -22,7 +22,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('nom_utilisateur', sa.String(length=80), nullable=False),
     sa.Column('email', sa.String(length=120), nullable=False),
-    sa.Column('mot_de_passe_hache', sa.String(length=255), nullable=False),
+    sa.Column('mot_de_passe_hache', sa.String(length=255), nullable=True),
     sa.Column('role', sa.String(length=20), nullable=True),
     sa.Column('jeton_github', sa.String(length=255), nullable=True),
     sa.Column('logo_profil', sa.String(length=255), nullable=True),
