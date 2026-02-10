@@ -355,21 +355,25 @@ def edit_profile():
             current_user.site_web = request.form.get('site_web', current_user.site_web)
             current_user.biographie = request.form.get('biographie', current_user.biographie)
             
-            # === 2. RÉSEAUX SOCIAUX ===
+            # === 2. NUMÉROS DE TÉLÉPHONE ===
+            current_user.telephone_principal = request.form.get('telephone_principal', current_user.telephone_principal)
+            current_user.telephone_mobile = request.form.get('telephone_mobile', current_user.telephone_mobile)
+            
+            # === 3. RÉSEAUX SOCIAUX ===
             current_user.github = request.form.get('github', current_user.github)
             current_user.linkedin = request.form.get('linkedin', current_user.linkedin)
             current_user.twitter = request.form.get('twitter', current_user.twitter)
             
-            # === 3. TOKEN GITHUB (privé) ===
+            # === 4. TOKEN GITHUB (privé) ===
             new_token = request.form.get('jeton_github', '').strip()
             if new_token:
                 current_user.jeton_github = new_token
                 flash('Token GitHub mis à jour', 'info')
             
-            # === 4. THÈME ===
+            # === 5. THÈME ===
             current_user.theme_prefere = request.form.get('theme_prefere', current_user.theme_prefere)
             
-            # === 5. GESTION DE L'AVATAR ===
+            # === 6. GESTION DE L'AVATAR ===
             avatar_file = request.files.get('avatar')
             if avatar_file and avatar_file.filename:
                 # Validation du type de fichier
@@ -388,7 +392,7 @@ def edit_profile():
                 else:
                     flash('Format de fichier non supporté pour l\'avatar. Utilisez PNG, JPG, JPEG, GIF ou WEBP.', 'warning')
             
-            # === 6. GESTION DE LA PHOTO DE COUVERTURE ===
+            # === 7. GESTION DE LA PHOTO DE COUVERTURE ===
             cover_file = request.files.get('cover')
             if cover_file and cover_file.filename:
                 allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
@@ -406,7 +410,7 @@ def edit_profile():
                 else:
                     flash('Format de fichier non supporté pour la couverture. Utilisez PNG, JPG, JPEG, GIF ou WEBP.', 'warning')
             
-            # === 7. GESTION DU CV (PDF) ===
+            # === 8. GESTION DU CV (PDF) ===
             cv_file = request.files.get('cv')
             if cv_file and cv_file.filename:
                 allowed_extensions = {'pdf', 'doc', 'docx'}
@@ -431,7 +435,7 @@ def edit_profile():
                 else:
                     flash('Format de fichier non supporté pour le CV. Utilisez PDF, DOC ou DOCX.', 'warning')
             
-            # === 8. SAUVEGARDE EN BASE DE DONNÉES ===
+            # === 9. SAUVEGARDE EN BASE DE DONNÉES ===
             db.session.commit()
             flash('Profil mis à jour avec succès!', 'success')
             
@@ -444,7 +448,6 @@ def edit_profile():
     # Pour le template, on peut passer les URLs des médias
     # Ces fonctions seront utilisées dans le template pour afficher les images
     return render_template('edit_profile.html')
-
 
 # Route pour servir les fichiers depuis le dossier media
 @admin_bp.route('/media/<type>/<filename>')

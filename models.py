@@ -29,9 +29,15 @@ class Utilisateur(db.Model, UserMixin):
     poste = db.Column(db.String(100), nullable=True)  # Ex: "Développeur Full Stack"
     localisation = db.Column(db.String(100), nullable=True)
     site_web = db.Column(db.String(255), nullable=True)
+    
+    # Réseaux sociaux
     twitter = db.Column(db.String(100), nullable=True)
     linkedin = db.Column(db.String(100), nullable=True)
     github = db.Column(db.String(100), nullable=True)
+    
+    # Numéros de téléphone
+    telephone_principal = db.Column(db.String(20), nullable=True)
+    telephone_mobile = db.Column(db.String(20), nullable=True)
     
     # Préférences
     theme_prefere = db.Column(db.String(20), default='light')  # 'light' ou 'dark'
