@@ -16,12 +16,28 @@ class Utilisateur(db.Model, UserMixin):
     
     role = db.Column(db.String(20), default='user')
     jeton_github = db.Column(db.String(255), nullable=True)
-    logo_profil = db.Column(db.String(255), nullable=True)
-    biographie = db.Column(db.Text, nullable=True)
     
+    # Photos de profil et couverture
+    photo_profil = db.Column(db.String(255), nullable=True, default='default-avatar.jpg')
+    photo_couverture = db.Column(db.String(255), nullable=True, default='default-cover.jpg')
+    
+    # Informations personnelles
+    biographie = db.Column(db.Text, nullable=True)
+    poste = db.Column(db.String(100), nullable=True)  # Ex: "Développeur Full Stack"
+    localisation = db.Column(db.String(100), nullable=True)
+    site_web = db.Column(db.String(255), nullable=True)
+    twitter = db.Column(db.String(100), nullable=True)
+    linkedin = db.Column(db.String(100), nullable=True)
+    github = db.Column(db.String(100), nullable=True)
+    
+    # Préférences
+    theme_prefere = db.Column(db.String(20), default='light')  # 'light' ou 'dark'
+    
+    # Statut
     est_confirme = db.Column(db.Boolean, default=False)
     date_confirmation = db.Column(db.DateTime, nullable=True)
     date_creation = db.Column(db.DateTime, default=datetime.utcnow)
+    derniere_connexion = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     projets = db.relationship('Projet', backref='proprietaire', lazy=True, cascade="all, delete-orphan")
 
@@ -32,7 +48,6 @@ class Projet(db.Model):
     __tablename__ = 'projets'
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(100), nullable=False)
-    derniere_connexion = db.Column(db.DateTime, default=datetime.utcnow)
     description = db.Column(db.Text)
     github_url = db.Column(db.String(255))
     demo_url = db.Column(db.String(255)) # URL en ligne
@@ -40,8 +55,10 @@ class Projet(db.Model):
     logo_projet = db.Column(db.String(255)) # Petit logo
     repo_id_github = db.Column(db.String(100), unique=True) # Pour éviter les doublons
     utilisateur_id = db.Column(db.Integer, db.ForeignKey('utilisateurs.id'))
-    demo_url = db.Column(db.String(255))  # Lien du site en ligne
     est_collaboration = db.Column(db.Boolean, default=False) # Collaboration ou compte propre
     structure_nom = db.Column(db.String(100)) # Nom de la structure
+    date_creation = db.Column(db.DateTime, default=datetime.utcnow)
+    date_mise_a_jour = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
     def __repr__(self):
-        return f'<Projet {self.titre_personnalise}>'
+        return f'<Projet {self.nom}>'

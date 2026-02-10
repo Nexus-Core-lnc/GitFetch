@@ -1,0 +1,1026 @@
+{% extends "master.html" %}
+
+{% block title %}Mon Profil - GitFetch{% endblock %}
+
+{% block content %}
+<div class="profile-edit-container">
+    <!-- Page Header Compact -->
+    <section class="page-header">
+        <div class="container">
+            <div class="page-header-content">
+                <div class="page-header-text">
+                    <h1>Mon <span class="highlight">Profil</span></h1>
+                    <p>Personnalisez votre profil et gérez vos informations</p>
+                </div>
+                <a href="{{ url_for('admin.dashboard') }}" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    <span class="back-text">Retour</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Profile Edit Section -->
+    <section class="profile-edit-section">
+        <div class="container">
+            <div class="profile-layout">
+                <!-- Left Side - Profile Preview Compact -->
+                <aside class="profile-preview-wrapper">
+                    <div class="profile-preview">
+                        <!-- Cover avec overlay permanent pour upload -->
+                        <div class="cover-container">
+                            <div class="cover-image" id="cover-preview"
+                                 style="background-image: url('{% if current_user.photo_couverture and current_user.photo_couverture != "default-cover.jpg" %}{{ url_for('static', filename='uploads/' + current_user.photo_couverture) }}{% else %}{{ url_for('static', filename='img/default-cover.jpg') }}{% endif %}');">
+                                <label for="cover-upload" class="cover-upload-overlay">
+                                    <i class="fas fa-camera"></i>
+                                    <span>Modifier</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Profile Info Compact -->
+                        <div class="profile-info">
+                            <div class="avatar-section">
+                                <div class="avatar-container">
+                                    <div class="avatar-image" id="avatar-preview"
+                                         style="background-image: url('{% if current_user.photo_profil and current_user.photo_profil != "default-avatar.jpg" %}{{ url_for('static', filename='uploads/' + current_user.photo_profil) }}{% else %}{{ url_for('static', filename='img/avatar.png') }}{% endif %}');">
+                                    </div>
+                                    <label for="avatar-upload" class="avatar-upload-btn">
+                                        <i class="fas fa-camera"></i>
+                                    </label>
+                                </div>
+
+                                <div class="profile-identity">
+                                    <h2 class="profile-name">{{ current_user.nom_utilisateur }}</h2>
+                                    <p class="profile-role">{{ current_user.poste or 'Développeur' }}</p>
+                                </div>
+                            </div>
+
+                            <!-- Meta Info Compact -->
+                            <div class="profile-meta">
+                                <div class="meta-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>{{ current_user.localisation or 'Non spécifié' }}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>Depuis {{ current_user.date_creation.strftime('%Y') if current_user.date_creation }}</span>
+                                </div>
+                            </div>
+
+                            <!-- Bio Compact -->
+                            {% if current_user.biographie %}
+                            <div class="profile-bio">
+                                <p>{{ current_user.biographie }}</p>
+                            </div>
+                            {% endif %}
+
+                            <!-- Stats Inline -->
+                            <div class="profile-stats">
+                                <div class="stat-item">
+                                    <span class="stat-value">{{ current_user.projets|length }}</span>
+                                    <span class="stat-label">Projets</span>
+                                </div>
+                                <div class="stat-divider"></div>
+                                <div class="stat-item">
+                                    <span class="stat-value">
+                                        {% if current_user.date_creation %}
+                                            {{ ((2026 - current_user.date_creation.year) if current_user.date_creation.year < 2026 else 0) }}+
+                                        {% else %}
+                                            0
+                                        {% endif %}
+                                    </span>
+                                    <span class="stat-label">Années</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Right Side - Edit Form Optimized -->
+                <main class="edit-form-container">
+                    <form action="{{ url_for('admin.edit_profile') }}" method="POST" enctype="multipart/form-data" class="edit-profile-form">
+                        <!-- Hidden file inputs -->
+                        <input type="file" id="avatar-upload" name="avatar" accept="image/*" style="display: none;">
+                        <input type="file" id="cover-upload" name="cover" accept="image/*" style="display: none;">
+
+                        <!-- Informations personnelles -->
+                        <div class="form-card">
+                            <div class="form-card-header">
+                                <div class="header-icon">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <h3>Informations personnelles</h3>
+                            </div>
+                            
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="nom_utilisateur">Nom d'utilisateur</label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-user"></i>
+                                        <input type="text" id="nom_utilisateur" name="nom_utilisateur" 
+                                               value="{{ current_user.nom_utilisateur }}" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-envelope"></i>
+                                        <input type="email" id="email" name="email" 
+                                               value="{{ current_user.email }}" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="poste">Poste/Rôle</label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-briefcase"></i>
+                                        <input type="text" id="poste" name="poste" 
+                                               value="{{ current_user.poste or '' }}" 
+                                               placeholder="Ex: Développeur Full Stack">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="localisation">Localisation</label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <input type="text" id="localisation" name="localisation" 
+                                               value="{{ current_user.localisation or '' }}" 
+                                               placeholder="Ex: Paris, France">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label for="site_web">Site Web</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-globe"></i>
+                                    <input type="url" id="site_web" name="site_web" 
+                                           value="{{ current_user.site_web or '' }}" 
+                                           placeholder="https://votre-site.com">
+                                </div>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label for="biographie">Biographie</label>
+                                <div class="input-wrapper textarea-wrapper">
+                                    <i class="fas fa-align-left"></i>
+                                    <textarea id="biographie" name="biographie" 
+                                              placeholder="Parlez de vous, vos compétences, vos passions..." 
+                                              rows="3">{{ current_user.biographie or '' }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Réseaux sociaux & Configuration dans un layout 2 colonnes -->
+                        <div class="form-row-split">
+                            <!-- Réseaux sociaux -->
+                            <div class="form-card">
+                                <div class="form-card-header">
+                                    <div class="header-icon">
+                                        <i class="fas fa-share-alt"></i>
+                                    </div>
+                                    <h3>Réseaux sociaux</h3>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="github">GitHub</label>
+                                    <div class="input-wrapper">
+                                        <i class="fab fa-github"></i>
+                                        <input type="text" id="github" name="github" 
+                                               value="{{ current_user.github or '' }}" 
+                                               placeholder="username">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="linkedin">LinkedIn</label>
+                                    <div class="input-wrapper">
+                                        <i class="fab fa-linkedin"></i>
+                                        <input type="text" id="linkedin" name="linkedin" 
+                                               value="{{ current_user.linkedin or '' }}" 
+                                               placeholder="username">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="twitter">Twitter</label>
+                                    <div class="input-wrapper">
+                                        <i class="fab fa-twitter"></i>
+                                        <input type="text" id="twitter" name="twitter" 
+                                               value="{{ current_user.twitter or '' }}" 
+                                               placeholder="@username">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Préférences -->
+                            <div class="form-card">
+                                <div class="form-card-header">
+                                    <div class="header-icon">
+                                        <i class="fas fa-cog"></i>
+                                    </div>
+                                    <h3>Configuration</h3>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="theme_prefere">Thème</label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-palette"></i>
+                                        <select id="theme_prefere" name="theme_prefere">
+                                            <option value="light" {% if current_user.theme_prefere == 'light' %}selected{% endif %}>Clair</option>
+                                            <option value="dark" {% if current_user.theme_prefere == 'dark' %}selected{% endif %}>Sombre</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="jeton_github">Token GitHub</label>
+                                    <div class="input-wrapper token-wrapper">
+                                        <i class="fab fa-github"></i>
+                                        <input type="password" id="jeton_github" name="jeton_github" 
+                                               value="{{ current_user.jeton_github or '' }}" 
+                                               placeholder="ghp_xxxxxxxxxx"
+                                               class="token-input">
+                                        <button type="button" class="btn-show-token" onclick="toggleTokenVisibility()">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <small class="form-help">
+                                        <i class="fas fa-info-circle"></i>
+                                        Pour l'import de dépôts privés
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions Fixed Bottom -->
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-check"></i>
+                                Enregistrer
+                            </button>
+                            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i>
+                                Annuler
+                            </a>
+                        </div>
+                    </form>
+                </main>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+    :root {
+        --primary: #ffc107;
+        --primary-dark: #f9a825;
+        --dark-bg: #0a192f;
+        --darker-bg: #112240;
+        --light-text: #ccd6f6;
+        --text-primary: #1a1a1a;
+        --text-secondary: #6b7280;
+        --white: #ffffff;
+        --bg-page: #f8f9fa;
+        --bg-card: #ffffff;
+        --border: #e5e7eb;
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .profile-edit-container {
+        min-height: 100vh;
+        background: var(--bg-page);
+    }
+
+    /* ===== PAGE HEADER COMPACT ===== */
+    .page-header {
+        background: linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+        padding: 2rem 1rem;
+        color: var(--white);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page-header::before {
+        content: "";
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(255, 193, 7, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        top: -150px;
+        right: -100px;
+        animation: pulse 6s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 0.6; }
+        50% { transform: scale(1.2); opacity: 1; }
+    }
+
+    .page-header-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .page-header-text h1 {
+        font-size: 2rem;
+        margin: 0 0 0.25rem 0;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    .page-header-text h1 .highlight {
+        color: var(--primary);
+        position: relative;
+    }
+
+    .page-header-text p {
+        color: var(--light-text);
+        font-size: 0.9rem;
+        margin: 0;
+        opacity: 0.9;
+    }
+
+    .back-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1.25rem;
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--white);
+        text-decoration: none;
+        border-radius: var(--radius-sm);
+        font-weight: 500;
+        transition: var(--transition);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        font-size: 0.875rem;
+    }
+
+    .back-btn:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateX(-3px);
+    }
+
+    /* ===== PROFILE LAYOUT ===== */
+    .profile-edit-section {
+        padding: 2rem 1rem 3rem;
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .profile-layout {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 2rem;
+        align-items: start;
+    }
+
+    /* ===== PROFILE PREVIEW SIDEBAR ===== */
+    .profile-preview-wrapper {
+        position: sticky;
+        top: 2rem;
+    }
+
+    .profile-preview {
+        background: var(--bg-card);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--border);
+    }
+
+    /* Cover Compact */
+    .cover-container {
+        position: relative;
+        height: 100px;
+    }
+
+    .cover-image {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+    }
+
+    .cover-upload-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.3);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+        cursor: pointer;
+        opacity: 0;
+        transition: var(--transition);
+        backdrop-filter: blur(2px);
+        color: var(--white);
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .cover-upload-overlay i {
+        font-size: 1.25rem;
+    }
+
+    .cover-container:hover .cover-upload-overlay {
+        opacity: 1;
+    }
+
+    /* Profile Info Compact */
+    .profile-info {
+        padding: 0 1.25rem 1.25rem;
+    }
+
+    .avatar-section {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-top: -40px;
+        margin-bottom: 1rem;
+    }
+
+    .avatar-container {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        flex-shrink: 0;
+    }
+
+    .avatar-image {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background-size: cover;
+        background-position: center;
+        border: 4px solid var(--bg-card);
+        box-shadow: var(--shadow-md);
+    }
+
+    .avatar-upload-btn {
+        position: absolute;
+        bottom: -2px;
+        right: -2px;
+        background: var(--primary);
+        color: var(--dark-bg);
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: var(--transition);
+        border: 3px solid var(--bg-card);
+        box-shadow: var(--shadow-sm);
+        font-size: 0.75rem;
+    }
+
+    .avatar-upload-btn:hover {
+        background: var(--primary-dark);
+        transform: scale(1.1);
+    }
+
+    .profile-identity {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .profile-name {
+        font-size: 1.25rem;
+        color: var(--text-primary);
+        margin: 0 0 0.125rem 0;
+        font-weight: 700;
+        line-height: 1.3;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .profile-role {
+        color: var(--primary);
+        font-weight: 600;
+        margin: 0;
+        font-size: 0.875rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Meta Info */
+    .profile-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-secondary);
+        font-size: 0.813rem;
+    }
+
+    .meta-item i {
+        color: var(--primary);
+        width: 16px;
+        font-size: 0.875rem;
+    }
+
+    /* Bio Compact */
+    .profile-bio {
+        background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+        padding: 0.875rem;
+        border-radius: var(--radius-sm);
+        margin-bottom: 1rem;
+        border-left: 3px solid var(--primary);
+    }
+
+    .profile-bio p {
+        color: var(--text-secondary);
+        line-height: 1.5;
+        font-size: 0.813rem;
+        margin: 0;
+    }
+
+    /* Stats Inline */
+    .profile-stats {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: linear-gradient(135deg, #fafafa 0%, #ffffff 100%);
+        border-radius: var(--radius-sm);
+    }
+
+    .stat-item {
+        flex: 1;
+        text-align: center;
+    }
+
+    .stat-divider {
+        width: 1px;
+        height: 40px;
+        background: var(--border);
+    }
+
+    .stat-value {
+        display: block;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary);
+        line-height: 1;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        display: block;
+        font-size: 0.688rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 500;
+    }
+
+    /* ===== FORM CONTAINER ===== */
+    .edit-form-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    /* Form Cards */
+    .form-card {
+        background: var(--bg-card);
+        border-radius: var(--radius-lg);
+        padding: 1.75rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border);
+        transition: var(--transition);
+    }
+
+    .form-card:hover {
+        box-shadow: var(--shadow-md);
+    }
+
+    .form-card-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f3f4f6;
+    }
+
+    .header-icon {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 193, 7, 0.05) 100%);
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        font-size: 1.125rem;
+    }
+
+    .form-card-header h3 {
+        font-size: 1.125rem;
+        color: var(--text-primary);
+        margin: 0;
+        font-weight: 600;
+    }
+
+    /* Form Grid */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+    }
+
+    .form-row-split {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .form-group.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 0.875rem;
+    }
+
+    /* Input Wrapper avec icône */
+    .input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .input-wrapper > i {
+        position: absolute;
+        left: 1rem;
+        color: var(--primary);
+        font-size: 0.875rem;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .input-wrapper input,
+    .input-wrapper select {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.75rem;
+        border: 2px solid var(--border);
+        border-radius: var(--radius-sm);
+        font-size: 0.875rem;
+        transition: var(--transition);
+        background: #fafafa;
+        color: var(--text-primary);
+    }
+
+    .input-wrapper input:focus,
+    .input-wrapper select:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.1);
+        background: var(--white);
+    }
+
+    /* Textarea */
+    .textarea-wrapper {
+        align-items: flex-start;
+    }
+
+    .textarea-wrapper > i {
+        top: 1rem;
+    }
+
+    .textarea-wrapper textarea {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.75rem;
+        border: 2px solid var(--border);
+        border-radius: var(--radius-sm);
+        font-size: 0.875rem;
+        transition: var(--transition);
+        background: #fafafa;
+        resize: vertical;
+        min-height: 80px;
+        line-height: 1.6;
+        font-family: inherit;
+    }
+
+    .textarea-wrapper textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.1);
+        background: var(--white);
+    }
+
+    /* Token Input */
+    .token-wrapper {
+        position: relative;
+    }
+
+    .token-wrapper input {
+        padding-right: 3rem;
+    }
+
+    .btn-show-token {
+        position: absolute;
+        right: 0.75rem;
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        padding: 0.5rem;
+        transition: var(--transition);
+        border-radius: var(--radius-sm);
+        z-index: 2;
+    }
+
+    .btn-show-token:hover {
+        color: var(--primary);
+        background: rgba(255, 193, 7, 0.1);
+    }
+
+    .form-help {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        color: var(--text-secondary);
+        font-size: 0.75rem;
+        padding: 0.5rem 0.75rem;
+        background: #f9fafb;
+        border-radius: var(--radius-sm);
+        border-left: 3px solid var(--primary);
+    }
+
+    .form-help i {
+        color: var(--primary);
+        font-size: 0.875rem;
+    }
+
+    /* Form Actions */
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        padding: 1.5rem;
+        background: var(--bg-card);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border);
+        position: sticky;
+        bottom: 1rem;
+        z-index: 10;
+    }
+
+    /* Buttons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.875rem 1.75rem;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        transition: var(--transition);
+        border: none;
+        cursor: pointer;
+        font-size: 0.875rem;
+        flex: 1;
+        text-decoration: none;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: var(--dark-bg);
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+    }
+
+    .btn-secondary {
+        background: transparent;
+        border: 2px solid var(--border);
+        color: var(--text-secondary);
+    }
+
+    .btn-secondary:hover {
+        background: #f9fafb;
+        border-color: var(--text-secondary);
+        color: var(--text-primary);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+        .profile-layout {
+            grid-template-columns: 280px 1fr;
+            gap: 1.5rem;
+        }
+
+        .form-row-split {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .page-header {
+            padding: 1.5rem 1rem;
+        }
+
+        .page-header-content {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .page-header-text h1 {
+            font-size: 1.75rem;
+        }
+
+        .back-text {
+            display: none;
+        }
+
+        .profile-layout {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .profile-preview-wrapper {
+            position: relative;
+            top: 0;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-card {
+            padding: 1.25rem;
+        }
+
+        .form-actions {
+            position: static;
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .page-header-text h1 {
+            font-size: 1.5rem;
+        }
+
+        .avatar-section {
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: center;
+        }
+
+        .avatar-container {
+            margin: 0 auto;
+        }
+
+        .profile-identity {
+            width: 100%;
+        }
+
+        .profile-name,
+        .profile-role {
+            white-space: normal;
+        }
+    }
+</style>
+
+<script>
+    // Preview des images
+    function previewImage(input, previewId) {
+        const preview = document.getElementById(previewId);
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.style.backgroundImage = `url(${e.target.result})`;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // Toggle token visibility
+    function toggleTokenVisibility() {
+        const tokenInput = document.getElementById('jeton_github');
+        const eyeIcon = document.querySelector('.btn-show-token i');
+        
+        if (tokenInput.type === 'password') {
+            tokenInput.type = 'text';
+            eyeIcon.className = 'fas fa-eye-slash';
+        } else {
+            tokenInput.type = 'password';
+            eyeIcon.className = 'fas fa-eye';
+        }
+    }
+
+    // Gestion des uploads d'images
+    document.addEventListener('DOMContentLoaded', function() {
+        // Avatar upload
+        const avatarInput = document.getElementById('avatar-upload');
+        if (avatarInput) {
+            avatarInput.addEventListener('change', function() {
+                previewImage(this, 'avatar-preview');
+            });
+        }
+
+        // Cover upload
+        const coverInput = document.getElementById('cover-upload');
+        if (coverInput) {
+            coverInput.addEventListener('change', function() {
+                previewImage(this, 'cover-preview');
+            });
+        }
+
+        // Form submission avec feedback
+        const form = document.querySelector('.edit-profile-form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const submitBtn = this.querySelector('.btn-primary');
+                if (submitBtn) {
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+                    submitBtn.disabled = true;
+                    
+                    setTimeout(() => {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }, 5000);
+                }
+            });
+        }
+
+        // Animation d'entrée pour les cartes
+        const cards = document.querySelectorAll('.form-card');
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        cards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+    });
+</script>
+{% endblock %}

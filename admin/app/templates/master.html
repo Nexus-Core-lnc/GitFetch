@@ -14,161 +14,191 @@
         }
 
         :root {
-            --primary-yellow: #ffc107;
-            --dark-yellow: #f9a825;
-            --sidebar-bg: #ffffff;
-            --sidebar-hover: #f8f9fa;
-            --text-dark: #2c3e50;
-            --text-light: #6c757d;
-            --white: #ffffff;
-            --gray-light: #f8f9fa;
-            --border-color: #e9ecef;
+            --jaune-primaire: #ffc107;
+            --jaune-fonce: #f9a825;
+            --fond-barre-laterale: #ffffff;
+            --survol-barre-laterale: #f8f9fa;
+            --texte-sombre: #2c3e50;
+            --texte-clair: #6c757d;
+            --blanc: #ffffff;
+            --gris-clair: #f8f9fa;
+            --couleur-bordure: #e9ecef;
+            --couleur-admin: #9c27b0;
+            --admin-clair: #e1bee7;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: var(--gray-light);
+            background-color: var(--gris-clair);
             color: #333;
             overflow-x: hidden;
         }
 
-        /* SIDEBAR - VERSION CLAIRE */
-        .sidebar {
+        /* BARRE LATERALE */
+        .barre-laterale {
             position: fixed;
             left: 0;
             top: 0;
             width: 280px;
             height: 100vh;
-            background: var(--sidebar-bg);
+            background: var(--fond-barre-laterale);
             padding: 0;
             z-index: 1000;
             transition: transform 0.3s ease;
             overflow-y: auto;
             box-shadow: 4px 0 15px rgba(0, 0, 0, 0.08);
-            border-right: 1px solid var(--border-color);
+            border-right: 1px solid var(--couleur-bordure);
         }
 
-        .sidebar::-webkit-scrollbar {
+        .barre-laterale::-webkit-scrollbar {
             width: 6px;
         }
 
-        .sidebar::-webkit-scrollbar-track {
+        .barre-laterale::-webkit-scrollbar-track {
             background: #f8f9fa;
         }
 
-        .sidebar::-webkit-scrollbar-thumb {
-            background: var(--primary-yellow);
+        .barre-laterale::-webkit-scrollbar-thumb {
+            background: var(--jaune-primaire);
             border-radius: 3px;
         }
 
-        .sidebar-header {
+        .entete-barre-laterale {
             padding: 30px 25px;
             background: linear-gradient(135deg, rgba(255, 193, 7, 0.08), rgba(255, 193, 7, 0.03));
             border-bottom: 2px solid rgba(255, 193, 7, 0.2);
         }
 
-        .sidebar-logo {
+        .logo-barre-laterale {
             display: flex;
             align-items: center;
             justify-content: center;
             text-decoration: none;
         }
 
-        .logo-container {
+        .conteneur-logo {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 12px;
         }
 
-        .logo-image {
+        .image-logo {
             width: 100px;
             height: auto;
             border-radius: 15px;
-            border: 3px solid var(--primary-yellow);
+            border: 3px solid var(--jaune-primaire);
             box-shadow: 0 8px 20px rgba(255, 193, 7, 0.3);
             transition: all 0.3s ease;
             object-fit: cover;
         }
 
-        .sidebar-logo:hover .logo-image {
+        .logo-barre-laterale:hover .image-logo {
             transform: scale(1.05);
             box-shadow: 0 12px 30px rgba(255, 193, 7, 0.4);
         }
 
-        .logo-text {
+        .texte-logo {
             font-size: 14px;
             font-weight: 600;
-            color: var(--text-dark);
+            color: var(--texte-sombre);
             text-transform: uppercase;
             letter-spacing: 2px;
             text-align: center;
         }
 
-        .sidebar-user {
+        .utilisateur-barre-laterale {
             padding: 20px 25px;
             background: linear-gradient(135deg, rgba(255, 193, 7, 0.06), transparent);
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--couleur-bordure);
         }
 
-        .user-info {
+        .info-utilisateur {
             display: flex;
             align-items: center;
             gap: 15px;
         }
 
-        .user-avatar {
+        .avatar-utilisateur {
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-yellow), var(--dark-yellow));
+            background: linear-gradient(135deg, var(--jaune-primaire), var(--jaune-fonce));
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 24px;
-            color: var(--white);
+            color: var(--blanc);
             font-weight: 700;
             box-shadow: 0 4px 10px rgba(255, 193, 7, 0.3);
+            overflow: hidden;
         }
 
-        .user-details h3 {
+        .avatar-utilisateur img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .details-utilisateur h3 {
             font-size: 16px;
-            color: var(--text-dark);
+            color: var(--texte-sombre);
             font-weight: 600;
             margin-bottom: 4px;
         }
 
-        .user-role {
+        .role-utilisateur {
             font-size: 13px;
-            color: var(--text-light);
+            color: var(--texte-clair);
             display: flex;
             align-items: center;
             gap: 6px;
         }
 
-        .user-role i {
-            color: var(--primary-yellow);
+        .role-utilisateur i {
+            color: var(--jaune-primaire);
         }
 
-        .sidebar-nav {
+        .role-utilisateur.admin {
+            color: var(--couleur-admin);
+            font-weight: 600;
+        }
+
+        .role-utilisateur.admin i {
+            color: var(--couleur-admin);
+        }
+
+        .navigation-barre-laterale {
             padding: 20px 0;
         }
 
-        .nav-section-title {
+        .titre-section-navigation {
             padding: 15px 25px 10px;
             font-size: 12px;
             font-weight: 600;
-            color: var(--text-light);
+            color: var(--texte-clair);
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        .nav-link {
+        .titre-section-navigation.admin {
+            color: var(--couleur-admin);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .titre-section-navigation.admin i {
+            font-size: 14px;
+        }
+
+        .lien-navigation {
             display: flex;
             align-items: center;
             gap: 15px;
             padding: 14px 25px;
-            color: var(--text-dark);
+            color: var(--texte-sombre);
             text-decoration: none;
             transition: all 0.3s ease;
             position: relative;
@@ -177,7 +207,7 @@
             border-radius: 10px;
         }
 
-        .nav-link::before {
+        .lien-navigation::before {
             content: '';
             position: absolute;
             left: 0;
@@ -185,40 +215,64 @@
             transform: translateY(-50%);
             height: 0;
             width: 4px;
-            background: var(--primary-yellow);
+            background: var(--jaune-primaire);
             border-radius: 0 3px 3px 0;
             transition: height 0.3s ease;
         }
 
-        .nav-link:hover,
-        .nav-link.active {
-            background: linear-gradient(135deg, rgba(255, 193, 7, 0.12), rgba(255, 193, 7, 0.06));
-            color: var(--dark-yellow);
+        .lien-navigation.admin::before {
+            background: var(--couleur-admin);
         }
 
-        .nav-link:hover::before,
-        .nav-link.active::before {
+        .lien-navigation:hover,
+        .lien-navigation.actif {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.12), rgba(255, 193, 7, 0.06));
+            color: var(--jaune-fonce);
+        }
+
+        .lien-navigation.admin:hover,
+        .lien-navigation.admin.actif {
+            background: linear-gradient(135deg, rgba(156, 39, 176, 0.12), rgba(156, 39, 176, 0.06));
+            color: var(--couleur-admin);
+        }
+
+        .lien-navigation:hover::before,
+        .lien-navigation.actif::before {
             height: 60%;
         }
 
-        .nav-link i {
+        .lien-navigation i {
             font-size: 20px;
             width: 24px;
             text-align: center;
-            color: var(--primary-yellow);
+            color: var(--jaune-primaire);
         }
 
-        .nav-link span {
+        .lien-navigation.admin i {
+            color: var(--couleur-admin);
+        }
+
+        .lien-navigation span {
             font-size: 15px;
         }
 
-        .sidebar-footer {
-            padding: 20px 25px;
-            margin-top: auto;
-            border-top: 1px solid var(--border-color);
+        .badge-admin {
+            background: var(--couleur-admin);
+            color: white;
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            margin-left: auto;
+            font-weight: 600;
         }
 
-        .logout-btn {
+        .pied-barre-laterale {
+            padding: 20px 25px;
+            margin-top: auto;
+            border-top: 1px solid var(--couleur-bordure);
+        }
+
+        .bouton-deconnexion {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -233,24 +287,24 @@
             transition: all 0.3s ease;
         }
 
-        .logout-btn:hover {
+        .bouton-deconnexion:hover {
             background: #f44336;
-            color: var(--white);
+            color: var(--blanc);
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
         }
 
-        /* MAIN CONTENT */
-        .main-content {
+        /* CONTENU PRINCIPAL */
+        .contenu-principal {
             margin-left: 280px;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
-        /* TOP HEADER */
-        .top-header {
-            background: var(--white);
+        /* EN-TETE SUPERIEUR */
+        .en-tete-superieur {
+            background: var(--blanc);
             padding: 20px 40px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             position: sticky;
@@ -259,51 +313,52 @@
             border-radius: 0 0 10px 10px;
         }
 
-        .header-content {
+        .contenu-en-tete {
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 20px;
         }
 
-        .header-left h2 {
+        .gauche-en-tete h2 {
             font-size: 24px;
-            color: var(--text-dark);
+            color: var(--texte-sombre);
             margin-bottom: 5px;
             font-weight: 700;
         }
 
-        .header-meta {
+        .metadonnees-en-tete {
             display: flex;
             align-items: center;
             gap: 20px;
             font-size: 14px;
-            color: var(--text-light);
+            color: var(--texte-clair);
         }
 
-        .meta-item {
+        .element-metadonnee {
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .meta-item i {
-            color: var(--primary-yellow);
+        .element-metadonnee i {
+            color: var(--jaune-primaire);
         }
 
-        .header-right {
+        .droite-en-tete {
             display: flex;
             align-items: center;
             gap: 15px;
+            flex-wrap: wrap;
         }
 
-        .btn-primary {
+        .bouton-primaire {
             display: inline-flex;
             align-items: center;
             gap: 10px;
             padding: 12px 24px;
-            background: linear-gradient(135deg, var(--primary-yellow), var(--dark-yellow));
-            color: var(--white);
+            background: linear-gradient(135deg, var(--jaune-primaire), var(--jaune-fonce));
+            color: var(--blanc);
             border: none;
             border-radius: 10px;
             font-weight: 600;
@@ -314,17 +369,92 @@
             box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
         }
 
-        .btn-primary:hover {
+        .bouton-primaire:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(255, 193, 7, 0.4);
         }
 
-        /* FLASH MESSAGES */
-        .flash-messages {
+        /* BOUTONS DE PARTAGE SOCIAL */
+        .boutons-partage {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .bouton-partage {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+        }
+
+        .bouton-partage:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .bouton-partage.whatsapp {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+        }
+
+        .bouton-partage.linkedin {
+            background: linear-gradient(135deg, #0077B5, #005885);
+        }
+
+        .bouton-partage.facebook {
+            background: linear-gradient(135deg, #1877F2, #0C63D4);
+        }
+
+        .bouton-partage.copier {
+            background: linear-gradient(135deg, #6c757d, #495057);
+        }
+
+        .bouton-partage.copier.copie-effectuee {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+        }
+
+        /* Infobulle */
+        .infobulle {
+            position: relative;
+        }
+
+        .infobulle::after {
+            content: attr(data-infobulle);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-8px);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .infobulle:hover::after {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-4px);
+        }
+
+        /* MESSAGES FLASH */
+        .messages-flash {
             padding: 20px 40px;
         }
 
-        .alert {
+        .alerte {
             padding: 16px 20px;
             border-radius: 10px;
             margin-bottom: 15px;
@@ -332,11 +462,11 @@
             align-items: center;
             gap: 15px;
             font-size: 14px;
-            animation: slideInDown 0.4s ease;
+            animation: glissementEntree 0.4s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
-        @keyframes slideInDown {
+        @keyframes glissementEntree {
             from {
                 opacity: 0;
                 transform: translateY(-20px);
@@ -347,55 +477,55 @@
             }
         }
 
-        .alert i {
+        .alerte i {
             font-size: 20px;
         }
 
-        .alert.success {
+        .alerte.succes {
             background: #d4edda;
             color: #155724;
             border-left: 4px solid #28a745;
         }
 
-        .alert.success i {
+        .alerte.succes i {
             color: #28a745;
         }
 
-        .alert.error {
+        .alerte.erreur {
             background: #f8d7da;
             color: #721c24;
             border-left: 4px solid #dc3545;
         }
 
-        .alert.error i {
+        .alerte.erreur i {
             color: #dc3545;
         }
 
-        .alert.info {
+        .alerte.info {
             background: #fff3cd;
             color: #856404;
-            border-left: 4px solid var(--primary-yellow);
+            border-left: 4px solid var(--jaune-primaire);
         }
 
-        .alert.info i {
-            color: var(--primary-yellow);
+        .alerte.info i {
+            color: var(--jaune-primaire);
         }
 
-        /* MAIN CONTENT AREA */
+        /* ZONE DE CONTENU PRINCIPAL */
         main {
             flex: 1;
             padding: 30px 40px;
-            background: var(--gray-light);
+            background: var(--gris-clair);
         }
 
-        /* MOBILE NAVIGATION */
-        .mobile-nav {
+        /* NAVIGATION MOBILE */
+        .navigation-mobile {
             display: none;
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: var(--white);
+            background: var(--blanc);
             box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
             z-index: 1000;
             overflow-x: auto;
@@ -404,17 +534,17 @@
             scrollbar-width: none;
         }
 
-        .mobile-nav::-webkit-scrollbar {
+        .navigation-mobile::-webkit-scrollbar {
             display: none;
         }
 
-        .mobile-nav-container {
+        .conteneur-navigation-mobile {
             display: flex;
             padding: 8px 0;
             min-width: min-content;
         }
 
-        .mobile-nav-item {
+        .element-navigation-mobile {
             flex: 0 0 auto;
             display: flex;
             flex-direction: column;
@@ -429,34 +559,38 @@
             min-width: 80px;
         }
 
-        .mobile-nav-item i {
+        .element-navigation-mobile i {
             font-size: 22px;
         }
 
-        .mobile-nav-item span {
+        .element-navigation-mobile span {
             font-size: 12px;
             font-weight: 500;
         }
 
-        .mobile-nav-item.active {
-            color: var(--primary-yellow);
+        .element-navigation-mobile.actif {
+            color: var(--jaune-primaire);
         }
 
-        .mobile-nav-item:active {
+        .element-navigation-mobile.admin {
+            color: var(--couleur-admin);
+        }
+
+        .element-navigation-mobile:active {
             transform: scale(0.95);
         }
 
-        .scroll-indicator {
+        .indicateur-scroll {
             position: absolute;
             right: 10px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--primary-yellow);
+            color: var(--jaune-primaire);
             font-size: 18px;
-            animation: pulse 2s infinite;
+            animation: pulsation 2s infinite;
         }
 
-        @keyframes pulse {
+        @keyframes pulsation {
             0%, 100% {
                 opacity: 1;
             }
@@ -467,35 +601,45 @@
 
         /* RESPONSIVE */
         @media (max-width: 768px) {
-            .sidebar {
+            .barre-laterale {
                 transform: translateX(-100%);
             }
 
-            .main-content {
+            .contenu-principal {
                 margin-left: 0;
                 margin-bottom: 70px;
             }
 
-            .top-header {
+            .en-tete-superieur {
                 padding: 15px 20px;
             }
 
-            .header-content {
+            .contenu-en-tete {
                 flex-direction: column;
                 align-items: flex-start;
             }
 
-            .header-left h2 {
+            .gauche-en-tete h2 {
                 font-size: 20px;
             }
 
-            .header-meta {
+            .metadonnees-en-tete {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 8px;
             }
 
-            .flash-messages {
+            .droite-en-tete {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .boutons-partage {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .messages-flash {
                 padding: 15px 20px;
             }
 
@@ -503,113 +647,176 @@
                 padding: 20px;
             }
 
-            .mobile-nav {
+            .navigation-mobile {
                 display: block;
             }
 
-            .btn-primary {
+            .bouton-primaire {
                 width: 100%;
                 justify-content: center;
             }
         }
 
         @media (max-width: 480px) {
-            .mobile-nav-item {
+            .element-navigation-mobile {
                 min-width: 70px;
                 padding: 10px 15px;
             }
 
-            .mobile-nav-item i {
+            .element-navigation-mobile i {
                 font-size: 20px;
             }
 
-            .mobile-nav-item span {
+            .element-navigation-mobile span {
                 font-size: 11px;
+            }
+
+            .bouton-partage {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <a href="{{ url_for('admin.dashboard') }}" class="sidebar-logo">
-                <div class="logo-container">
-                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="GitFetch Logo" class="logo-image">
-                    <span class="logo-text">Panel Admin</span>
+    <!-- BARRE LATERALE -->
+    <aside class="barre-laterale">
+        <div class="entete-barre-laterale">
+            <a href="{{ url_for('admin.dashboard') }}" class="logo-barre-laterale">
+                <div class="conteneur-logo">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo GitFetch" class="image-logo">
+                    <span class="texte-logo">Panel Admin</span>
                 </div>
             </a>
         </div>
 
-        <div class="sidebar-user">
-            <div class="user-info">
-                <div class="user-avatar">
-                    {{ current_user.nom_utilisateur[0]|upper }}
+        <div class="utilisateur-barre-laterale">
+            <div class="info-utilisateur">
+                <div class="avatar-utilisateur">
+                    {% if current_user.photo_profil and current_user.photo_profil != 'default-avatar.jpg' %}
+                        {% set url_avatar = url_for('static', filename='uploads/' + current_user.photo_profil) %}
+                        <img src="{{ url_avatar }}" 
+                             alt="{{ current_user.nom_utilisateur }}"
+                             onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/avatar.png') }}';">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='img/avatar.png') }}" 
+                             alt="{{ current_user.nom_utilisateur }}">
+                    {% endif %}
                 </div>
-                <div class="user-details">
+                <div class="details-utilisateur">
                     <h3>{{ current_user.nom_utilisateur }}</h3>
-                    <div class="user-role">
+                    <div class="role-utilisateur {% if current_user.role == 'admin' %}admin{% endif %}">
                         <i class="fas fa-circle" style="font-size: 8px;"></i>
-                        <span>Développeur</span>
+                        <span>{{ current_user.role|title if current_user.role else 'Développeur' }}</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <nav class="sidebar-nav">
-            <div class="nav-section-title">Menu Principal</div>
-            <a href="{{ url_for('admin.dashboard') }}" class="nav-link active">
+        <nav class="navigation-barre-laterale">
+            <div class="titre-section-navigation">Menu Principal</div>
+            <a href="{{ url_for('admin.dashboard') }}" class="lien-navigation {% if request.endpoint == 'admin.dashboard' %}actif{% endif %}">
                 <i class="fas fa-th-large"></i>
                 <span>Tableau de bord</span>
             </a>
-            <a href="{{ url_for('admin.list_repos') }}" class="nav-link">
+            <a href="{{ url_for('admin.list_repos') }}" class="lien-navigation {% if request.endpoint == 'admin.list_repos' %}actif{% endif %}">
                 <i class="fas fa-folder-open"></i>
                 <span>Mes Projets</span>
             </a>
-            <a href="{{ url_for('admin.import_view') }}" class="nav-link">
+            <a href="{{ url_for('admin.import_view') }}" class="lien-navigation {% if request.endpoint == 'admin.import_view' %}actif{% endif %}">
                 <i class="fab fa-github"></i>
                 <span>Importer GitHub</span>
             </a>
+            <a href="{{ url_for('admin.edit_profile') }}" class="lien-navigation {% if request.endpoint == 'admin.edit_profile' %}actif{% endif %}">
+                <i class="fas fa-user-cog"></i>
+                <span>Mon Profil</span>
+            </a>
+
+            <!-- SECTION ADMIN - Visible uniquement pour les admins -->
+            {% if current_user.role == 'admin' %}
+            <div class="titre-section-navigation admin">
+                <i class="fas fa-crown"></i>
+                <span>Administration</span>
+            </div>
+            <a href="#" class="lien-navigation admin">
+                <i class="fas fa-users"></i>
+                <span>Gestion Utilisateurs</span>
+                <span class="badge-admin">ADMIN</span>
+            </a>
+            <a href="{{ url_for('admin.dashboard') }}" class="lien-navigation admin">
+                <i class="fas fa-chart-line"></i>
+                <span>Statistiques</span>
+                <span class="badge-admin">ADMIN</span>
+            </a>
+            <a href="{{ url_for('admin.dashboard') }}" class="lien-navigation admin">
+                <i class="fas fa-cog"></i>
+                <span>Paramètres Système</span>
+                <span class="badge-admin">ADMIN</span>
+            </a>
+            {% endif %}
         </nav>
 
-        <div class="sidebar-footer">
-            <a href="http://127.0.0.1:5001/deconnexion" class="logout-btn">
+        <div class="pied-barre-laterale">
+            <a href="http://127.0.0.1:5001/deconnexion" class="bouton-deconnexion">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Déconnexion</span>
             </a>
         </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
-    <div class="main-content">
-        <!-- TOP HEADER -->
-        <header class="top-header">
-            <div class="header-content">
-                <div class="header-left">
+    <!-- CONTENU PRINCIPAL -->
+    <div class="contenu-principal">
+        <!-- EN-TETE SUPERIEUR -->
+        <header class="en-tete-superieur">
+            <div class="contenu-en-tete">
+                <div class="gauche-en-tete">
                     <h2>Bienvenue, {{ current_user.nom_utilisateur }} 👋</h2>
-                    <div class="header-meta">
-                        <div class="meta-item">
+                    <div class="metadonnees-en-tete">
+                        <div class="element-metadonnee">
                             <i class="fas fa-clock"></i>
                             <span>Dernière connexion : {{ current_user.derniere_connexion or 'Jamais' }}</span>
                         </div>
+                        {% if current_user.role == 'admin' %}
+                        <div class="element-metadonnee">
+                            <i class="fas fa-shield-alt" style="color: var(--couleur-admin);"></i>
+                            <span style="color: var(--couleur-admin); font-weight: 600;">Administrateur</span>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
-                <div class="header-right">
-                    <a href="http://127.0.0.1:5003" class="btn-primary" target="_blank">
-    <i class="fas fa-briefcase"></i>
-    Voir mon Portfolio
-</a>
+                <div class="droite-en-tete">
+                    <!-- Boutons de partage social -->
+                    <div class="boutons-partage">
+                        <button class="bouton-partage whatsapp infobulle" data-infobulle="Partager sur WhatsApp" onclick="partagerWhatsApp()">
+                            <i class="fab fa-whatsapp"></i>
+                        </button>
+                        <button class="bouton-partage linkedin infobulle" data-infobulle="Partager sur LinkedIn" onclick="partagerLinkedIn()">
+                            <i class="fab fa-linkedin-in"></i>
+                        </button>
+                        <button class="bouton-partage facebook infobulle" data-infobulle="Partager sur Facebook" onclick="partagerFacebook()">
+                            <i class="fab fa-facebook-f"></i>
+                        </button>
+                        <button class="bouton-partage copier infobulle" data-infobulle="Copier le lien" onclick="copierURL()" id="boutonCopier">
+                            <i class="fas fa-link"></i>
+                        </button>
+                    </div>
+                    
+                    <a href="http://127.0.0.1:5003" class="bouton-primaire" target="_blank">
+                        <i class="fas fa-briefcase"></i>
+                        Voir mon Portfolio
+                    </a>
                 </div>
             </div>
         </header>
 
-        <!-- FLASH MESSAGES -->
+        <!-- MESSAGES FLASH -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-                <section class="flash-messages">
+                <section class="messages-flash">
                     {% for category, message in messages %}
-                        <div class="alert {{ category }}">
+                        <div class="alerte {{ category }}">
                             {% if category == 'success' %}
                                 <i class="fas fa-check-circle"></i>
                             {% elif category == 'error' %}
@@ -624,77 +831,128 @@
             {% endif %}
         {% endwith %}
 
-        <!-- MAIN CONTENT -->
+        <!-- CONTENU PRINCIPAL -->
         <main>
             {% block content %}
             {% endblock %}
         </main>
     </div>
 
-    <!-- MOBILE NAVIGATION -->
-    <nav class="mobile-nav">
-        <div class="mobile-nav-container">
-            <a href="{{ url_for('admin.dashboard') }}" class="mobile-nav-item active">
+    <!-- NAVIGATION MOBILE -->
+    <nav class="navigation-mobile">
+        <div class="conteneur-navigation-mobile">
+            <a href="{{ url_for('admin.dashboard') }}" class="element-navigation-mobile {% if request.endpoint == 'admin.dashboard' %}actif{% endif %}">
                 <i class="fas fa-th-large"></i>
-                <span>Dashboard</span>
+                <span>Tableau</span>
             </a>
-            <a href="{{ url_for('admin.list_repos') }}" class="mobile-nav-item">
+            <a href="{{ url_for('admin.list_repos') }}" class="element-navigation-mobile {% if request.endpoint == 'admin.list_repos' %}actif{% endif %}">
                 <i class="fas fa-folder-open"></i>
                 <span>Projets</span>
             </a>
-            <a href="{{ url_for('admin.import_view') }}" class="mobile-nav-item">
+            <a href="{{ url_for('admin.import_view') }}" class="element-navigation-mobile {% if request.endpoint == 'admin.import_view' %}actif{% endif %}">
                 <i class="fab fa-github"></i>
                 <span>Importer</span>
             </a>
-            <a href="#" class="mobile-nav-item">
+            {% if current_user.role == 'admin' %}
+            <a href="#" class="element-navigation-mobile admin">
+                <i class="fas fa-users"></i>
+                <span>Utilisateurs</span>
+            </a>
+            {% endif %}
+            <a href="http://127.0.0.1:5003" class="element-navigation-mobile" target="_blank">
                 <i class="fas fa-briefcase"></i>
                 <span>Portfolio</span>
             </a>
-            <a href="http://127.0.0.1:5001/deconnexion" class="mobile-nav-item">
+            <a href="http://127.0.0.1:5001/deconnexion" class="element-navigation-mobile">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Déconnexion</span>
             </a>
         </div>
-        <div class="scroll-indicator">
+        <div class="indicateur-scroll">
             <i class="fas fa-chevron-right"></i>
         </div>
     </nav>
 
     <script>
+        // Fonctions de partage social
+        function partagerWhatsApp() {
+            const url = window.location.href;
+            const texte = "Découvrez GitFetch - Gérez vos projets GitHub facilement !";
+            const urlWhatsApp = `https://wa.me/?text=${encodeURIComponent(texte + ' ' + url)}`;
+            window.open(urlWhatsApp, '_blank');
+        }
+
+        function partagerLinkedIn() {
+            const url = window.location.href;
+            const urlLinkedIn = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+            window.open(urlLinkedIn, '_blank', 'width=600,height=600');
+        }
+
+        function partagerFacebook() {
+            const url = window.location.href;
+            const urlFacebook = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+            window.open(urlFacebook, '_blank', 'width=600,height=600');
+        }
+
+        function copierURL() {
+            const url = window.location.href;
+            const boutonCopier = document.getElementById('boutonCopier');
+            
+            navigator.clipboard.writeText(url).then(() => {
+                // Change l'icône et la couleur
+                boutonCopier.classList.add('copie-effectuee');
+                boutonCopier.innerHTML = '<i class="fas fa-check"></i>';
+                boutonCopier.setAttribute('data-infobulle', 'Lien copié !');
+                
+                // Réinitialise après 2 secondes
+                setTimeout(() => {
+                    boutonCopier.classList.remove('copie-effectuee');
+                    boutonCopier.innerHTML = '<i class="fas fa-link"></i>';
+                    boutonCopier.setAttribute('data-infobulle', 'Copier le lien');
+                }, 2000);
+            }).catch(err => {
+                console.error('Erreur lors de la copie:', err);
+                alert('Impossible de copier le lien');
+            });
+        }
+
         // Mettre à jour le lien actif
-        const currentPath = window.location.pathname;
+        const cheminActuel = window.location.pathname;
         
-        // Desktop nav
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href') === currentPath) {
-                link.classList.add('active');
+        // Navigation desktop
+        document.querySelectorAll('.lien-navigation').forEach(lien => {
+            const href = lien.getAttribute('href');
+            if (href && href !== '#' && href === cheminActuel) {
+                lien.classList.add('actif');
             }
         });
 
-        // Mobile nav
-        document.querySelectorAll('.mobile-nav-item').forEach(item => {
-            item.classList.remove('active');
-            if (item.getAttribute('href') === currentPath) {
-                item.classList.add('active');
+        // Navigation mobile
+        document.querySelectorAll('.element-navigation-mobile').forEach(element => {
+            const href = element.getAttribute('href');
+            if (href && href !== '#' && href === cheminActuel) {
+                element.classList.add('actif');
             }
         });
 
         // Gérer le scroll horizontal sur mobile
-        const mobileNav = document.querySelector('.mobile-nav');
-        const mobileNavContainer = document.querySelector('.mobile-nav-container');
+        const navigationMobile = document.querySelector('.navigation-mobile');
+        const conteneurNavigationMobile = document.querySelector('.conteneur-navigation-mobile');
         
-        if (mobileNav && mobileNavContainer) {
+        if (navigationMobile && conteneurNavigationMobile) {
             // Masquer l'indicateur si tout tient
-            if (mobileNavContainer.scrollWidth <= mobileNav.clientWidth) {
-                const indicator = document.querySelector('.scroll-indicator');
-                if (indicator) indicator.style.display = 'none';
+            if (conteneurNavigationMobile.scrollWidth <= navigationMobile.clientWidth) {
+                const indicateur = document.querySelector('.indicateur-scroll');
+                if (indicateur) indicateur.style.display = 'none';
             }
         }
 
         // Animation de feedback au clic mobile
-        document.querySelectorAll('.mobile-nav-item').forEach(item => {
-            item.addEventListener('click', function(e) {
+        document.querySelectorAll('.element-navigation-mobile').forEach(element => {
+            element.addEventListener('click', function(e) {
+                if (this.getAttribute('href') === '#') {
+                    e.preventDefault();
+                }
                 this.style.transform = 'scale(0.95)';
                 setTimeout(() => {
                     this.style.transform = 'scale(1)';
@@ -703,8 +961,8 @@
         });
 
         // Confirmation de déconnexion
-        document.querySelectorAll('a[href*="deconnexion"]').forEach(link => {
-            link.addEventListener('click', function(e) {
+        document.querySelectorAll('a[href*="deconnexion"]').forEach(lien => {
+            lien.addEventListener('click', function(e) {
                 if (!confirm('Voulez-vous vraiment vous déconnecter ?')) {
                     e.preventDefault();
                 }
