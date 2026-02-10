@@ -30,21 +30,18 @@ class Utilisateur(db.Model, UserMixin):
 
 class Projet(db.Model):
     __tablename__ = 'projets'
-
     id = db.Column(db.Integer, primary_key=True)
-    id_depot_github = db.Column(db.BigInteger, unique=True)
-    
-    titre_personnalise = db.Column(db.String(150))
-    description_personnalisee = db.Column(db.Text)
-    annee_creation = db.Column(db.Integer)
-    url_depot = db.Column(db.String(255))
-    
-    technologies = db.Column(db.JSON) 
-    collaborateurs_et_orgs = db.Column(db.JSON)
-    
-    est_visible = db.Column(db.Boolean, default=True)
-    
-    utilisateur_id = db.Column(db.Integer, db.ForeignKey('utilisateurs.id'), nullable=False)
-
+    nom = db.Column(db.String(100), nullable=False)
+    derniere_connexion = db.Column(db.DateTime, default=datetime.utcnow)
+    description = db.Column(db.Text)
+    github_url = db.Column(db.String(255))
+    demo_url = db.Column(db.String(255)) # URL en ligne
+    image_couverture = db.Column(db.String(255)) # URL de l'image
+    logo_projet = db.Column(db.String(255)) # Petit logo
+    repo_id_github = db.Column(db.String(100), unique=True) # Pour éviter les doublons
+    utilisateur_id = db.Column(db.Integer, db.ForeignKey('utilisateurs.id'))
+    demo_url = db.Column(db.String(255))  # Lien du site en ligne
+    est_collaboration = db.Column(db.Boolean, default=False) # Collaboration ou compte propre
+    structure_nom = db.Column(db.String(100)) # Nom de la structure
     def __repr__(self):
         return f'<Projet {self.titre_personnalise}>'

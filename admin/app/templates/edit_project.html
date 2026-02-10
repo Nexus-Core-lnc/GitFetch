@@ -1,0 +1,815 @@
+{% extends "master.html" %}
+
+{% block title %}Modifier Projet - GitFetch{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier Projet - GitFetch</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #ffc107;
+            --primary-dark: #f9a825;
+            --dark-bg: #0a192f;
+            --darker-bg: #112240;
+            --light-text: #ccd6f6;
+            --gray-text: #666;
+            --white: #ffffff;
+            --light-bg: #f9f9f9;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.15);
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+        }
+
+        body {
+            font-family: "Poppins", sans-serif;
+            color: #333;
+            line-height: 1.6;
+            background-color: var(--white);
+        }
+
+        h1, h2, h3, h4 {
+            font-family: "Montserrat", sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 28px;
+            background: var(--primary-color);
+            color: #000;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-family: "Poppins", sans-serif;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 193, 7, 0.3);
+            background: var(--primary-dark);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 193, 7, 0.1);
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .btn-dark {
+            background: var(--dark-bg);
+            color: var(--white);
+            border: none;
+        }
+
+        .btn-dark:hover {
+            background: var(--darker-bg);
+            box-shadow: 0 10px 20px rgba(10, 25, 47, 0.3);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+            border: none;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+            padding: 80px 0 60px;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: "";
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 193, 7, 0.03);
+            border-radius: 50%;
+            top: -200px;
+            right: -100px;
+        }
+
+        .page-header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .page-header-text h1 {
+            font-size: 46px;
+            margin-bottom: 15px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out forwards;
+        }
+
+        .page-header-text h1 .highlight {
+            color: var(--primary-color);
+            position: relative;
+            display: inline-block;
+        }
+
+        .page-header-text h1 .highlight::after {
+            content: "";
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background-color: rgba(255, 193, 7, 0.2);
+            z-index: -1;
+        }
+
+        .page-header-text p {
+            color: var(--light-text);
+            font-size: 18px;
+            max-width: 700px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.3s forwards;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-5px);
+        }
+
+        /* Edit Form Section */
+        .edit-section {
+            padding: 60px 0;
+            background: var(--white);
+        }
+
+        .edit-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .projet-preview {
+            background: var(--light-bg);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .preview-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .preview-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #000;
+        }
+
+        .preview-header h3 {
+            font-size: 24px;
+            color: var(--dark-bg);
+        }
+
+        .preview-image {
+            width: 100%;
+            height: 200px;
+            background: var(--white);
+            border-radius: 10px;
+            margin-bottom: 25px;
+            overflow: hidden;
+            border: 2px dashed #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preview-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .no-image {
+            text-align: center;
+            color: var(--gray-text);
+        }
+
+        .no-image i {
+            font-size: 40px;
+            margin-bottom: 10px;
+            opacity: 0.5;
+        }
+
+        .preview-details {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .preview-details h4 {
+            color: var(--dark-bg);
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .preview-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--dark-bg);
+        }
+
+        .info-value {
+            color: var(--gray-text);
+            max-width: 60%;
+            text-align: right;
+        }
+
+        /* Edit Form */
+        .edit-form-container {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .form-header {
+            margin-bottom: 30px;
+        }
+
+        .form-header h2 {
+            font-size: 28px;
+            color: var(--dark-bg);
+            margin-bottom: 10px;
+        }
+
+        .form-header p {
+            color: var(--gray-text);
+        }
+
+        .edit-form {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--dark-bg);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group label i {
+            color: var(--primary-color);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            padding: 14px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-family: "Poppins", sans-serif;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .image-upload {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--primary-color);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            background: rgba(255, 193, 7, 0.05);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            background: rgba(255, 193, 7, 0.1);
+        }
+
+        .upload-area i {
+            font-size: 40px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .upload-area p {
+            color: var(--gray-text);
+            margin-bottom: 5px;
+        }
+
+        .upload-area span {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .current-image {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: var(--light-bg);
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .current-image img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid var(--primary-color);
+        }
+
+        .image-info {
+            flex: 1;
+        }
+
+        .image-info p {
+            color: var(--gray-text);
+            font-size: 14px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 30px;
+            border-top: 2px solid #eee;
+        }
+
+        .form-actions .btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+        /* User Info Sidebar */
+        .user-info-sidebar {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+            padding: 40px;
+            border-radius: 15px;
+            color: var(--white);
+            margin-top: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .user-info-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .user-details h3 {
+            font-size: 22px;
+            margin-bottom: 5px;
+            color: white;
+        }
+
+        .user-details p {
+            color: var(--light-text);
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .user-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .stat-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--light-text);
+            opacity: 0.8;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .edit-container {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .page-header-text h1 {
+                font-size: 36px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-header-text h1 {
+                font-size: 30px;
+            }
+
+            .preview-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .user-info-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="page-header-content">
+                <div class="page-header-text">
+                    <h1>Modifier <span class="highlight">{{ projet.nom }}</span></h1>
+                    <p>Personnalisez les détails de votre projet et mettez à jour les informations affichées sur votre portfolio.</p>
+                </div>
+                <a href="{{ url_for('admin.list_repos') }}" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    Retour aux projets
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Edit Form Section -->
+    <section class="edit-section">
+        <div class="container">
+            <div class="edit-container">
+                <!-- projet Preview -->
+                <div class="projet-preview">
+                    <div class="preview-header">
+                        <div class="preview-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <h3>Aperçu du projet</h3>
+                    </div>
+
+                    <div class="preview-image">
+                        {% if projet.image_couverture %}
+                            <img src="/static/uploads/{{ projet.image_couverture }}" alt="{{ projet.nom }}">
+                        {% else %}
+                            <div class="no-image">
+                                <i class="fab fa-github"></i>
+                                <p>Aucune image de couverture</p>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="preview-details">
+                        <h4>Informations actuelles</h4>
+                        <div class="preview-info">
+                            <div class="info-row">
+                                <span class="info-label">Nom :</span>
+                                <span class="info-value">{{ projet.nom }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Statut :</span>
+                                <span class="info-value">
+                                    {% if projet.est_public %}
+                                        <span style="color: var(--success-color);">Public</span>
+                                    {% else %}
+                                        <span style="color: var(--danger-color);">Privé</span>
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">URL GitHub :</span>
+                                <span class="info-value">
+                                    <a href="{{ projet.github_url }}" target="_blank" style="color: var(--primary-color);">Visiter</a>
+                                </span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Date d'import :</span>
+                                <span class="info-value">{{ projet.date_import.strftime('%d/%m/%Y') if projet.date_import else 'N/A' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Edit Form -->
+                <div class="edit-form-container">
+                    <div class="form-header">
+                        <h2>Modifier le projet</h2>
+                        <p>Mettez à jour les informations de votre projet ci-dessous</p>
+                    </div>
+
+                    <form action="{{ url_for('admin.edit_project', id=projet.id) }}" method="POST" enctype="multipart/form-data" class="edit-form">
+                        <div class="form-group">
+                            <label for="nom"><i class="fas fa-tag"></i> Nom du projet</label>
+                            <input type="text" id="nom" name="nom" value="{{ projet.nom }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description"><i class="fas fa-align-left"></i> Description</label>
+                            <textarea id="description" name="description">{{ projet.description or '' }}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="technologies"><i class="fas fa-code"></i> Technologies (séparées par des virgules)</label>
+                            <input type="text" id="technologies" name="technologies" value="{{ projet.technologies or '' }}" placeholder="Python, JavaScript, Flask, ...">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="est_public"><i class="fas fa-eye"></i> Visibilité</label>
+                            <select id="est_public" name="est_public">
+                                <option value="1" {% if projet.est_public %}selected{% endif %}>Public (visible sur le portfolio)</option>
+                                <option value="0" {% if not projet.est_public %}selected{% endif %}>Privé (caché du portfolio)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group image-upload">
+                            <label><i class="fas fa-image"></i> Image de couverture</label>
+                            
+                            {% if projet.image_couverture %}
+                            <div class="current-image">
+                                <img src="/static/uploads/{{ projet.image_couverture }}" alt="Image actuelle">
+                                <div class="image-info">
+                                    <p>Image actuelle : <strong>{{ projet.image_couverture }}</strong></p>
+                                    <p style="font-size: 12px; color: #999;">Laissez vide pour conserver cette image</p>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <div class="upload-area" onclick="document.getElementById('image').click()">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Cliquez pour télécharger une nouvelle image</p>
+                                <span>JPG, PNG ou GIF (max 5MB)</span>
+                                <input type="file" id="image" name="image" accept="image/*" style="display: none;" onchange="previewImage(this)">
+                            </div>
+                            <div id="image-preview" style="display: none; margin-top: 15px;">
+                                <img id="preview" style="max-width: 100%; max-height: 200px; border-radius: 8px;">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="github_url"><i class="fab fa-github"></i> URL GitHub</label>
+                            <input type="url" id="github_url" name="github_url" value="{{ projet.github_url }}" required>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i>
+                                Enregistrer les modifications
+                            </button>
+                            <a href="{{ url_for('admin.list_repos') }}" class="btn btn-outline">
+                                <i class="fas fa-times"></i>
+                                Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- User Info Sidebar -->
+            <div class="user-info-sidebar">
+                <div class="user-info-header">
+                    <img src="{{ url_for('static', filename='uploads/' + (current_user.avatar or 'default-avatar.jpg')) }}" 
+                         alt="{{ current_user.nom_utilisateur }}" 
+                         class="user-avatar-img"
+                         onerror="this.src='https://ui-avatars.com/api/?name={{ current_user.nom_utilisateur }}&background=ffc107&color=000&size=80'">
+                    <div class="user-details">
+                        <h3>{{ current_user.nom_utilisateur }}</h3>
+                        <p>Développeur & Propriétaire du projet</p>
+                    </div>
+                </div>
+
+                <div class="user-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">{{ current_user.projets|length }}</div>
+                        <div class="stat-label">Projets</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ current_user.projets|selectattr('est_public')|list|length }}</div>
+                        <div class="stat-label">Projets publics</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ current_user.date_inscription.strftime('%d/%m/%Y') if current_user.date_inscription else 'N/A' }}</div>
+                        <div class="stat-label">Inscrit depuis</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ current_user.derniere_connexion.strftime('%d/%m/%Y') if current_user.derniere_connexion else 'Jamais' }}</div>
+                        <div class="stat-label">Dernière connexion</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function previewImage(input) {
+            const preview = document.getElementById('preview');
+            const previewContainer = document.getElementById('image-preview');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+                
+                // Mettre à jour le texte de l'upload area
+                const uploadArea = document.querySelector('.upload-area');
+                uploadArea.innerHTML = `
+                    <i class="fas fa-check-circle" style="color: #28a745;"></i>
+                    <p>Image sélectionnée : ${input.files[0].name}</p>
+                    <span style="color: #28a745;">Cliquez pour changer d'image</span>
+                `;
+            }
+        }
+
+        // Animation pour les éléments
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.projet-preview, .edit-form-container, .user-info-sidebar');
+            elements.forEach((element, index) => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        });
+
+        // Confirmation avant soumission
+        document.querySelector('.edit-form').addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+            submitBtn.disabled = true;
+            
+            // Réinitialiser après 5 secondes (sécurité)
+            setTimeout(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
+{% endblock content %}

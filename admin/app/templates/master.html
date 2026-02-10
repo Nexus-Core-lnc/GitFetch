@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}GitFetch Admin{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-yellow: #ffc107;
+            --dark-yellow: #f9a825;
+            --sidebar-bg: #ffffff;
+            --sidebar-hover: #f8f9fa;
+            --text-dark: #2c3e50;
+            --text-light: #6c757d;
+            --white: #ffffff;
+            --gray-light: #f8f9fa;
+            --border-color: #e9ecef;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--gray-light);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* SIDEBAR - VERSION CLAIRE */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            padding: 0;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.08);
+            border-right: 1px solid var(--border-color);
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: #f8f9fa;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--primary-yellow);
+            border-radius: 3px;
+        }
+
+        .sidebar-header {
+            padding: 30px 25px;
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.08), rgba(255, 193, 7, 0.03));
+            border-bottom: 2px solid rgba(255, 193, 7, 0.2);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-image {
+            width: 100px;
+            height: auto;
+            border-radius: 15px;
+            border: 3px solid var(--primary-yellow);
+            box-shadow: 0 8px 20px rgba(255, 193, 7, 0.3);
+            transition: all 0.3s ease;
+            object-fit: cover;
+        }
+
+        .sidebar-logo:hover .logo-image {
+            transform: scale(1.05);
+            box-shadow: 0 12px 30px rgba(255, 193, 7, 0.4);
+        }
+
+        .logo-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        .sidebar-user {
+            padding: 20px 25px;
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.06), transparent);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-yellow), var(--dark-yellow));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--white);
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(255, 193, 7, 0.3);
+        }
+
+        .user-details h3 {
+            font-size: 16px;
+            color: var(--text-dark);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .user-role {
+            font-size: 13px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .user-role i {
+            color: var(--primary-yellow);
+        }
+
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+
+        .nav-section-title {
+            padding: 15px 25px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 14px 25px;
+            color: var(--text-dark);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            font-weight: 500;
+            margin: 4px 12px;
+            border-radius: 10px;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 0;
+            width: 4px;
+            background: var(--primary-yellow);
+            border-radius: 0 3px 3px 0;
+            transition: height 0.3s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.12), rgba(255, 193, 7, 0.06));
+            color: var(--dark-yellow);
+        }
+
+        .nav-link:hover::before,
+        .nav-link.active::before {
+            height: 60%;
+        }
+
+        .nav-link i {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+            color: var(--primary-yellow);
+        }
+
+        .nav-link span {
+            font-size: 15px;
+        }
+
+        .sidebar-footer {
+            padding: 20px 25px;
+            margin-top: auto;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px;
+            background: rgba(244, 67, 54, 0.08);
+            color: #f44336;
+            border: 1px solid rgba(244, 67, 54, 0.2);
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #f44336;
+            color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* TOP HEADER */
+        .top-header {
+            background: var(--white);
+            padding: 20px 40px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-left h2 {
+            font-size: 24px;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .header-meta {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .meta-item i {
+            color: var(--primary-yellow);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--primary-yellow), var(--dark-yellow));
+            color: var(--white);
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 193, 7, 0.4);
+        }
+
+        /* FLASH MESSAGES */
+        .flash-messages {
+            padding: 20px 40px;
+        }
+
+        .alert {
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 14px;
+            animation: slideInDown 0.4s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert i {
+            font-size: 20px;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert.success i {
+            color: #28a745;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .alert.error i {
+            color: #dc3545;
+        }
+
+        .alert.info {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 4px solid var(--primary-yellow);
+        }
+
+        .alert.info i {
+            color: var(--primary-yellow);
+        }
+
+        /* MAIN CONTENT AREA */
+        main {
+            flex: 1;
+            padding: 30px 40px;
+            background: var(--gray-light);
+        }
+
+        /* MOBILE NAVIGATION */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .mobile-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .mobile-nav-container {
+            display: flex;
+            padding: 8px 0;
+            min-width: min-content;
+        }
+
+        .mobile-nav-item {
+            flex: 0 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 12px 20px;
+            color: #666;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            min-width: 80px;
+        }
+
+        .mobile-nav-item i {
+            font-size: 22px;
+        }
+
+        .mobile-nav-item span {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .mobile-nav-item.active {
+            color: var(--primary-yellow);
+        }
+
+        .mobile-nav-item:active {
+            transform: scale(0.95);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-yellow);
+            font-size: 18px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+                margin-bottom: 70px;
+            }
+
+            .top-header {
+                padding: 15px 20px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header-left h2 {
+                font-size: 20px;
+            }
+
+            .header-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .flash-messages {
+                padding: 15px 20px;
+            }
+
+            main {
+                padding: 20px;
+            }
+
+            .mobile-nav {
+                display: block;
+            }
+
+            .btn-primary {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .mobile-nav-item {
+                min-width: 70px;
+                padding: 10px 15px;
+            }
+
+            .mobile-nav-item i {
+                font-size: 20px;
+            }
+
+            .mobile-nav-item span {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="{{ url_for('admin.dashboard') }}" class="sidebar-logo">
+                <div class="logo-container">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="GitFetch Logo" class="logo-image">
+                    <span class="logo-text">Panel Admin</span>
+                </div>
+            </a>
+        </div>
+
+        <div class="sidebar-user">
+            <div class="user-info">
+                <div class="user-avatar">
+                    {{ current_user.nom_utilisateur[0]|upper }}
+                </div>
+                <div class="user-details">
+                    <h3>{{ current_user.nom_utilisateur }}</h3>
+                    <div class="user-role">
+                        <i class="fas fa-circle" style="font-size: 8px;"></i>
+                        <span>Développeur</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section-title">Menu Principal</div>
+            <a href="{{ url_for('admin.dashboard') }}" class="nav-link active">
+                <i class="fas fa-th-large"></i>
+                <span>Tableau de bord</span>
+            </a>
+            <a href="{{ url_for('admin.list_repos') }}" class="nav-link">
+                <i class="fas fa-folder-open"></i>
+                <span>Mes Projets</span>
+            </a>
+            <a href="{{ url_for('admin.import_view') }}" class="nav-link">
+                <i class="fab fa-github"></i>
+                <span>Importer GitHub</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="http://127.0.0.1:5001/deconnexion" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Déconnexion</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- TOP HEADER -->
+        <header class="top-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <h2>Bienvenue, {{ current_user.nom_utilisateur }} 👋</h2>
+                    <div class="header-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Dernière connexion : {{ current_user.derniere_connexion or 'Jamais' }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <a href="http://127.0.0.1:5003" class="btn-primary" target="_blank">
+    <i class="fas fa-briefcase"></i>
+    Voir mon Portfolio
+</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- FLASH MESSAGES -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <section class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert {{ category }}">
+                            {% if category == 'success' %}
+                                <i class="fas fa-check-circle"></i>
+                            {% elif category == 'error' %}
+                                <i class="fas fa-exclamation-circle"></i>
+                            {% else %}
+                                <i class="fas fa-info-circle"></i>
+                            {% endif %}
+                            <span>{{ message }}</span>
+                        </div>
+                    {% endfor %}
+                </section>
+            {% endif %}
+        {% endwith %}
+
+        <!-- MAIN CONTENT -->
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
+
+    <!-- MOBILE NAVIGATION -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-container">
+            <a href="{{ url_for('admin.dashboard') }}" class="mobile-nav-item active">
+                <i class="fas fa-th-large"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{{ url_for('admin.list_repos') }}" class="mobile-nav-item">
+                <i class="fas fa-folder-open"></i>
+                <span>Projets</span>
+            </a>
+            <a href="{{ url_for('admin.import_view') }}" class="mobile-nav-item">
+                <i class="fab fa-github"></i>
+                <span>Importer</span>
+            </a>
+            <a href="#" class="mobile-nav-item">
+                <i class="fas fa-briefcase"></i>
+                <span>Portfolio</span>
+            </a>
+            <a href="http://127.0.0.1:5001/deconnexion" class="mobile-nav-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Déconnexion</span>
+            </a>
+        </div>
+        <div class="scroll-indicator">
+            <i class="fas fa-chevron-right"></i>
+        </div>
+    </nav>
+
+    <script>
+        // Mettre à jour le lien actif
+        const currentPath = window.location.pathname;
+        
+        // Desktop nav
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === currentPath) {
+                link.classList.add('active');
+            }
+        });
+
+        // Mobile nav
+        document.querySelectorAll('.mobile-nav-item').forEach(item => {
+            item.classList.remove('active');
+            if (item.getAttribute('href') === currentPath) {
+                item.classList.add('active');
+            }
+        });
+
+        // Gérer le scroll horizontal sur mobile
+        const mobileNav = document.querySelector('.mobile-nav');
+        const mobileNavContainer = document.querySelector('.mobile-nav-container');
+        
+        if (mobileNav && mobileNavContainer) {
+            // Masquer l'indicateur si tout tient
+            if (mobileNavContainer.scrollWidth <= mobileNav.clientWidth) {
+                const indicator = document.querySelector('.scroll-indicator');
+                if (indicator) indicator.style.display = 'none';
+            }
+        }
+
+        // Animation de feedback au clic mobile
+        document.querySelectorAll('.mobile-nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+            });
+        });
+
+        // Confirmation de déconnexion
+        document.querySelectorAll('a[href*="deconnexion"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (!confirm('Voulez-vous vraiment vous déconnecter ?')) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

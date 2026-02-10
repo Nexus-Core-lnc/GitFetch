@@ -6,16 +6,16 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from dotenv import load_dotenv
 
-# --- LOGIQUE DE PARTAGE DES MODÈLES ---
+# 1. LOGIQUE DE CHEMIN (DOIT ÊTRE EN PREMIER)
 # On remonte au dossier racine GitFetch/
 root_path = Path(__file__).resolve().parent.parent.parent
 if str(root_path) not in sys.path:
     sys.path.append(str(root_path))
 
-# On importe db et Utilisateur depuis le models.py à la racine
+# 2. IMPORTS DES MODÈLES (Maintenant que le chemin est connu)
 from models import db, Utilisateur 
 
-# Instance locale pour gérer la session admin
+# Instance pour gérer la session admin
 login_manager = LoginManager()
 
 def create_app():
@@ -40,17 +40,18 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
     
-    # Si un utilisateur non connecté tente d'accéder à l'admin, 
-    # on le renvoie vers le port 5001 (Auth)
+    # Configuration du login_view pour redirection vers le service Auth (Port 5001)
     auth_url = os.getenv('AUTH_SERVICE_URL', 'http://127.0.0.1:5001')
     login_manager.login_view = f"{auth_url}/login"
+    login_manager.login_message = "Veuillez vous connecter sur le service d'authentification."
 
     # --- USER LOADER ---
     @login_manager.user_loader
     def load_user(user_id):
         return Utilisateur.query.get(int(user_id))
 
-    # --- BLUEPRINTS ---
+    # --- ENREGISTREMENT DES BLUEPRINTS ---
+    # On importe les Blueprints à l'intérieur de la fonction pour éviter les imports circulaires
     from .routes import admin_bp
     app.register_blueprint(admin_bp)
 

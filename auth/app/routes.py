@@ -6,6 +6,8 @@ from flask_mail import Message
 from itsdangerous import URLSafeTimedSerializer
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required, current_user
+from datetime import datetime # Import nécessaire
+
 
 main_bp = Blueprint('main', __name__)
 
@@ -97,15 +99,29 @@ def login():
 
         user = Utilisateur.query.filter_by(email=email).first()
 
+        # 1. Vérification identifiants
         if not user or not check_password_hash(user.mot_de_passe_hache, password):
             flash('Email ou mot de passe incorrect.', 'danger')
             return redirect(url_for('main.login'))
 
+        # 2. Vérification confirmation email
         if not user.est_confirme:
             flash('Veuillez confirmer votre email avant de vous connecter.', 'warning')
             return redirect(url_for('main.login'))
 
+        # --- AJOUT DYNAMIQUE : Mise à jour de la date de connexion ---
+        try:
+            user.derniere_connexion = datetime.utcnow()
+            db.session.commit() # On enregistre la date en base de données
+        except Exception as e:
+            db.session.rollback()
+            # On ne bloque pas la connexion si la mise à jour de la date échoue
+            print(f"Erreur lors de la mise à jour de la date : {e}")
+
+        # 3. Connexion de l'utilisateur
         login_user(user, remember=remember)
+        
+        # Redirection vers le dashboard du micro-service Admin
         return redirect(f"{admin_url}/dashboard")
 
     return render_template("login.html")
