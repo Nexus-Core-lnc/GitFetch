@@ -21,6 +21,9 @@ class Utilisateur(db.Model, UserMixin):
     photo_profil = db.Column(db.String(255), nullable=True, default='default-avatar.jpg')
     photo_couverture = db.Column(db.String(255), nullable=True, default='default-cover.jpg')
     
+    # CV
+    cv = db.Column(db.String(255)) 
+    
     # Informations personnelles
     biographie = db.Column(db.Text, nullable=True)
     poste = db.Column(db.String(100), nullable=True)  # Ex: "Développeur Full Stack"

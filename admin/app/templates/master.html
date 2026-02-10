@@ -696,15 +696,27 @@
             <div class="info-utilisateur">
                 <div class="avatar-utilisateur">
                     {% if current_user.photo_profil and current_user.photo_profil != 'default-avatar.jpg' %}
-                        {% set url_avatar = url_for('static', filename='uploads/' + current_user.photo_profil) %}
-                        <img src="{{ url_avatar }}" 
-                             alt="{{ current_user.nom_utilisateur }}"
-                             onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/avatar.png') }}';">
+                        {# Détermine si c'est une nouvelle image (dans media/) ou ancienne (dans static/uploads/) #}
+                        {% if current_user.photo_profil.startswith('avatar_') %}
+                            {# Nouvelle image dans media/profiles/ #}
+                            {% set url_avatar = url_for('admin.serve_media', type='avatar', filename=current_user.photo_profil) %}
+                            <img src="{{ url_avatar }}" 
+                                alt="{{ current_user.nom_utilisateur }}"
+                                onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/avatar.png') }}';">
+                        {% else %}
+                            {# Ancienne image dans static/uploads/ (pour la compatibilité) #}
+                            {% set url_avatar = url_for('static', filename='uploads/' + current_user.photo_profil) %}
+                            <img src="{{ url_avatar }}" 
+                                alt="{{ current_user.nom_utilisateur }}"
+                                onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/avatar.png') }}';">
+                        {% endif %}
                     {% else %}
+                        {# Image par défaut #}
                         <img src="{{ url_for('static', filename='img/avatar.png') }}" 
-                             alt="{{ current_user.nom_utilisateur }}">
+                            alt="{{ current_user.nom_utilisateur }}">
                     {% endif %}
                 </div>
+            </div>
                 <div class="details-utilisateur">
                     <h3>{{ current_user.nom_utilisateur }}</h3>
                     <div class="role-utilisateur {% if current_user.role == 'admin' %}admin{% endif %}">
