@@ -6,16 +6,16 @@
         <!-- Logo avec photo de profil -->
         <div class="logo-container">
           <a href="{{ url_for('portfolio.home') }}" class="logo">
-<div class="profile-pic">
-    {% if user.photo_profil and user.photo_profil != 'default-avatar.jpg' %}
-        {# Utilisation du préfixe exact configuré dans l'admin #}
-        <img src="{{ admin_url }}/serve-static/media/profiles/{{ user.photo_profil }}" 
-             alt="Photo de {{ user.nom_utilisateur }}"
-             onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/avatar.png') }}'">
-    {% else %}
-        <img src="{{ url_for('static', filename='img/avatar.png') }}" alt="Photo de profil">
-    {% endif %}
-</div>
+          <div class="profile-pic">
+              {% if user.photo_profil and user.photo_profil != 'default-avatar.jpg' %}
+                  {# Utilisation du préfixe exact configuré dans l'admin #}
+                  <img src="{{ admin_url }}/serve-static/media/profiles/{{ user.photo_profil }}" 
+                      alt="Photo de {{ user.nom_utilisateur }}"
+                      onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/avatar.png') }}'">
+              {% else %}
+                  <img src="{{ url_for('static', filename='img/avatar.png') }}" alt="Photo de profil">
+              {% endif %}
+          </div>
             <div class="logo-text">
               <span class="logo-name">{{ user.nom_utilisateur|upper if user else 'TECH_PORTFOLIO' }}</span>
               <span class="logo-title">{{ user.poste or 'Expert IT' }}</span>

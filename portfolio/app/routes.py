@@ -1,6 +1,6 @@
 import os
-from flask import Blueprint, render_template, abort
-from models import db, Projet, Utilisateur
+from flask import Blueprint, render_template, abort, send_from_directory
+from models import db, Projet, Utilisateur, PortfolioConfig, AboutPage
 
 # On définit le blueprint pour le portfolio
 portfolio_bp = Blueprint('portfolio', __name__)
@@ -12,7 +12,7 @@ def get_common_context():
     Fonction utilitaire pour récupérer les données communes à toutes les pages.
     Évite de répéter ce code dans chaque route.
     """
-    user = Utilisateur.query.first()  # On récupère le propriétaire du portfolio
+    user = Utilisateur.query.first()  # On récupère le propriérateur du portfolio
     
     # URLs des micro-services (Admin et Auth)
     auth_url = os.getenv('AUTH_SERVICE_URL', 'http://127.0.0.1:5001')
@@ -24,23 +24,61 @@ def get_common_context():
         'admin_url': admin_url
     }
 
-# --- ROUTES ---
+# --- ROUTE MÉDIA UNIQUE ET GÉNÉRIQUE ---
+
+@portfolio_bp.route('/media/<folder>/<path:filename>')
+def serve_admin_media(folder, filename):
+    """
+    Route UNIQUE pour servir tous les médias depuis le service admin.
+    Supporte les dossiers : about, profiles, projects, covers, etc.
+    """
+    # Chemin absolu vers le dossier media de l'admin
+    base_dir = os.path.abspath(os.path.join(os.getcwd(), 'admin', 'app', 'media', folder))
+    
+    # Vérifier si le dossier existe
+    if not os.path.exists(base_dir):
+        print(f"ERREUR: Dossier introuvable - {base_dir}")
+        # Fallback vers le dossier about par défaut
+        default_dir = os.path.abspath(os.path.join(os.getcwd(), 'admin', 'app', 'media', 'about'))
+        return send_from_directory(default_dir, 'default-about.jpg')
+    
+    try:
+        return send_from_directory(base_dir, filename)
+    except FileNotFoundError:
+        print(f"ERREUR: Fichier introuvable - {os.path.join(base_dir, filename)}")
+        # Fallback vers image par défaut selon le dossier
+        if folder == 'about':
+            default_file = 'default-about.jpg'
+        elif folder == 'profiles':
+            default_file = 'default-profile.jpg'
+        elif folder == 'projects':
+            default_file = 'default-project.jpg'
+        elif folder == 'covers':
+            default_file = 'default-cover.jpg'
+        else:
+            default_file = 'default-about.jpg'
+        
+        return send_from_directory(base_dir, default_file)
+
+# --- ROUTES PRINCIPALES ---
 
 @portfolio_bp.route('/')
-@portfolio_bp.route('/portfolio')
 def home():
-    """Page d'accueil du portfolio"""
     context = get_common_context()
+    user = context.get('user')
     
-    if not context['user']:
-        return "Aucun profil configuré dans la base de données.", 404
-        
-    # On peut récupérer les 3 derniers projets pour la section "Featured" de l'accueil
-    projets_recents = Projet.query.filter_by(utilisateur_id=context['user'].id)\
-                                  .order_by(Projet.id.desc())\
-                                  .limit(3).all()
-    
-    return render_template('portfolio.html', projets=projets_recents, **context)
+    projets = []
+    config = None
+    if user:
+        projets = Projet.query.filter_by(utilisateur_id=user.id).limit(3).all()
+        config = PortfolioConfig.query.filter_by(utilisateur_id=user.id).first()
+
+    return render_template(
+        'portfolio.html', 
+        projets=projets, 
+        config=config, 
+        **context
+    )
 
 @portfolio_bp.route('/me_connaitre')
 def me_connaitre():
@@ -48,8 +86,10 @@ def me_connaitre():
     context = get_common_context()
     if not context['user']:
         abort(404)
-        
-    return render_template('me_connaitre.html', **context)
+    
+    about_config = AboutPage.query.filter_by(utilisateur_id=context['user'].id).first()
+    
+    return render_template('me_connaitre.html', about_config=about_config, **context)
 
 @portfolio_bp.route('/projets')
 def projets_liste():
@@ -58,7 +98,6 @@ def projets_liste():
     if not context['user']:
         abort(404)
     
-    # On récupère TOUS les projets de l'utilisateur
     tous_les_projets = Projet.query.filter_by(utilisateur_id=context['user'].id)\
                                    .order_by(Projet.id.desc()).all()
     

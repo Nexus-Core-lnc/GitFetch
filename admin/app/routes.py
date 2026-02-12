@@ -1,12 +1,25 @@
 import os
 import requests
+import secrets
 from datetime import datetime
-from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app, send_from_directory, abort
+from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app, send_from_directory, abort, session
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
-from models import db, Projet, Utilisateur
+from models import db, Projet, Utilisateur, PortfolioConfig, AboutPage
+from urllib.parse import urlencode
 
+# Blueprint principal admin
 admin_bp = Blueprint('admin', __name__)
+
+# Blueprint GitHub
+github_bp = Blueprint('github_bp', __name__)
+
+# Configuration GitHub OAuth
+GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID', '')
+GITHUB_CLIENT_SECRET = os.environ.get('GITHUB_CLIENT_SECRET', '')
+GITHUB_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize'
+GITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token'
+GITHUB_USER_URL = 'https://api.github.com/user'
 
 # --- FONCTIONS UTILITAIRES ---
 
@@ -44,25 +57,172 @@ def save_uploaded_file(file, type_file, user_id):
     file.save(full_path)
     return filename
 
-
-from flask import send_from_directory, current_app
-import os
-
-import os
-from flask import send_from_directory, current_app
+# --- ROUTES DE SERVICE DE FICHIERS ---
 
 @admin_bp.route('/serve-static/media/profiles/<filename>')
 def serve_profile_pic(filename):
     media_path = os.path.join(current_app.root_path, 'media', 'profiles')
     return send_from_directory(media_path, filename)
 
-
 @admin_bp.route('/serve-static/media/docs/<filename>')
 def serve_cv(filename):
     docs_path = os.path.join(current_app.root_path, 'media', 'docs')
-    # as_attachment=True force le navigateur à télécharger le fichier
     return send_from_directory(docs_path, filename, as_attachment=True)
-# --- ROUTES PRINCIPALES ---
+
+@admin_bp.route('/uploads/<filename>')
+def uploaded_file(filename):
+    """Route pour servir les fichiers uploadés"""
+    return send_from_directory(get_upload_path(), filename)
+
+@admin_bp.route('/serve-static/<path:filename>')
+def serve_root_static(filename):
+    """Envoie les fichiers depuis le dossier static racine"""
+    root_static = get_static_path()
+    return send_from_directory(root_static, filename)
+
+# --- ROUTES GITHUB OAUTH ---
+
+@github_bp.route('/authorize')
+def authorize():
+    """Redirige vers GitHub pour l'autorisation OAuth"""
+    if not current_user.is_authenticated:
+        flash('Veuillez vous connecter d\'abord', 'warning')
+        return redirect(url_for('admin.dashboard'))
+    
+    if not GITHUB_CLIENT_ID or not GITHUB_CLIENT_SECRET:
+        flash('Configuration GitHub manquante. Contactez l\'administrateur.', 'error')
+        return redirect(url_for('admin.dashboard'))
+    
+    # Générer un état aléatoire pour la sécurité
+    state = secrets.token_urlsafe(16)
+    session['oauth_state'] = state
+    
+    # URL de callback
+    redirect_uri = url_for('github_bp.callback', _external=True)
+
+    
+    # Paramètres de la requête OAuth
+    params = {
+        'client_id': GITHUB_CLIENT_ID,
+        'redirect_uri': redirect_uri,
+        'scope': 'repo read:user user:email',
+        'state': state
+    }
+    
+    # Stocker l'URL de redirection après autorisation
+    next_url = request.args.get('next', url_for('admin.dashboard'))
+    session['next_url'] = next_url
+    print(f"Callback URL: {redirect_uri}")
+    
+    return redirect(f"{GITHUB_AUTHORIZE_URL}?{urlencode(params)}")
+
+@github_bp.route('/callback')
+@login_required
+def callback():
+    """Callback après autorisation GitHub"""
+
+    # Vérifier l'état (sécurité CSRF)
+    state = request.args.get('state')
+    code = request.args.get('code')
+
+    if not state or state != session.get('oauth_state'):
+        flash("Erreur de sécurité OAuth (state invalide).", "error")
+        return redirect(url_for('admin.dashboard'))
+
+    if not code:
+        flash("Code d'autorisation manquant.", "error")
+        return redirect(url_for('admin.dashboard'))
+
+    # Échanger le code contre un access_token
+    token_response = requests.post(
+        GITHUB_TOKEN_URL,
+        headers={"Accept": "application/json"},
+        data={
+            "client_id": GITHUB_CLIENT_ID,
+            "client_secret": GITHUB_CLIENT_SECRET,
+            "code": code,
+        },
+    )
+
+    token_json = token_response.json()
+
+    if "access_token" not in token_json:
+        flash("Impossible de récupérer le token GitHub.", "error")
+        return redirect(url_for('admin.dashboard'))
+
+    access_token = token_json["access_token"]
+
+    # Sauvegarder le token en base
+    current_user.jeton_github = access_token
+    db.session.commit()
+
+    # Nettoyage session
+    session.pop('oauth_state', None)
+
+    flash("Compte GitHub connecté avec succès !", "success")
+    return redirect(url_for('admin.dashboard'))
+
+@github_bp.route('/revoke')
+def revoke():
+    """Révoque l'accès GitHub"""
+    if not current_user.is_authenticated:
+        flash('Veuillez vous connecter d\'abord', 'warning')
+        return redirect(url_for('admin.dashboard'))
+    
+    try:
+        # Supprimer le token de la base de données
+        current_user.jeton_github = None
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Erreur lors de la révocation : {str(e)}', 'error')
+    finally:
+        # Nettoyer la session
+        session.pop('github_token', None)
+        session.pop('github_user', None)
+        session.pop('oauth_state', None)
+        session.pop('next_url', None)
+    
+    flash('🔐 Accès GitHub révoqué', 'success')
+    return redirect(url_for('admin.authorize_page'))
+
+@github_bp.route('/check')
+def check():
+    """Vérifie si l'utilisateur est connecté à GitHub"""
+    if not current_user.is_authenticated:
+        return {'connected': False, 'authenticated': False}
+    
+    token = session.get('github_token') or current_user.jeton_github
+    user = session.get('github_user')
+    
+    if token and user:
+        return {
+            'connected': True,
+            'user': user.get('login'),
+            'avatar': user.get('avatar_url'),
+            'authenticated': True
+        }
+    return {'connected': False, 'authenticated': True}
+
+# --- ROUTES ADMIN PAGES D'AUTORISATION ---
+
+@admin_bp.route('/authorize')
+def authorize_page():
+    """Page d'autorisation GitHub"""
+    return render_template('authorize.html')
+
+@admin_bp.route('/skip-authorize')
+def skipp_authorize():
+    """Passer l'autorisation pour le moment"""
+    if not current_user.is_authenticated:
+        return redirect(url_for('admin.dashboard'))
+    
+    session['skip_github'] = True
+    session['skip_github_time'] = datetime.utcnow().isoformat()
+    flash('Vous pourrez connecter GitHub plus tard depuis le menu', 'info')
+    return redirect(url_for('admin.dashboard'))
+
+# --- ROUTES PRINCIPALES ADMIN ---
 
 @admin_bp.route('/dashboard')
 @login_required
@@ -90,6 +250,8 @@ def dashboard():
                 flash(f"Impossible de récupérer les dépôts GitHub (Code: {response.status_code})", "warning")
         except Exception as e:
             flash(f"Erreur de connexion à GitHub : {str(e)}", "danger")
+    else:
+        flash("Token GitHub non configuré. Connectez votre compte GitHub pour importer des dépôts.", "info")
 
     return render_template('dashboard.html', repos=repos)
 
@@ -122,7 +284,8 @@ def import_view():
 @login_required
 def list_repos():
     """Affiche uniquement les projets déjà présents dans PostgreSQL"""
-    return render_template('list_repos.html')
+    projets = Projet.query.filter_by(utilisateur_id=current_user.id).order_by(Projet.id.desc()).all()
+    return render_template('list_repos.html', projets=projets)
 
 @admin_bp.route('/import-repo/<int:github_id>', methods=['POST'])
 @login_required
@@ -162,18 +325,30 @@ def edit_project(id):
 
     if request.method == 'POST':
         try:
+            # Informations de base
             projet.nom = request.form.get('nom')
             projet.description = request.form.get('description')
             projet.demo_url = request.form.get('demo_url')
             projet.structure_nom = request.form.get('structure_nom')
             
+            # Gestion de la collaboration
             est_collab = request.form.get('est_collaboration')
             projet.est_collaboration = est_collab == '1' if est_collab else False
 
+            # === GESTION DES TECHNOLOGIES ANNEXES (LISTE) ===
+            technologies_str = request.form.get('technologies_annexes', '')
+            if technologies_str.strip():
+                technologie_liste = [tech.strip() for tech in technologies_str.split(',') if tech.strip()]
+                projet.technologies_annexes = technologie_liste
+            else:
+                projet.technologies_annexes = []
+
+            # Gestion de l'image de couverture
             file = request.files.get('image_file')
             if file and file.filename:
                 new_filename = save_uploaded_file(file, 'proj', projet.id)
                 if new_filename:
+                    # Supprimer l'ancien fichier s'il existe
                     if projet.image_couverture:
                         old_file = os.path.join(get_upload_path('projects'), projet.image_couverture)
                         if os.path.exists(old_file):
@@ -193,7 +368,17 @@ def edit_project(id):
             db.session.rollback()
             flash(f"Erreur lors de l'enregistrement: {str(e)}", "danger")
 
-    return render_template('edit_project.html', projet=projet)
+    # Pour l'affichage GET : convertir la liste en chaîne pour le formulaire
+    technologies_texte = ""
+    if projet.technologies_annexes:
+        if isinstance(projet.technologies_annexes, list):
+            technologies_texte = ", ".join(projet.technologies_annexes)
+        else:
+            technologies_texte = projet.technologies_annexes
+
+    return render_template('edit_project.html', 
+                         projet=projet, 
+                         technologies_texte=technologies_texte)
 
 @admin_bp.route('/delete-project/<int:id>', methods=['POST'])
 @login_required
@@ -225,46 +410,7 @@ def refresh_repos():
     """Redirige simplement vers le dashboard pour forcer un appel API GitHub"""
     return redirect(url_for('admin.dashboard'))
 
-# --- ROUTES DE SERVICE DE FICHIERS ---
-
-@admin_bp.route('/uploads/<filename>')
-def uploaded_file(filename):
-    """Route pour servir les fichiers uploadés"""
-    return send_from_directory(get_upload_path(), filename)
-
-@admin_bp.route('/serve-static/<path:filename>')
-def serve_root_static(filename):
-    """Envoie les fichiers depuis le dossier static racine"""
-    root_static = get_static_path()
-    return send_from_directory(root_static, filename)
-
-# --- ROUTE D'INITIALISATION (développement) ---
-
-@admin_bp.route('/init-folders')
-def init_folders():
-    """Crée les dossiers nécessaires s'ils n'existent pas"""
-    try:
-        upload_path = get_upload_path()
-        
-        static_path = get_static_path()
-        if not os.path.exists(static_path):
-            os.makedirs(static_path, exist_ok=True)
-        
-        default_avatar = os.path.join(get_static_path(), 'default-avatar.jpg')
-        default_cover = os.path.join(get_static_path(), 'default-cover.jpg')
-        
-        if not os.path.exists(default_avatar):
-            with open(default_avatar, 'w') as f:
-                f.write("Default avatar image placeholder")
-        
-        if not os.path.exists(default_cover):
-            with open(default_cover, 'w') as f:
-                f.write("Default cover image placeholder")
-        
-        return f"Dossiers initialisés avec succès!<br>Uploads: {upload_path}<br>Static: {static_path}"
-    
-    except Exception as e:
-        return f"Erreur lors de l'initialisation: {str(e)}"
+# --- ROUTES DE PROFIL ET MEDIA ---
 
 @admin_bp.route('/edit-profile', methods=['GET', 'POST'])
 @login_required
@@ -276,14 +422,12 @@ def edit_profile():
     
     def get_media_path(subdir=''):
         """Retourne le chemin absolu vers le dossier media et le crée s'il n'existe pas"""
-        # Chemin absolu vers media/ à la racine du projet Flask
         project_root = current_app.root_path
         media_path = os.path.join(project_root, 'media')
         
         if subdir:
             media_path = os.path.join(media_path, subdir)
         
-        # Créer le dossier s'il n'existe pas
         if not os.path.exists(media_path):
             os.makedirs(media_path, exist_ok=True)
         
@@ -291,7 +435,6 @@ def edit_profile():
     
     def get_media_url(filename, type_file):
         """Retourne l'URL pour servir les fichiers depuis le dossier media"""
-        # Pour servir depuis media/ via une route spéciale
         return url_for('admin.serve_media', type=type_file, filename=filename)
     
     def save_media_file(file, type_file, user_id):
@@ -306,18 +449,13 @@ def edit_profile():
         if not subdir:
             return None
         
-        # Obtenir le chemin du dossier
         media_dir = get_media_path(subdir)
         
-        # Générer un nom de fichier unique
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         original_ext = os.path.splitext(file.filename)[1] if '.' in file.filename else ''
         filename = f"{type_file}_{user_id}_{timestamp}{original_ext}"
-        
-        # Sécuriser le nom de fichier
         filename = secure_filename(filename)
         
-        # Sauvegarder le fichier
         full_path = os.path.join(media_dir, filename)
         file.save(full_path)
         
@@ -376,13 +514,11 @@ def edit_profile():
             # === 6. GESTION DE L'AVATAR ===
             avatar_file = request.files.get('avatar')
             if avatar_file and avatar_file.filename:
-                # Validation du type de fichier
                 allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
                 filename = secure_filename(avatar_file.filename)
                 if '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions:
                     new_avatar = save_media_file(avatar_file, 'avatar', current_user.id)
                     if new_avatar:
-                        # Suppression de l'ancien fichier si différent du défaut
                         if (current_user.photo_profil and 
                             current_user.photo_profil != 'default-avatar.jpg'):
                             delete_media_file(current_user.photo_profil, 'avatar')
@@ -400,7 +536,6 @@ def edit_profile():
                 if '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions:
                     new_cover = save_media_file(cover_file, 'cover', current_user.id)
                     if new_cover:
-                        # Suppression de l'ancien fichier si différent du défaut
                         if (current_user.photo_couverture and 
                             current_user.photo_couverture != 'default-cover.jpg'):
                             delete_media_file(current_user.photo_couverture, 'cover')
@@ -416,7 +551,6 @@ def edit_profile():
                 allowed_extensions = {'pdf', 'doc', 'docx'}
                 filename = secure_filename(cv_file.filename)
                 if '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions:
-                    # Vérification de la taille (5 Mo max)
                     cv_file.seek(0, os.SEEK_END)
                     file_size = cv_file.tell()
                     cv_file.seek(0)
@@ -426,7 +560,6 @@ def edit_profile():
                     else:
                         new_cv = save_media_file(cv_file, 'cv', current_user.id)
                         if new_cv:
-                            # Suppression de l'ancien fichier s'il existe
                             if current_user.cv:
                                 delete_media_file(current_user.cv, 'cv')
                             
@@ -445,17 +578,13 @@ def edit_profile():
         
         return redirect(url_for('admin.edit_profile'))
     
-    # Pour le template, on peut passer les URLs des médias
-    # Ces fonctions seront utilisées dans le template pour afficher les images
     return render_template('edit_profile.html')
 
-# Route pour servir les fichiers depuis le dossier media
 @admin_bp.route('/media/<type>/<filename>')
 @login_required
 def serve_media(type, filename):
     """Sert les fichiers depuis le dossier media"""
     
-    # Mapping des types vers les sous-dossiers
     subdirs = {
         'avatar': 'profiles',
         'cover': 'covers',
@@ -466,12 +595,10 @@ def serve_media(type, filename):
     if not subdir:
         abort(404)
     
-    # Chemin vers le dossier media
     project_root = current_app.root_path
     media_dir = os.path.join(project_root, 'media', subdir)
     
-    # Vérifier que le fichier existe et appartient à l'utilisateur
-    # (sécurité : vérifier que le fichier commence par le bon pattern)
+    # Sécurité : vérifier que le fichier appartient à l'utilisateur
     if type == 'avatar' and not filename.startswith(f'avatar_{current_user.id}_'):
         abort(403)
     elif type == 'cover' and not filename.startswith(f'cover_{current_user.id}_'):
@@ -481,8 +608,34 @@ def serve_media(type, filename):
     
     return send_from_directory(media_dir, filename)
 
+# --- ROUTES D'INITIALISATION ---
 
-# Route utilitaire pour initialiser la structure media
+@admin_bp.route('/init-folders')
+def init_folders():
+    """Crée les dossiers nécessaires s'ils n'existent pas"""
+    try:
+        upload_path = get_upload_path()
+        static_path = get_static_path()
+        
+        if not os.path.exists(static_path):
+            os.makedirs(static_path, exist_ok=True)
+        
+        default_avatar = os.path.join(get_static_path(), 'default-avatar.jpg')
+        default_cover = os.path.join(get_static_path(), 'default-cover.jpg')
+        
+        if not os.path.exists(default_avatar):
+            with open(default_avatar, 'w') as f:
+                f.write("Default avatar image placeholder")
+        
+        if not os.path.exists(default_cover):
+            with open(default_cover, 'w') as f:
+                f.write("Default cover image placeholder")
+        
+        return f"Dossiers initialisés avec succès!<br>Uploads: {upload_path}<br>Static: {static_path}"
+    
+    except Exception as e:
+        return f"Erreur lors de l'initialisation: {str(e)}"
+
 @admin_bp.route('/init-media-folders')
 def init_media_folders():
     """Crée la structure media/ à la racine du projet"""
@@ -490,7 +643,6 @@ def init_media_folders():
         project_root = current_app.root_path
         media_path = os.path.join(project_root, 'media')
         
-        # Créer les sous-dossiers
         subdirs = ['profiles', 'covers', 'docs']
         
         for subdir in subdirs:
@@ -508,8 +660,171 @@ def init_media_folders():
             <li>{os.path.join(media_path, 'covers')}</li>
             <li>{os.path.join(media_path, 'docs')}</li>
         </ul>
-        <p><a href="{{ url_for('admin.edit_profile') }}">Retour à l'édition du profil</a></p>
+        <p><a href="{url_for('admin.edit_profile')}">Retour à l'édition du profil</a></p>
         '''
     
     except Exception as e:
         return f"Erreur lors de la création de la structure media: {str(e)}"
+
+# --- ROUTES PORTFOLIO ---
+
+@admin_bp.route('/portfolio/edit', methods=['GET', 'POST'])
+@login_required
+def edit_portfolio_content():
+    # Récupérer ou créer la config pour l'utilisateur
+    config = PortfolioConfig.query.filter_by(utilisateur_id=current_user.id).first()
+    if not config:
+        config = PortfolioConfig(utilisateur_id=current_user.id)
+        db.session.add(config)
+
+    if request.method == 'POST':
+        # --- TEXTES SIMPLES ---
+        config.hero_titre = request.form.get('hero_titre')
+        config.hero_description = request.form.get('hero_description')
+        config.about_titre = request.form.get('about_titre')
+        config.about_soustitre = request.form.get('about_soustitre')
+        config.about_description = request.form.get('about_description')
+        config.about_lien_texte = request.form.get('about_lien_texte')
+        config.projects_titre = request.form.get('projects_titre')
+        config.cta_titre = request.form.get('cta_titre')
+
+        # --- GESTION DES SPÉCIALITÉS ---
+        s_noms = request.form.getlist('skill_item_nom[]')
+        s_icons = request.form.getlist('skill_item_icon[]')
+        
+        skills_list = []
+        for n, i in zip(s_noms, s_icons):
+            if n.strip():
+                skills_list.append({"nom": n, "icon": i})
+        config.about_skills_json = skills_list
+
+        # --- GESTION DE LA STACK TECHNIQUE ---
+        t_noms = request.form.getlist('tech_nom[]')
+        t_percents = request.form.getlist('tech_pourcent[]')
+        t_icons = request.form.getlist('tech_icon[]')
+        t_cats = request.form.getlist('tech_cat[]')
+
+        tech_list = []
+        for n, p, i, c in zip(t_noms, t_percents, t_icons, t_cats):
+            if n.strip():
+                tech_list.append({
+                    "nom": n, 
+                    "pourcent": p, 
+                    "icon": i, 
+                    "cat": c
+                })
+        
+        config.tech_stack_json = tech_list
+
+        try:
+            db.session.commit()
+            flash("Portfolio mis à jour avec succès !", "success")
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Erreur lors de l'enregistrement : {str(e)}", "danger")
+
+        return redirect(url_for('admin.edit_portfolio_content'))
+
+    return render_template('edit_portfolio.html', config=config)
+
+# --- ROUTES ABOUT ---
+
+@admin_bp.route('/about/edit', methods=['GET', 'POST'])
+@login_required
+def about_edit():
+    config = AboutPage.query.filter_by(utilisateur_id=current_user.id).first()
+    
+    if request.method == 'POST':
+        if not config:
+            config = AboutPage(utilisateur_id=current_user.id)
+        
+        # Traitement des fichiers
+        upload_folder = os.path.join(current_app.root_path, 'media', 'about')
+        os.makedirs(upload_folder, exist_ok=True)
+        
+        # Hero image
+        if 'hero_image' in request.files:
+            file = request.files['hero_image']
+            if file and file.filename:
+                ext = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else ''
+                filename = f"hero_{secrets.token_hex(8)}.{ext}"
+                file.save(os.path.join(upload_folder, filename))
+                config.hero_image = filename
+        if request.form.get('hero_image_delete'):
+            config.hero_image = None
+        
+        # Philosophie image
+        if 'philosophie_image' in request.files:
+            file = request.files['philosophie_image']
+            if file and file.filename:
+                ext = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else ''
+                filename = f"philosophie_{secrets.token_hex(8)}.{ext}"
+                file.save(os.path.join(upload_folder, filename))
+                config.philosophie_image = filename
+        if request.form.get('philosophie_image_delete'):
+            config.philosophie_image = None
+        
+        # Parcours image
+        if 'parcours_image' in request.files:
+            file = request.files['parcours_image']
+            if file and file.filename:
+                ext = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else ''
+                filename = f"parcours_{secrets.token_hex(8)}.{ext}"
+                file.save(os.path.join(upload_folder, filename))
+                config.parcours_image = filename
+        if request.form.get('parcours_image_delete'):
+            config.parcours_image = None
+        
+        # Competences image
+        if 'competences_image' in request.files:
+            file = request.files['competences_image']
+            if file and file.filename:
+                ext = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else ''
+                filename = f"competences_{secrets.token_hex(8)}.{ext}"
+                file.save(os.path.join(upload_folder, filename))
+                config.competences_image = filename
+        if request.form.get('competences_image_delete'):
+            config.competences_image = None
+        
+        # Certifications image
+        if 'certifications_image' in request.files:
+            file = request.files['certifications_image']
+            if file and file.filename:
+                ext = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else ''
+                filename = f"certifications_{secrets.token_hex(8)}.{ext}"
+                file.save(os.path.join(upload_folder, filename))
+                config.certifications_image = filename
+        if request.form.get('certifications_image_delete'):
+            config.certifications_image = None
+        
+        # Texte
+        config.hero_titre = request.form.get('hero_titre')
+        config.hero_sous_titre = request.form.get('hero_sous_titre')
+        config.philosophie_titre = request.form.get('philosophie_titre')
+        config.philosophie_contenu = request.form.get('philosophie_contenu')
+        config.parcours_titre = request.form.get('parcours_titre')
+        config.parcours_contenu = request.form.get('parcours_contenu')
+        config.competences_titre = request.form.get('competences_titre')
+        config.competences_contenu = request.form.get('competences_contenu')
+        config.certifications_titre = request.form.get('certifications_titre')
+        
+        db.session.add(config)
+        db.session.commit()
+        
+        flash('Page À propos mise à jour avec succès!', 'success')
+        return redirect(url_for('admin.about_edit'))
+    
+    return render_template('about_edit.html', config=config)
+
+@github_bp.route('/debug')
+def debug_github():
+    """Route de debug pour vérifier la configuration GitHub"""
+    info = {
+        'GITHUB_CLIENT_ID': GITHUB_CLIENT_ID[:5] + '...' if GITHUB_CLIENT_ID else 'NON DÉFINI',
+        'GITHUB_CLIENT_SECRET': 'Défini' if GITHUB_CLIENT_SECRET else 'NON DÉFINI',
+        'GITHUB_AUTHORIZE_URL': GITHUB_AUTHORIZE_URL,
+        'GITHUB_TOKEN_URL': GITHUB_TOKEN_URL,
+        'authenticated': current_user.is_authenticated if hasattr(current_user, 'is_authenticated') else False,
+        'jeton_github': 'Présent' if hasattr(current_user, 'jeton_github') and current_user.jeton_github else 'Absent'
+    }
+    return info

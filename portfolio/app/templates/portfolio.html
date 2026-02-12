@@ -22,7 +22,15 @@
             <div class="hero-content">
                 <div class="hero-text">
                     <h1>CONSTRUIRE LE <span class="highlight">FUTUR</span> DU CODE</h1>
-                    <p>Expert en ingénierie logicielle, cybersécurité et architectures cloud. Je transforme des idées complexes en infrastructures robustes et évolutives.</p>
+                    <p>
+<p>
+    {% if user and user.biographie %}
+        {{ user.biographie }}
+    {% else %}
+        {# Debug temporaire : enlève ceci quand ça marche #}
+        donnee personnelle
+    {% endif %}
+</p>
                     <a href="{{ url_for('portfolio.projets_liste') }}" class="btn">
                         <i class="fas fa-code"></i>
                         Voir mes projets
@@ -33,7 +41,9 @@
                     </a>
                 </div>
                 <div class="hero-image">
-                    <img src="https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Workspace IT">
+                        <img src="{% if user.photo_profil %}{{ admin_url }}/serve-static/media/profiles/{{ user.photo_profil }}{% else %}https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop{% endif %}" 
+                            alt="Photo de {{ user.nom_utilisateur }}"
+                            onerror="this.src='https://via.placeholder.com/400x400?text=Profile'">
                 </div>
             </div>
         </div>
@@ -43,206 +53,80 @@
     <section class="about" id="apropos">
         <div class="container">
             <div class="about-content">
-                <div class="about-image">
-                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Profile">
-                </div>
+<div class="about-image">
+    <img src="{% if user.photo_couverture %}/media/covers/{{ user.photo_couverture }}{% else %}https://images.unsplash.com/photo-1498050108023-c5249f4df085{% endif %}" 
+         alt="Couverture"
+         style="width: 100%; height: auto; display: block;">
+</div>
                 <div class="about-text">
-                    <h2>Spécialiste IT multi-domaines</h2>
-                    <h3>Précision. Performance. Innovation.</h3>
-                    <p>Avec plus de 10 ans d'expérience dans l'écosystème technologique, j'accompagne les entreprises dans leur transformation numérique. Mon approche combine rigueur technique et vision stratégique pour délivrer des solutions à la hauteur de vos ambitions.</p>
+                    <h2>{{ config.about_titre }}</h2>
+                    <h3>{{ config.about_soustitre }}</h3>
+                    <p>{{ config.about_description }}</p>
                     <div class="skills-grid">
+                        {% for skill in config.about_skills_json %}
                         <div class="skill-item">
                             <div class="skill-icon">
-                                <i class="fas fa-sitemap"></i>
+                                <i class="{{ skill.icon }}"></i>
                             </div>
-                            <span>ARCHITECTURE</span>
+                            <span>{{ skill.nom }}</span>
                         </div>
-                        <div class="skill-item">
-                            <div class="skill-icon">
-                                <i class="fas fa-shield-alt"></i>
-                            </div>
-                            <span>SÉCURITÉ</span>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-icon">
-                                <i class="fas fa-globe"></i>
-                            </div>
-                            <span>WEB SCALABLE</span>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-icon">
-                                <i class="fas fa-database"></i>
-                            </div>
-                            <span>DATA, BIG DATA</span>
-                        </div>
+                        {% endfor %}
                     </div>
-                    <a href="#" class="more-link">
-                        EN SAVOIR PLUS SUR MON PARCOURS
-                        <i class="fas fa-arrow-right"></i>
-                    </a>
-                </div>
             </div>
         </div>
     </section>
 
     <!-- Tech Stack Section -->
-    <section class="tech-stack">
-        <div class="container">
-            <div class="section-header">
-                <h2>STACK <span class="highlight">TECHNIQUE</span></h2>
-                <p>Une maîtrise approfondie des technologies modernes pour répondre aux défis techniques complexes de l'industrie informatique.</p>
+<section class="tech-stack" id="stack">
+    <div class="tech-grid">
+        {# On vérifie si config existe ET si tech_stack_json n'est pas vide #}
+        {% if config and config.tech_stack_json %}
+            {% for tech in config.tech_stack_json %}
+            <div class="tech-card">
+                <h3>
+                    <span>
+                        <i class="{{ tech.icon if tech.icon else 'fas fa-code' }}"></i> 
+                        {{ tech.nom }}
+                    </span>
+                    <span class="tech-percentage" data-target="{{ tech.pourcent }}">
+    {{ tech.pourcent }}%
+</span>
+                </h3>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ tech.pourcent }}%;"></div>
+                </div>
+                
+                {% if tech.cat %}
+                <p class="tech-categories">CATÉGORIE : {{ tech.cat }}</p>
+                {% endif %}
             </div>
-            <div class="tech-grid">
-                <div class="tech-card">
-                    <h3>
-                        <span><i class="fab fa-react"></i> React / Next.js</span>
-                        <span class="tech-percentage" data-target="90">0%</span>
-                    </h3>
-                    <div class="progress-bar">
-                        <div class="progress-fill" data-width="90"></div>
-                    </div>
-                    <p class="tech-categories">CATÉGORIES : TECH PRO</p>
-                </div>
-                <div class="tech-card">
-                    <h3>
-                        <span><i class="fab fa-js-square"></i> TypeScript</span>
-                        <span class="tech-percentage" data-target="95">0%</span>
-                    </h3>
-                    <div class="progress-bar">
-                        <div class="progress-fill" data-width="95"></div>
-                    </div>
-                    <p class="tech-categories">CATÉGORIES : PRO PRO</p>
-                </div>
-                <div class="tech-card">
-                    <h3>
-                        <span><i class="fas fa-paint-brush"></i> Tailwind CSS</span>
-                        <span class="tech-percentage" data-target="95">0%</span>
-                    </h3>
-                    <div class="progress-bar">
-                        <div class="progress-fill" data-width="95"></div>
-                    </div>
-                    <p class="tech-categories">CATÉGORIES : PRO PRO</p>
-                </div>
-                <div class="tech-card">
-                    <h3>
-                        <span><i class="fab fa-node-js"></i> Node.js / Express</span>
-                        <span class="tech-percentage" data-target="85">0%</span>
-                    </h3>
-                    <div class="progress-bar">
-                        <div class="progress-fill" data-width="85"></div>
-                    </div>
-                    <p class="tech-categories">CATÉGORIES : BACK END</p>
-                </div>
-                <div class="tech-card">
-                    <h3>
-                        <span><i class="fas fa-database"></i> PostgreSQL / Supabase</span>
-                        <span class="tech-percentage" data-target="80">0%</span>
-                    </h3>
-                    <div class="progress-bar">
-                        <div class="progress-fill" data-width="80"></div>
-                    </div>
-                    <p class="tech-categories">CATÉGORIES : BDD & API / STORAGE</p>
-                </div>
-                <div class="tech-card">
-                    <h3>
-                        <span><i class="fab fa-docker"></i> Docker & Kubernetes</span>
-                        <span class="tech-percentage" data-target="75">0%</span>
-                    </h3>
-                    <div class="progress-bar">
-                        <div class="progress-fill" data-width="75"></div>
-                    </div>
-                    <p class="tech-citations">CATÉGORIES : VE. RESO. DEV. / OPS</p>
-                </div>
-            </div>
-        </div>
-    </section>
+            {% endfor %}
+        {% else %}
+            <p>Aucune compétence technique configurée.</p>
+        {% endif %}
+    </div>
+</section>
 
     <!-- Projects Section -->
     <section class="projects" id="projets">
-        <div class="container">
-            <div class="section-header">
-                <h2>PROJETS <span class="highlight">RÉCENTS</span></h2>
-                <p>Découvrez une sélection de mes derniers projets, illustrant mon expertise technique et ma capacité à gérer des projets complexes.</p>
-            </div>
-            <div class="projects-grid">
-                <div class="project-card">
-                    <div class="project-image"></div>
-                    <div class="project-content">
-                        <h3>CyberSentinel Dashboard</h3>
-                        <p>Plateforme de monitoring en temps réel pour la détection d'intrusions réseau, visualisant les menaces potentielles et permettant une réponse rapide.</p>
-                        <div class="project-tags">
-                            <span class="tag">REACT</span>
-                            <span class="tag">WEBSOCKET</span>
-                            <span class="tag">CHARTJS</span>
-                            <span class="tag">FASTAPI</span>
-                        </div>
-                        <div class="project-footer">
-                            <a href="#" class="btn btn-small btn-secondary">
-                                <i class="fas fa-code"></i>
-                                CODE
-                            </a>
-                            <a href="#" class="btn btn-small">
-                                <i class="fas fa-eye"></i>
-                                DÉMO
-                            </a>
-                        </div>
-                    </div>
+        <div class="projects-grid">
+            {% for projet in projets %}
+            <div class="project-card">
+                <div class="project-image" 
+                    style="background-image: url('{{ admin_url }}/serve-static/media/projects/{{ projet.image_couverture if projet.image_couverture else 'default-project.jpg' }}');">
                 </div>
-                <div class="project-card">
-                    <div class="project-image"></div>
-                    <div class="project-content">
-                        <h3>CloudStack Automation</h3>
-                        <p>Infrastructure as Code pour le déploiement automatisé d'architecture micro-services sur AWS via Terraform et Ansible.</p>
-                        <div class="project-tags">
-                            <span class="tag">TERRAFORM</span>
-                            <span class="tag">AWS</span>
-                            <span class="tag">DOCKER</span>
-                            <span class="tag">PYTHON</span>
-                        </div>
-                        <div class="project-footer">
-                            <a href="#" class="btn btn-small btn-secondary">
-                                <i class="fas fa-code"></i>
-                                CODE
-                            </a>
-                            <a href="#" class="btn btn-small">
-                                <i class="fas fa-eye"></i>
-                                DÉMO
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-card">
-                    <div class="project-image"></div>
-                    <div class="project-content">
-                        <h3>NeoBank Mobile</h3>
-                        <p>Application mobile bancaire avec gestion de portefeuille crypto et authentification biométrique pour une sécurité maximale.</p>
-                        <div class="project-tags">
-                            <span class="tag">REACT NATIVE</span>
-                            <span class="tag">TYPESCRIPT</span>
-                            <span class="tag">NODE JS</span>
-                            <span class="tag">RASA</span>
-                        </div>
-                        <div class="project-footer">
-                            <a href="#" class="btn btn-small btn-secondary">
-                                <i class="fas fa-lock"></i>
-                                PRIVÉ
-                            </a>
-                            <a href="#" class="btn btn-small">
-                                <i class="fas fa-eye"></i>
-                                DÉMO
-                            </a>
-                        </div>
+                <div class="project-content">
+                    <h3>{{ projet.nom }}</h3>
+                    <p>{{ projet.description[:150] }}...</p>
+                    <div class="project-footer">
+                        <a href="{{ projet.demo_url }}" class="btn btn-small" target="_blank">DÉMO</a>
                     </div>
                 </div>
             </div>
-            <div class="discover-more">
-                <a href="{{ url_for('portfolio.projets_liste') }}" class="btn btn-dark">
-                    <i class="fas fa-folder-open"></i>
-                    Découvrir tous les projets
-                </a>
-            </div>
+            {% endfor %}
         </div>
-    </section>
+    </section> 
 
     <!-- CTA Section -->
     <section class="cta" id="contact">

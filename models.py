@@ -59,15 +59,88 @@ class Projet(db.Model):
     nom = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
     github_url = db.Column(db.String(255))
-    demo_url = db.Column(db.String(255)) # URL en ligne
-    image_couverture = db.Column(db.String(255)) # URL de l'image
-    logo_projet = db.Column(db.String(255)) # Petit logo
-    repo_id_github = db.Column(db.String(100), unique=True) # Pour éviter les doublons
+    demo_url = db.Column(db.String(255))
+    image_couverture = db.Column(db.String(255))
+    logo_projet = db.Column(db.String(255))
+    repo_id_github = db.Column(db.String(100), unique=True)
     utilisateur_id = db.Column(db.Integer, db.ForeignKey('utilisateurs.id'))
-    est_collaboration = db.Column(db.Boolean, default=False) # Collaboration ou compte propre
-    structure_nom = db.Column(db.String(100)) # Nom de la structure
+    est_collaboration = db.Column(db.Boolean, default=False)
+    structure_nom = db.Column(db.String(100))
     date_creation = db.Column(db.DateTime, default=datetime.utcnow)
     date_mise_a_jour = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    technologies_annexes = db.Column(db.JSON, default=list)  # Liste de chaînes
     
     def __repr__(self):
         return f'<Projet {self.nom}>'
+    
+    
+class PortfolioConfig(db.Model):
+    __tablename__ = 'portfolio_config'
+    id = db.Column(db.Integer, primary_key=True)
+    utilisateur_id = db.Column(db.Integer, db.ForeignKey('utilisateurs.id'), nullable=False)
+    
+    # SECTION HERO
+    hero_titre = db.Column(db.String(200), default="CONSTRUIRE LE FUTUR DU CODE")
+    
+    # SECTION ABOUT (Spécialiste IT...)
+    about_titre = db.Column(db.String(200), default="Spécialiste IT multi-domaines")
+    about_soustitre = db.Column(db.String(200), default="Précision. Performance. Innovation.")
+    about_description = db.Column(db.Text)
+    about_lien_texte = db.Column(db.String(100), default="EN SAVOIR PLUS SUR MON PARCOURS")
+    
+    # SKILLS ITEMS (Architecture, Sécurité...)
+    # On stocke ça en JSON : [{"nom": "ARCHITECTURE", "icon": "fas fa-sitemap"}, ...]
+    about_skills_json = db.Column(db.JSON, default=list)
+    
+    # STACK TECHNIQUE (React, Python...)
+    tech_stack_json = db.Column(db.JSON, default=list)
+    
+    # TITRES DE SECTIONS
+    projects_titre = db.Column(db.String(200), default="PROJETS RÉCENTS")
+    cta_titre = db.Column(db.String(200), default="PRÊT À LANCER VOTRE PROCHAIN PROJET")
+    
+    # À ajouter dans admin/app/models.py
+
+class AboutPage(db.Model):
+    __tablename__ = 'about_pages'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    utilisateur_id = db.Column(db.Integer, nullable=False, index=True)
+    
+    # HERO SECTION
+    hero_titre = db.Column(db.String(255), default="PLUS QU'UN DÉVELOPPEUR")
+    hero_texte = db.Column(db.Text, default="Une passion pour l'innovation...")
+    hero_image = db.Column(db.String(500), nullable=True)  # Nom du fichier
+    hero_bouton_1_texte = db.Column(db.String(100), default="Mon parcours")
+    hero_bouton_1_lien = db.Column(db.String(255), default="#formation")
+    hero_bouton_2_texte = db.Column(db.String(100), default="Échanger ensemble")
+    hero_bouton_2_lien = db.Column(db.String(255), default="#contact")
+    
+    # PHILOSOPHY SECTION
+    philosophie_titre = db.Column(db.String(255), default="MA PHILOSOPHIE")
+    philosophie_sous_titre = db.Column(db.String(255), default="L'humain au centre de la technologie")
+    philosophie_description_1 = db.Column(db.Text, default="...")
+    philosophie_description_2 = db.Column(db.Text, default="...")
+    philosophie_image = db.Column(db.String(500), nullable=True)
+    
+    # PARCOURS SECTION
+    parcours_image = db.Column(db.String(500), nullable=True)
+    
+    # COMPETENCES SECTION
+    competences_titre = db.Column(db.String(255), default="COMPÉTENCES CLÉS")
+    competences_sous_titre = db.Column(db.String(255), default="...")
+    competences_image = db.Column(db.String(500), nullable=True)
+    
+    # CERTIFICATIONS SECTION
+    certifications_titre = db.Column(db.String(255), default="CERTIFICATIONS RECONNUES")
+    certifications_sous_titre = db.Column(db.String(255), default="...")
+    certifications_image = db.Column(db.String(500), nullable=True)
+    
+    # JSON FIELDS
+    values_json = db.Column(db.JSON, default=list)
+    parcours_json = db.Column(db.JSON, default=list)
+    competences_json = db.Column(db.JSON, default=list)
+    certifications_json = db.Column(db.JSON, default=list)
+    
+    date_creation = db.Column(db.DateTime, default=datetime.utcnow)
+    date_mise_a_jour = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

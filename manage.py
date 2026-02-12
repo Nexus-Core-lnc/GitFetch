@@ -4,6 +4,7 @@ from pathlib import Path
 from flask import Flask, send_from_directory
 from flask_migrate import Migrate
 from dotenv import load_dotenv
+import models
 
 # 1. Définition des chemins racine
 # Path(__file__).resolve().parent correspond à GitFetch/

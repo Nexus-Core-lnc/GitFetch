@@ -8,7 +8,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mes Projets - TECH_PORTFOLIO</title>
+    <title>Mes Projets - GitFetch</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -59,6 +59,9 @@
             transition: all 0.4s;
             opacity: 0;
             transform: translateY(30px);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
         
         .project-card-full.animated {
@@ -71,11 +74,35 @@
         }
         
         .project-image-full {
-            height: 250px;
+            height: 200px;
             background-size: cover;
             background-position: center;
             position: relative;
             overflow: hidden;
+            background-color: #f5f5f5;
+        }
+        
+        .project-logo, .project-logo-default {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            object-fit: cover;
+            border: 3px solid white;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .project-logo-default {
+            background: #24292e;
+            color: white;
+            font-size: 30px;
         }
         
         .project-image-full::after {
@@ -89,13 +116,54 @@
         }
         
         .project-content-full {
-            padding: 30px;
+            padding: 25px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
         
-        .project-content-full h3 {
-            font-size: 24px;
+        .project-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
             margin-bottom: 15px;
+        }
+        
+        .project-header-logo, .project-header-logo-default {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 2px solid #ffc107;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .project-header-logo-default {
+            background: #24292e;
+            color: white;
+            font-size: 24px;
+        }
+        
+        .project-header h3 {
+            font-size: 22px;
+            margin: 0;
             color: #0a192f;
+            flex: 1;
+        }
+        
+        .collab-badge {
+            background: #ffc107;
+            color: #000;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: 8px;
         }
         
         .project-content-full p {
@@ -103,45 +171,53 @@
             margin-bottom: 20px;
             line-height: 1.7;
             font-size: 15px;
+            flex: 1;
         }
         
         .project-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 20px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
             border-bottom: 1px solid #eee;
         }
         
-        .project-category {
-            padding: 6px 15px;
-            background: rgba(255, 193, 7, 0.1);
+        .project-structure {
+            padding: 4px 12px;
+            background: rgba(10, 25, 47, 0.05);
             border-radius: 20px;
-            font-size: 13px;
-            color: #ffc107;
+            font-size: 12px;
+            color: #0a192f;
             font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
         
         .project-date {
             color: #999;
-            font-size: 14px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         
         .project-tags-full {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         
         .tag-full {
             padding: 6px 14px;
             background: #f5f5f5;
             border-radius: 20px;
-            font-size: 13px;
+            font-size: 12px;
             color: #666;
             transition: all 0.3s;
+            font-weight: 500;
         }
         
         .tag-full:hover {
@@ -152,12 +228,13 @@
         
         .project-footer-full {
             display: flex;
-            gap: 15px;
+            gap: 12px;
+            margin-top: auto;
         }
         
         .btn-small-full {
-            padding: 10px 22px;
-            font-size: 14px;
+            padding: 10px 18px;
+            font-size: 13px;
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -167,6 +244,8 @@
             transition: all 0.3s;
             border: none;
             cursor: pointer;
+            flex: 1;
+            justify-content: center;
         }
         
         .btn-small-full.primary {
@@ -187,6 +266,39 @@
         
         .btn-small-full.secondary:hover {
             background: rgba(255, 193, 7, 0.1);
+            transform: translateY(-3px);
+        }
+        
+        .btn-small-full.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+            border-color: #ccc;
+            color: #999;
+        }
+        
+        .repo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #24292e;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+        
+        .project-repo-id {
+            margin-top: 12px;
+            font-size: 11px;
+            color: #999;
+            text-align: right;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 5px;
+            border-top: 1px solid #eee;
+            padding-top: 12px;
         }
         
         .filter-section {
@@ -309,11 +421,37 @@
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            position: relative;
+            height: 400px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .featured-logo, .featured-logo-default {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 80px;
+            height: 80px;
+            border-radius: 15px;
+            border: 4px solid white;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            z-index: 2;
+            object-fit: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .featured-logo-default {
+            background: #24292e;
+            color: white;
+            font-size: 40px;
         }
         
         .featured-image img {
             width: 100%;
-            height: 400px;
+            height: 100%;
             object-fit: cover;
             transition: transform 0.5s;
         }
@@ -327,6 +465,45 @@
             flex-wrap: wrap;
             gap: 10px;
             margin: 25px 0;
+        }
+        
+        .empty-projects {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        
+        .empty-projects i {
+            font-size: 60px;
+            color: #ffc107;
+            margin-bottom: 20px;
+        }
+        
+        .empty-projects h3 {
+            font-size: 24px;
+            color: #0a192f;
+            margin-bottom: 15px;
+        }
+        
+        .empty-projects p {
+            color: #666;
+            margin-bottom: 25px;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .no-featured {
+            text-align: center;
+            padding: 60px;
+            background: #f9f9f9;
+            border-radius: 15px;
         }
         
         /* Responsive */
@@ -389,7 +566,15 @@
             
             .btn-small-full {
                 width: 100%;
-                justify-content: center;
+            }
+            
+            .project-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .featured-image {
+                height: 300px;
             }
         }
         
@@ -400,6 +585,16 @@
             
             .stat-label {
                 font-size: 14px;
+            }
+            
+            .featured-image {
+                height: 250px;
+            }
+            
+            .featured-logo, .featured-logo-default {
+                width: 60px;
+                height: 60px;
+                font-size: 30px;
             }
         }
     </style>
@@ -428,25 +623,25 @@
         </div>
     </section>
 
-    <!-- Statistiques BIEN ALIGNÉES -->
+    <!-- Statistiques DYNAMISÉES -->
     <section class="project-stats">
         <div class="container">
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-number" data-target="42">0</div>
+                    <div class="stat-number" data-target="{{ projets|length }}">0</div>
                     <div class="stat-label">Projets Réalisés</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" data-target="18">0</div>
-                    <div class="stat-label">Clients Satisfaits</div>
+                    <div class="stat-number" data-target="{{ projets|selectattr('est_collaboration', 'equalto', true)|list|length }}">0</div>
+                    <div class="stat-label">Projets en Collaboration</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" data-target="3">0</div>
-                    <div class="stat-label">Prix d'Excellence</div>
+                    <div class="stat-number" data-target="{{ projets|selectattr('github_url')|list|length }}">0</div>
+                    <div class="stat-label">Dépôts GitHub</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" data-target="100">0</div>
-                    <div class="stat-label">Bugs Critiques Résolus</div>
+                    <div class="stat-number" data-target="{{ projets|selectattr('demo_url')|list|length }}">0</div>
+                    <div class="stat-label">Démos en Ligne</div>
                 </div>
             </div>
         </div>
@@ -471,7 +666,7 @@
         </div>
     </section>
 
-    <!-- Projet Phare -->
+    <!-- PROJET PHARE DYNAMISÉ - Le plus récent ou premier de la liste -->
     <section class="project-featured" id="featured">
         <div class="container">
             <div class="section-header">
@@ -479,49 +674,108 @@
                 <p>Une réalisation qui illustre parfaitement mon approche technique et créative</p>
             </div>
             
-            <div class="featured-content">
-                <div class="featured-image">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="CyberSentinel Dashboard">
+            {% if projets %}
+                {% set projet_phare = projets[0] %}  <!-- Premier projet (le plus récent car order_by id desc) -->
+                <div class="featured-content">
+                    <div class="featured-image" {% if projet_phare.image_couverture %}style="background-image: url('{{ projet_phare.image_couverture }}')"{% else %}style="background-image: url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')"{% endif %}>
+                        {% if projet_phare.logo_projet %}
+                            <img src="{{ projet_phare.logo_projet }}" alt="Logo {{ projet_phare.nom }}" class="featured-logo">
+                        {% else %}
+                            <div class="featured-logo-default">
+                                <i class="fab fa-github"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="featured-text">
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;">
+                            <h3 style="margin-bottom: 0;">{{ projet_phare.nom }}</h3>
+                            {% if projet_phare.est_collaboration %}
+                                <span class="collab-badge">
+                                    <i class="fas fa-users"></i>
+                                    Collaboration
+                                </span>
+                            {% endif %}
+                        </div>
+                        
+                        <p class="project-date" style="margin-bottom: 15px;">
+                            <i class="fas fa-calendar-alt"></i> 
+                            {% if projet_phare.date_creation %}
+                                {{ projet_phare.date_creation.strftime('%Y') }}
+                            {% else %}
+                                Date non spécifiée
+                            {% endif %}
+                            {% if projet_phare.date_mise_a_jour %}
+                                <span style="margin-left: 15px;">
+                                    <i class="fas fa-sync-alt"></i> 
+                                    Mis à jour: {{ projet_phare.date_mise_a_jour.strftime('%d/%m/%Y') }}
+                                </span>
+                            {% endif %}
+                        </p>
+                        
+                        <p>{{ projet_phare.description or "Aucune description disponible." }}</p>
+                        
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;">
+                            {% if projet_phare.structure_nom %}
+                                <span class="project-structure">
+                                    <i class="fas fa-building"></i> {{ projet_phare.structure_nom }}
+                                </span>
+                            {% endif %}
+                            
+                            {% if projet_phare.repo_id_github %}
+                                <span class="repo-badge">
+                                    <i class="fab fa-github"></i> {{ projet_phare.repo_id_github }}
+                                </span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="featured-tags">
+                            {% if projet_phare.technologies_annexes %}
+                                {% for tech in projet_phare.technologies_annexes[:8] %}
+                                    <span class="tag-full">{{ tech|upper }}</span>
+                                {% endfor %}
+                            {% else %}
+                                <span class="tag-full">AUCUNE TECHNO</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="project-footer-full">
+                            {% if projet_phare.demo_url %}
+                                <a href="{{ projet_phare.demo_url }}" target="_blank" class="btn-small-full primary">
+                                    <i class="fas fa-globe"></i>
+                                    Voir en ligne
+                                </a>
+                            {% else %}
+                                <a href="#" class="btn-small-full primary disabled">
+                                    <i class="fas fa-globe"></i>
+                                    Non déployé
+                                </a>
+                            {% endif %}
+                            
+                            {% if projet_phare.github_url %}
+                                <a href="{{ projet_phare.github_url }}" target="_blank" class="btn-small-full secondary">
+                                    <i class="fab fa-github"></i>
+                                    Code source
+                                </a>
+                            {% else %}
+                                <a href="#" class="btn-small-full secondary disabled">
+                                    <i class="fas fa-lock"></i>
+                                    Privé
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
-                <div class="featured-text">
-                    <h3>CyberSentinel Pro</h3>
-                    <p class="project-date">2023 - Projet en cours</p>
-                    <p>Plateforme complète de sécurité informatique offrant une surveillance en temps réel, une analyse comportementale et une réponse automatisée aux incidents. Système utilisé par plus de 50 entreprises pour protéger leurs infrastructures critiques.</p>
-                    
-                    <div class="featured-tags">
-                        <span class="tag-full">REACT</span>
-                        <span class="tag-full">TYPESCRIPT</span>
-                        <span class="tag-full">NODE.JS</span>
-                        <span class="tag-full">PYTHON</span>
-                        <span class="tag-full">DOCKER</span>
-                        <span class="tag-full">AWS</span>
-                    </div>
-                    
-                    <div class="project-meta">
-                        <span class="project-category">SÉCURITÉ & CLOUD</span>
-                        <span class="project-date">6 mois de développement</span>
-                    </div>
-                    
-                    <div class="project-footer-full">
-                        <a href="#" class="btn-small-full primary">
-                            <i class="fas fa-eye"></i>
-                            Voir la démo
-                        </a>
-                        <a href="#" class="btn-small-full secondary">
-                            <i class="fas fa-code"></i>
-                            Code source
-                        </a>
-                        <a href="#" class="btn-small-full secondary">
-                            <i class="fas fa-file-alt"></i>
-                            Documentation
-                        </a>
-                    </div>
+            {% else %}
+                <div class="no-featured">
+                    <i class="fas fa-rocket" style="font-size: 48px; color: #ffc107; margin-bottom: 20px;"></i>
+                    <h3>Aucun projet phare pour le moment</h3>
+                    <p>Commencez par ajouter votre premier projet !</p>
                 </div>
-            </div>
+            {% endif %}
         </div>
     </section>
 
-    <!-- Tous les Projets -->
+    <!-- TOUS MES PROJETS - DYNAMISÉS AVEC LES DONNÉES DE LA BASE -->
     <section class="projects" id="projects">
         <div class="container">
             <div class="section-header">
@@ -529,200 +783,153 @@
                 <p>Une sélection représentative de mon travail à travers différentes technologies et domaines</p>
             </div>
             
-            <div class="projects-grid-full" id="projects-grid">
-                <!-- Projet 1 -->
-                <div class="project-card-full" data-category="web,cloud">
-                    <div class="project-image-full" style="background-image: url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')"></div>
-                    <div class="project-content-full">
-                        <h3>E-Commerce Scalable</h3>
-                        <div class="project-meta">
-                            <span class="project-category">E-COMMERCE</span>
-                            <span class="project-date">2023</span>
-                        </div>
-                        <p>Plateforme de e-commerce haute performance avec système de recommandation IA, paiements sécurisés et infrastructure auto-scalable sur AWS.</p>
+            {% if projets %}
+                <div class="projects-grid-full" id="projects-grid">
+                    {% for projet in projets %}
+                        <div class="project-card-full" data-category="
+                            {%- if projet.technologies_annexes -%}
+                                {%- for tech in projet.technologies_annexes -%}
+                                    {%- if 'REACT' in tech or 'VUE' in tech or 'NEXT' in tech or 'NODE' in tech or 'DJANGO' in tech or 'FLASK' in tech -%}web {% endif -%}
+                                    {%- if 'REACT NATIVE' in tech or 'SWIFT' in tech or 'KOTLIN' in tech or 'FLUTTER' in tech or 'BLE' in tech -%}mobile {% endif -%}
+                                    {%- if 'DOCKER' in tech or 'KUBERNETES' in tech or 'AWS' in tech or 'TERRAFORM' in tech or 'ANSIBLE' in tech -%}cloud {% endif -%}
+                                    {%- if 'JWT' in tech or 'OAUTH' in tech or 'VAULT' in tech or 'SECURITY' in tech -%}security {% endif -%}
+                                    {%- if 'TENSORFLOW' in tech or 'PYTHON' in tech or 'IA' in tech or 'MACHINE LEARNING' in tech -%}ai {% endif -%}
+                                {%- endfor -%}
+                            {%- else -%}web
+                            {%- endif -%}">
                         
-                        <div class="project-tags-full">
-                            <span class="tag-full">NEXT.JS</span>
-                            <span class="tag-full">STRIPE</span>
-                            <span class="tag-full">MONGODB</span>
-                            <span class="tag-full">AWS LAMBDA</span>
+                            <!-- Image de couverture -->
+                            <div class="project-image-full" {% if projet.image_couverture %}style="background-image: url('{{ projet.image_couverture }}')"{% else %}style="background-image: url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')"{% endif %}>
+                                <!-- Logo du projet ou icône GitHub par défaut -->
+                                {% if projet.logo_projet %}
+                                    <img src="{{ projet.logo_projet }}" alt="Logo {{ projet.nom }}" class="project-logo">
+                                {% else %}
+                                    <div class="project-logo-default">
+                                        <i class="fab fa-github"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="project-content-full">
+                                <div class="project-header">
+                                    <!-- Logo dans l'en-tête ou icône GitHub par défaut -->
+                                    {% if projet.logo_projet %}
+                                        <img src="{{ projet.logo_projet }}" alt="Logo" class="project-header-logo">
+                                    {% else %}
+                                        <div class="project-header-logo-default">
+                                            <i class="fab fa-github"></i>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <h3>
+                                        {{ projet.nom }}
+                                        <!-- Badge de collaboration -->
+                                        {% if projet.est_collaboration %}
+                                            <span class="collab-badge">
+                                                <i class="fas fa-users"></i>
+                                                Collab
+                                            </span>
+                                        {% endif %}
+                                    </h3>
+                                </div>
+                                
+                                <div class="project-meta">
+                                    <!-- Structure / organisation -->
+                                    {% if projet.structure_nom %}
+                                        <span class="project-structure">
+                                            <i class="fas fa-building"></i> {{ projet.structure_nom }}
+                                        </span>
+                                    {% else %}
+                                        <span class="project-structure">
+                                            <i class="fas fa-user"></i> Personnel
+                                        </span>
+                                    {% endif %}
+                                    
+                                    <!-- Date de création -->
+                                    <span class="project-date">
+                                        <i class="fas fa-calendar-alt"></i> 
+                                        {{ projet.date_creation.strftime('%Y') if projet.date_creation else 'N/A' }}
+                                    </span>
+                                </div>
+                                
+                                <!-- Description -->
+                                <p>{{ projet.description|truncate(150) if projet.description else "Aucune description disponible." }}</p>
+                                
+                                <!-- Technologies (technologies_annexes) -->
+                                <div class="project-tags-full">
+                                    {% if projet.technologies_annexes %}
+                                        {% for tech in projet.technologies_annexes[:6] %}
+                                            <span class="tag-full">{{ tech|upper }}</span>
+                                        {% endfor %}
+                                    {% else %}
+                                        <span class="tag-full">AUCUNE TECHNO</span>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Boutons d'action -->
+                                <div class="project-footer-full">
+                                    <!-- BOUTON VOIR EN LIGNE (demo_url) -->
+                                    {% if projet.demo_url %}
+                                        <a href="{{ projet.demo_url }}" target="_blank" class="btn-small-full primary">
+                                            <i class="fas fa-globe"></i>
+                                            Voir en ligne
+                                        </a>
+                                    {% else %}
+                                        <a href="#" class="btn-small-full primary disabled">
+                                            <i class="fas fa-globe"></i>
+                                            Non déployé
+                                        </a>
+                                    {% endif %}
+                                    
+                                    <!-- BOUTON CODE SOURCE (github_url) -->
+                                    {% if projet.github_url %}
+                                        <a href="{{ projet.github_url }}" target="_blank" class="btn-small-full secondary">
+                                            <i class="fab fa-github"></i>
+                                            GitHub
+                                        </a>
+                                    {% else %}
+                                        <a href="#" class="btn-small-full secondary disabled">
+                                            <i class="fas fa-lock"></i>
+                                            Privé
+                                        </a>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- repo_id_github -->
+                                {% if projet.repo_id_github %}
+                                    <div class="project-repo-id">
+                                        <i class="fab fa-github"></i> {{ projet.repo_id_github }}
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
-                        
-                        <div class="project-footer-full">
-                            <a href="#" class="btn-small-full primary">
-                                <i class="fas fa-eye"></i>
-                                Démo
-                            </a>
-                            <a href="#" class="btn-small-full secondary">
-                                <i class="fas fa-code"></i>
-                                Code
-                            </a>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
                 
-                <!-- Projet 2 -->
-                <div class="project-card-full" data-category="mobile">
-                    <div class="project-image-full" style="background-image: url('https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')"></div>
-                    <div class="project-content-full">
-                        <h3>HealthTracker Mobile</h3>
-                        <div class="project-meta">
-                            <span class="project-category">SANTÉ</span>
-                            <span class="project-date">2023</span>
-                        </div>
-                        <p>Application de suivi santé avec synchronisation d'appareils IoT, analyse de données biométriques et alertes intelligentes.</p>
-                        
-                        <div class="project-tags-full">
-                            <span class="tag-full">REACT NATIVE</span>
-                            <span class="tag-full">GRAPHQL</span>
-                            <span class="tag-full">FIREBASE</span>
-                            <span class="tag-full">BLE</span>
-                        </div>
-                        
-                        <div class="project-footer-full">
-                            <a href="#" class="btn-small-full primary">
-                                <i class="fas fa-eye"></i>
-                                Démo
-                            </a>
-                            <a href="#" class="btn-small-full secondary">
-                                <i class="fas fa-lock"></i>
-                                Privé
-                            </a>
-                        </div>
+                <div class="discover-more" style="text-align: center; margin-top: 40px;">
+                    <a href="#" class="btn btn-dark" onclick="alert('Tous les projets sont déjà affichés !'); return false;">
+                        <i class="fas fa-sync-alt"></i>
+                        {{ projets|length }} projet(s) affiché(s)
+                    </a>
+                </div>
+            {% else %}
+                <!-- Aucun projet -->
+                <div class="empty-projects">
+                    <i class="fas fa-folder-open"></i>
+                    <h3>Aucun projet pour le moment</h3>
+                    <p>Commencez par importer vos projets depuis GitHub ou créez votre premier projet.</p>
+                    <div class="btn-group">
+                        <a href="{{ url_for('github_bp.sync_projets') }}" class="btn btn-primary">
+                            <i class="fab fa-github"></i>
+                            Importer de GitHub
+                        </a>
+                        <a href="#" class="btn btn-secondary">
+                            <i class="fas fa-plus"></i>
+                            Nouveau projet
+                        </a>
                     </div>
                 </div>
-                
-                <!-- Projet 3 -->
-                <div class="project-card-full" data-category="cloud,security">
-                    <div class="project-image-full" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')"></div>
-                    <div class="project-content-full">
-                        <h3>InfraSecure Cloud</h3>
-                        <div class="project-meta">
-                            <span class="project-category">DEVOPS</span>
-                            <span class="project-date">2022</span>
-                        </div>
-                        <p>Solution d'infrastructure as Code avec sécurité intégrée, monitoring avancé et déploiement automatisé sur multi-cloud.</p>
-                        
-                        <div class="project-tags-full">
-                            <span class="tag-full">TERRAFORM</span>
-                            <span class="tag-full">KUBERNETES</span>
-                            <span class="tag-full">ANSIBLE</span>
-                            <span class="tag-full">PROMETHEUS</span>
-                        </div>
-                        
-                        <div class="project-footer-full">
-                            <a href="#" class="btn-small-full primary">
-                                <i class="fas fa-eye"></i>
-                                Démo
-                            </a>
-                            <a href="#" class="btn-small-full secondary">
-                                <i class="fas fa-code"></i>
-                                Code
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Projet 4 -->
-                <div class="project-card-full" data-category="ai">
-                    <div class="project-image-full" style="background-image: url('https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')"></div>
-                    <div class="project-content-full">
-                        <h3>DataVision AI</h3>
-                        <div class="project-meta">
-                            <span class="project-category">DATA SCIENCE</span>
-                            <span class="project-date">2022</span>
-                        </div>
-                        <p>Plateforme d'analyse prédictive et de visualisation de données avec algorithmes de machine learning customisés.</p>
-                        
-                        <div class="project-tags-full">
-                            <span class="tag-full">PYTHON</span>
-                            <span class="tag-full">TENSORFLOW</span>
-                            <span class="tag-full">D3.JS</span>
-                            <span class="tag-full">FASTAPI</span>
-                        </div>
-                        
-                        <div class="project-footer-full">
-                            <a href="#" class="btn-small-full primary">
-                                <i class="fas fa-eye"></i>
-                                Démo
-                            </a>
-                            <a href="#" class="btn-small-full secondary">
-                                <i class="fas fa-code"></i>
-                                Code
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Projet 5 -->
-                <div class="project-card-full" data-category="web">
-                    <div class="project-image-full" style="background-image: url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')"></div>
-                    <div class="project-content-full">
-                        <h3>FinTech Dashboard</h3>
-                        <div class="project-meta">
-                            <span class="project-category">FINANCE</span>
-                            <span class="project-date">2022</span>
-                        </div>
-                        <p>Dashboard analytique pour institutions financières avec visualisation en temps réel et reporting automatisé.</p>
-                        
-                        <div class="project-tags-full">
-                            <span class="tag-full">VUE.JS</span>
-                            <span class="tag-full">D3.JS</span>
-                            <span class="tag-full">WEBSOCKET</span>
-                            <span class="tag-full">POSTGRESQL</span>
-                        </div>
-                        
-                        <div class="project-footer-full">
-                            <a href="#" class="btn-small-full primary">
-                                <i class="fas fa-eye"></i>
-                                Démo
-                            </a>
-                            <a href="#" class="btn-small-full secondary">
-                                <i class="fas fa-lock"></i>
-                                Privé
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Projet 6 -->
-                <div class="project-card-full" data-category="security">
-                    <div class="project-image-full" style="background-image: url('https://images.unsplash.com/photo-1560732488-6b0df240254a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')"></div>
-                    <div class="project-content-full">
-                        <h3>AuthGuard Pro</h3>
-                        <div class="project-meta">
-                            <span class="project-category">SÉCURITÉ</span>
-                            <span class="project-date">2021</span>
-                        </div>
-                        <p>Système d'authentification multi-facteurs avec détection d'anomalies et intégration SSO pour entreprises.</p>
-                        
-                        <div class="project-tags-full">
-                            <span class="tag-full">NODE.JS</span>
-                            <span class="tag-full">JWT</span>
-                            <span class="tag-full">OATH2</span>
-                            <span class="tag-full">REDIS</span>
-                        </div>
-                        
-                        <div class="project-footer-full">
-                            <a href="#" class="btn-small-full primary">
-                                <i class="fas fa-eye"></i>
-                                Démo
-                            </a>
-                            <a href="#" class="btn-small-full secondary">
-                                <i class="fas fa-code"></i>
-                                Code
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="discover-more">
-                <a href="#" class="btn btn-dark">
-                    <i class="fas fa-sync-alt"></i>
-                    Charger plus de projets
-                </a>
-            </div>
+            {% endif %}
         </div>
     </section>
 
@@ -752,8 +959,12 @@
                         // Animation des nombres pour les statistiques
                         if (entry.target.classList.contains('stat-card')) {
                             const statNumber = entry.target.querySelector('.stat-number');
-                            const target = parseInt(statNumber.getAttribute('data-target'));
-                            animateCounter(statNumber, target);
+                            if (statNumber) {
+                                const target = parseInt(statNumber.getAttribute('data-target'));
+                                if (!isNaN(target)) {
+                                    animateCounter(statNumber, target);
+                                }
+                            }
                         }
                         
                         observer.unobserve(entry.target);
@@ -788,7 +999,7 @@
                     
                     projectCards.forEach(card => {
                         if (filter === 'all' || card.getAttribute('data-category').includes(filter)) {
-                            card.style.display = 'block';
+                            card.style.display = 'flex';
                             setTimeout(() => {
                                 card.style.opacity = '1';
                                 card.style.transform = 'translateY(0)';
@@ -811,7 +1022,7 @@
                 const timer = setInterval(() => {
                     current += increment;
                     if (current >= target) {
-                        element.textContent = target + (target === 100 ? '%' : '+');
+                        element.textContent = target;
                         clearInterval(timer);
                     } else {
                         element.textContent = Math.floor(current);
@@ -823,8 +1034,12 @@
             document.querySelectorAll('.stat-card').forEach(card => {
                 if (card.classList.contains('animated')) {
                     const statNumber = card.querySelector('.stat-number');
-                    const target = parseInt(statNumber.getAttribute('data-target'));
-                    animateCounter(statNumber, target);
+                    if (statNumber) {
+                        const target = parseInt(statNumber.getAttribute('data-target'));
+                        if (!isNaN(target)) {
+                            animateCounter(statNumber, target);
+                        }
+                    }
                 }
             });
         });
