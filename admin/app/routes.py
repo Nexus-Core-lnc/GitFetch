@@ -59,6 +59,78 @@ def save_uploaded_file(file, type_file, user_id):
 
 # --- ROUTES DE SERVICE DE FICHIERS ---
 
+
+import os
+from authlib.integrations.flask_client import OAuth
+from dotenv import load_dotenv
+
+# Charger le fichier .env
+load_dotenv()
+
+oauth = OAuth(current_app)
+
+github = oauth.register(
+    name='github',
+    client_id=os.getenv('GITHUB_CLIENT_ID'),
+    client_secret=os.getenv('GITHUB_CLIENT_SECRET'),
+    access_token_url='https://github.com/login/oauth/access_token',
+    authorize_url='https://github.com/login/oauth/authorize',
+    api_base_url='https://api.github.com/',
+    client_kwargs={'scope': 'user repo'},
+)
+
+
+@admin_bp.route('/link-github')
+@login_required
+def link_github():
+    """Redirige vers GitHub pour obtenir l'autorisation"""
+    # L'URL de callback doit être déclarée identique sur ton dashboard GitHub Developer
+    redirect_uri = url_for('admin.github_authorize_callback', _external=True)
+    return github.authorize_redirect(redirect_uri)
+
+@admin_bp.route('/github-callback')
+@login_required
+def github_authorize_callback():
+    try:
+        # Récupération du token via Authlib
+        token = github.authorize_access_token()
+        
+        if token and 'access_token' in token:
+            # On stocke le jeton dans le champ spécifique jeton_github
+            current_user.jeton_github = token['access_token']
+            
+            db.session.commit()
+            flash("Succès : Jeton GitHub enregistré dans jeton_github.", "success")
+        else:
+            flash("Erreur : Impossible de récupérer le jeton d'accès.", "danger")
+            
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Erreur lors de l'autorisation : {str(e)}", "danger")
+        
+    return redirect(url_for('admin.dashboard'))
+
+@admin_bp.route('/auth/github/authorize')
+@login_required
+def authorize_github():
+    # L'URL où GitHub renverra l'utilisateur après acceptation
+    redirect_uri = url_for('admin.github_callback', _external=True)
+    return github.authorize_redirect(redirect_uri)
+
+@admin_bp.route('/auth/github/callback')
+@login_required
+def github_callback():
+    token = github.authorize_access_token()
+    # On enregistre le token dans la session ou mieux, en Base de Données
+    # pour que l'utilisateur n'ait pas à le refaire à chaque fois.
+    current_user.github_access_token = token['access_token']
+    db.session.commit()
+    
+    flash("Connexion à GitHub réussie !", "success")
+    return redirect(url_for('admin.dashboard'))
+
+
+
 @admin_bp.route('/serve-static/media/profiles/<filename>')
 def serve_profile_pic(filename):
     media_path = os.path.join(current_app.root_path, 'media', 'profiles')

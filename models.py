@@ -34,6 +34,7 @@ class Utilisateur(db.Model, UserMixin):
     twitter = db.Column(db.String(100), nullable=True)
     linkedin = db.Column(db.String(100), nullable=True)
     github = db.Column(db.String(100), nullable=True)
+    github_access_token = db.Column(db.String(255), nullable=True)
     
     # Numéros de téléphone
     telephone_principal = db.Column(db.String(20), nullable=True)
