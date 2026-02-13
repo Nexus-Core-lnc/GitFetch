@@ -668,95 +668,6 @@
             background: var(--gris-clair);
         }
 
-        /* NAVIGATION MOBILE */
-        .navigation-mobile {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--blanc);
-            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            overflow-x: auto;
-            overflow-y: hidden;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-        }
-
-        .navigation-mobile::-webkit-scrollbar {
-            display: none;
-        }
-
-        .conteneur-navigation-mobile {
-            display: flex;
-            padding: 8px 0;
-            min-width: min-content;
-        }
-
-        .element-navigation-mobile {
-            flex: 0 0 auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 12px 20px;
-            color: #666;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            min-width: 80px;
-        }
-
-        .element-navigation-mobile i {
-            font-size: 22px;
-        }
-
-        .element-navigation-mobile span {
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .element-navigation-mobile.actif {
-            color: var(--jaune-primaire);
-        }
-
-        .element-navigation-mobile.admin {
-            color: var(--couleur-admin);
-        }
-
-        .element-navigation-mobile.portfolio {
-            color: var(--couleur-portfolio);
-        }
-
-        .element-navigation-mobile.me-connaitre {
-            color: var(--couleur-me-connaitre);
-        }
-
-        .element-navigation-mobile:active {
-            transform: scale(0.95);
-        }
-
-        .indicateur-scroll {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--jaune-primaire);
-            font-size: 18px;
-            animation: pulsation 2s infinite;
-        }
-
-        @keyframes pulsation {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
-        }
-
         /* PAGE AUTHORIZE */
         .conteneur-authorize {
             max-width: 800px;
@@ -905,10 +816,6 @@
                 padding: 20px;
             }
 
-            .navigation-mobile {
-                display: block;
-            }
-
             .bouton-primaire, .bouton-github-header {
                 width: 100%;
                 justify-content: center;
@@ -921,6 +828,95 @@
 
             .titre-authorize {
                 font-size: 24px;
+            }
+        }
+
+        /* NAVIGATION MOBILE */
+        .navigation-mobile {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--blanc);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .navigation-mobile::-webkit-scrollbar {
+            display: none;
+        }
+
+        .conteneur-navigation-mobile {
+            display: flex;
+            padding: 8px 0;
+            min-width: min-content;
+        }
+
+        .element-navigation-mobile {
+            flex: 0 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 12px 20px;
+            color: #666;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            min-width: 80px;
+        }
+
+        .element-navigation-mobile i {
+            font-size: 22px;
+        }
+
+        .element-navigation-mobile span {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .element-navigation-mobile.actif {
+            color: var(--jaune-primaire);
+        }
+
+        .element-navigation-mobile.admin {
+            color: var(--couleur-admin);
+        }
+
+        .element-navigation-mobile.portfolio {
+            color: var(--couleur-portfolio);
+        }
+
+        .element-navigation-mobile.me-connaitre {
+            color: var(--couleur-me-connaitre);
+        }
+
+        .element-navigation-mobile:active {
+            transform: scale(0.95);
+        }
+
+        .indicateur-scroll {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--jaune-primaire);
+            font-size: 18px;
+            animation: pulsation 2s infinite;
+        }
+
+        @keyframes pulsation {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
             }
         }
 
@@ -947,9 +943,13 @@
     </style>
 </head>
 <body>
+    {# Variables de session GitHub #}
+    {% set github_connecte = current_user.jeton_github is not none %}
+    {% set github_utilisateur = session.get('github_user') %}
+    {% set github_token_session = session.get('github_token') %}
 
-    <!-- CONDITION PRINCIPALE : VÉRIFICATION DU JETON GITHUB -->
-    {% if not session.get('github_token') and request.endpoint not in ['admin.authorize_page', 'github_bp.callback', 'admin.authorize_page', 'admin.skipp_authorize'] %}
+    {# Si l'utilisateur n'a PAS de jeton GitHub en base de données ET n'est pas sur la page d'authorization #}
+    {% if not github_connecte and request.endpoint not in ['admin.authorize_page', 'github_bp.callback', 'admin.skipp_authorize'] and not session.get('skip_github') %}
         <!-- REDIRECTION JAVASCRIPT VERS LA PAGE D'AUTHORISATION -->
         <script>
             window.location.href = "{{ url_for('admin.authorize_page') }}";
@@ -980,7 +980,7 @@
                     </div>
                 </div>
                 
-                <a href="{{ url_for('admin.authorize_page') }}" class="bouton-authorize">
+                <a href="{{ url_for('admin.link_github') }}" class="bouton-authorize">
                     <i class="fab fa-github"></i>
                     Autoriser avec GitHub
                 </a>
@@ -1036,12 +1036,12 @@
                         </div>
                         
                         <!-- STATUT GITHUB DYNAMIQUE -->
-                        {% if session.get('github_token') %}
+                        {% if github_connecte %}
                             <div class="status-github connecte">
                                 <i class="fab fa-github"></i>
                                 <span>GitHub connecté</span>
-                                {% if session.get('github_user') %}
-                                    <span style="margin-left: auto; font-weight: 600;">@{{ session.get('github_user').login }}</span>
+                                {% if github_utilisateur %}
+                                    <span style="margin-left: auto; font-weight: 600;">@{{ github_utilisateur.login }}</span>
                                 {% endif %}
                             </div>
                         {% else %}
@@ -1063,17 +1063,17 @@
                     <i class="fas fa-th-large"></i>
                     <span>Tableau de bord</span>
                 </a>
-                <a href="{{ url_for('admin.import_repo') }}" class="lien-navigation {% if request.endpoint == 'admin.import_repo' %}actif{% endif %}">
+                <a href="{{ url_for('admin.list_repos') }}" class="lien-navigation {% if request.endpoint == 'admin.list_repos' %}actif{% endif %}">
                     <i class="fas fa-folder-open"></i>
                     <span>Mes Projets</span>
-                    {% if not session.get('github_token') %}
+                    {% if not github_connecte %}
                         <span class="badge-github" style="background: #cf222e;">! Action requise</span>
                     {% endif %}
                 </a>
                 <a href="{{ url_for('admin.import_view') }}" class="lien-navigation {% if request.endpoint == 'admin.import_view' %}actif{% endif %}">
                     <i class="fab fa-github"></i>
                     <span>Importer GitHub</span>
-                    {% if not session.get('github_token') %}
+                    {% if not github_connecte %}
                         <span class="badge-github" style="background: #cf222e;">! Connecter</span>
                     {% endif %}
                 </a>
@@ -1086,7 +1086,7 @@
                 </a>
                 
                 <!-- NOUVEAU : Onglet Éditer Me Connaître -->
-                <a href="#" class="lien-navigation me-connaitre {% if request.endpoint == '#' %}actif{% endif %}">
+                <a href="{{ url_for('admin.about_edit') }}" class="lien-navigation me-connaitre {% if request.endpoint == 'admin.about_edit' %}actif{% endif %}">
                     <i class="fas fa-user-tie"></i>
                     <span>Éditer Me Connaître</span>
                     <span class="badge-me-connaitre">À PROPOS</span>
@@ -1141,9 +1141,16 @@
                             
                             <!-- STATUT GITHUB DANS L'EN-TÊTE -->
                             <div class="element-metadonnee">
-                                {% if session.get('github_token') %}
+                                {% if github_connecte %}
                                     <i class="fab fa-github" style="color: #2ea44f;"></i>
-                                    <span style="color: #2ea44f;">GitHub: {{ session.get('github_user').login if session.get('github_user') else 'Connecté' }}</span>
+                                    <span style="color: #2ea44f;">
+                                        GitHub: 
+                                        {% if github_utilisateur %}
+                                            {{ github_utilisateur.login }}
+                                        {% else %}
+                                            Connecté
+                                        {% endif %}
+                                    </span>
                                 {% else %}
                                     <i class="fab fa-github" style="color: #cf222e;"></i>
                                     <span style="color: #cf222e;">GitHub non connecté</span>
@@ -1168,7 +1175,7 @@
                             </button>
                         </div>
                         
-                        {% if not session.get('github_token') %}
+                        {% if not github_connecte %}
                             <a href="{{ url_for('admin.authorize_page') }}" class="bouton-github-header">
                                 <i class="fab fa-github"></i>
                                 Connecter GitHub
@@ -1206,7 +1213,7 @@
             {% endwith %}
 
             <!-- ALERTE SPÉCIALE SI GITHUB NON CONNECTÉ -->
-            {% if not session.get('github_token') and request.endpoint not in ['admin.authorize_page', 'github_bp.callback', 'admin.authorize_page', 'admin.skipp_authorize'] %}
+            {% if not github_connecte and request.endpoint not in ['admin.authorize_page', 'github_bp.callback', 'admin.skipp_authorize'] and not session.get('skip_github') %}
                 <section class="messages-flash">
                     <div class="alerte github-warning">
                         <i class="fab fa-github"></i>
@@ -1230,7 +1237,7 @@
                     <i class="fas fa-th-large"></i>
                     <span>Tableau</span>
                 </a>
-                <a href="{{ url_for('admin.import_repo') }}" class="element-navigation-mobile {% if request.endpoint == 'admin.import_repo' %}actif{% endif %}">
+                <a href="{{ url_for('admin.list_repos') }}" class="element-navigation-mobile {% if request.endpoint == 'admin.list_repos' %}actif{% endif %}">
                     <i class="fas fa-folder-open"></i>
                     <span>Projets</span>
                 </a>
@@ -1246,21 +1253,21 @@
                 </a>
                 
                 <!-- NOUVEAU : Éditer Me Connaître (mobile) -->
-                <a href="" class="element-navigation-mobile me-connaitre {% if request.endpoint == '#' %}actif{% endif %}">
+                <a href="{{ url_for('admin.about_edit') }}" class="element-navigation-mobile me-connaitre {% if request.endpoint == 'admin.about_edit' %}actif{% endif %}">
                     <i class="fas fa-user-tie"></i>
                     <span>Me Connaître</span>
                 </a>
                 
                 <!-- ADMIN - Uniquement Gestion des Statistiques (mobile) -->
                 {% if current_user.role == 'admin' %}
-                <a href="" class="element-navigation-mobile admin">
+                <a href="#" class="element-navigation-mobile admin">
                     <i class="fas fa-chart-line"></i>
                     <span>Statistiques</span>
                 </a>
                 {% endif %}
                 
                 <!-- BOUTON CONNECTER GITHUB MOBILE -->
-                {% if not session.get('github_token') %}
+                {% if not github_connecte %}
                     <a href="{{ url_for('admin.authorize_page') }}" class="element-navigation-mobile" style="color: #cf222e;">
                         <i class="fab fa-github"></i>
                         <span>Connecter</span>

@@ -80,6 +80,22 @@ github = oauth.register(
 )
 
 
+@admin_bp.route('/auth/github/authorize')
+@login_required
+def authorize_github():
+    redirect_uri = url_for('admin.github_callback', _external=True)
+    print('current_user  a pour propriete', current_user)
+    
+    # Personnalisation via kwargs
+    return github.authorize_redirect(
+        redirect_uri,
+        # 'allow_signup' : permet ou non à l'utilisateur de créer un compte GitHub s'il n'en a pas
+        allow_signup='true',
+        # 'login' : suggère un nom d'utilisateur spécifique pour la connexion
+        login=current_user.nom_utilisateur
+    )
+    
+    
 @admin_bp.route('/link-github')
 @login_required
 def link_github():
@@ -92,30 +108,27 @@ def link_github():
 @login_required
 def github_authorize_callback():
     try:
-        # Récupération du token via Authlib
         token = github.authorize_access_token()
-        
-        if token and 'access_token' in token:
-            # On stocke le jeton dans le champ spécifique jeton_github
+        if token:
+            # 1. Sauvegarde en DB
             current_user.jeton_github = token['access_token']
-            
             db.session.commit()
-            flash("Succès : Jeton GitHub enregistré dans jeton_github.", "success")
-        else:
-            flash("Erreur : Impossible de récupérer le jeton d'accès.", "danger")
-            
-    except Exception as e:
-        db.session.rollback()
-        flash(f"Erreur lors de l'autorisation : {str(e)}", "danger")
-        
-    return redirect(url_for('admin.dashboard'))
 
-@admin_bp.route('/auth/github/authorize')
-@login_required
-def authorize_github():
-    # L'URL où GitHub renverra l'utilisateur après acceptation
-    redirect_uri = url_for('admin.github_callback', _external=True)
-    return github.authorize_redirect(redirect_uri)
+            # 2. Récupération des infos profil via l'API GitHub
+            headers = {'Authorization': f"token {token['access_token']}"}
+            resp = requests.get('https://api.github.com/user', headers=headers)
+            profile = resp.json()
+
+            # 3. GÉNÉRATION DE LA SESSION
+            session['github_user'] = profile  # Contient login, id, avatar_url, etc.
+            session['github_token'] = token['access_token'] # Pour la compatibilité master.html
+            
+            flash(f"Connecté en tant que {profile['login']}", "success")
+        
+    except Exception as e:
+        flash(f"Erreur : {str(e)}", "danger")
+    
+    return redirect(url_for('admin.dashboard'))
 
 @admin_bp.route('/auth/github/callback')
 @login_required
