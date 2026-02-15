@@ -30,7 +30,7 @@ GITHUB_USER_URL = 'https://api.github.com/user'
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')  # Routes d'authentification
 main_bp = Blueprint('main', __name__)  # Routes principales (accueil, etc.)
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')  # Routes d'administration
-portfolio_bp = Blueprint('portfolio', __name__, url_prefix='/portfolio')  # Routes publiques du portfolio avec préfixe /portfolio
+portfolio_bp = Blueprint('portfolio', __name__)  # Routes publiques du portfolio
 github_bp = Blueprint('github_bp', __name__, url_prefix='/github')  # Routes GitHub OAuth
 
 # --- FONCTIONS UTILITAIRES COMMUNES ---
@@ -44,29 +44,24 @@ def verifier_jeton(token, salt, expiration=3600):
     """Vérifie un jeton email"""
     serialiseur = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
     try:
-        email = serialiseur.loads(token, salt=salt, max_age=expiration)
-        return email
+        return serialiseur.loads(token, salt=salt, max_age=expiration)
     except:
         return None
 
 def envoyer_email(destinataire, sujet, template, **kwargs):
     """Envoie un email"""
-    try:
-        msg = Message(
-            sujet,
-            recipients=[destinataire],
-            sender=current_app.config.get('MAIL_DEFAULT_SENDER')
-        )
-        msg.html = render_template(f'auth/{template}', **kwargs)
-        # Récupérer l'instance mail depuis l'application
-        mail = current_app.extensions.get('mail')
-        if mail:
-            mail.send(msg)
-            print(f"Email envoyé à {destinataire}")
-        else:
-            print("ERREUR: Mail non configuré")
-    except Exception as e:
-        print(f"Erreur lors de l'envoi d'email: {e}")
+    msg = Message(
+        sujet,
+        recipients=[destinataire],
+        sender=current_app.config.get('MAIL_DEFAULT_SENDER')
+    )
+    msg.html = render_template(f'auth/{template}', **kwargs)
+    # Récupérer l'instance mail depuis l'application
+    mail = current_app.extensions.get('mail')
+    if mail:
+        mail.send(msg)
+    else:
+        print("ERREUR: Mail non configuré")
 
 def get_media_path(subdir=''):
     """Retourne le chemin absolu vers le dossier media et le crée s'il n'existe pas"""
@@ -163,66 +158,50 @@ def get_common_context():
 
 @auth_bp.route("/register", methods=['GET', 'POST'])
 def register():
-    """Inscription d'un nouvel utilisateur"""
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
 
-        # Vérifier si l'email existe déjà
         if Utilisateur.query.filter_by(email=email).first():
             flash("Cette adresse email est déjà enregistrée.", "danger")
             return redirect(url_for('auth.login'))
 
-        # Créer le nouvel utilisateur
         nouvel_utilisateur = Utilisateur(
             email=email,
             nom_utilisateur=email.split('@')[0],
             mot_de_passe_hache=generate_password_hash(password),
-            est_confirme=False,
-            photo_profil='default-avatar.jpg',
-            photo_couverture='default-cover.jpg'
+            est_confirme=False
         )
 
         db.session.add(nouvel_utilisateur)
         db.session.commit()
 
-        # Envoyer l'email de confirmation
         token = generer_jeton(email, 'email-confirm-salt')
         lien = url_for('auth.confirmer_email', token=token, _external=True)
-        
-        # Garder HTTP pour le développement local
-        # Ne pas forcer HTTPS en local
-        
         envoyer_email(email, "Confirmez votre compte GitFetch", 'email_confirmation.html', confirm_url=lien)
 
-        flash("Compte créé ! Vérifiez votre boîte mail pour confirmer votre inscription.", "success")
+        flash("Compte créé ! Vérifiez votre boîte mail pour confirmer.", "success")
         return redirect(url_for('auth.login'))
 
     return render_template("auth/register.html")
 
 @auth_bp.route("/confirm/<token>")
 def confirmer_email(token):
-    """Confirmation d'email via le lien reçu"""
     email = verifier_jeton(token, 'email-confirm-salt')
     if not email:
-        flash("Le lien de confirmation est invalide ou a expiré.", "danger")
+        flash("Le lien est invalide ou a expiré.", "danger")
         return redirect(url_for('auth.register'))
 
     utilisateur = Utilisateur.query.filter_by(email=email).first_or_404()
-    
     if not utilisateur.est_confirme:
         utilisateur.est_confirme = True
-        utilisateur.date_confirmation = datetime.utcnow()
         db.session.commit()
-        flash("Email validé avec succès ! Vous pouvez maintenant vous connecter.", "success")
-    else:
-        flash("Cet email a déjà été confirmé.", "info")
+        flash("Email validé ! Vous pouvez vous connecter.", "success")
     
     return redirect(url_for('auth.login'))
 
 @auth_bp.route("/connexion", methods=['GET', 'POST'])
 def login():
-    """Connexion classique par email/mot de passe"""
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
@@ -231,13 +210,13 @@ def login():
         user = Utilisateur.query.filter_by(email=email).first()
 
         # 1. Vérification identifiants
-        if not user or not user.mot_de_passe_hache or not check_password_hash(user.mot_de_passe_hache, password):
+        if not user or not check_password_hash(user.mot_de_passe_hache, password):
             flash('Email ou mot de passe incorrect.', 'danger')
             return redirect(url_for('auth.login'))
 
         # 2. Vérification confirmation email
         if not user.est_confirme:
-            flash('Veuillez confirmer votre email avant de vous connecter. Vérifiez votre boîte de réception.', 'warning')
+            flash('Veuillez confirmer votre email avant de vous connecter.', 'warning')
             return redirect(url_for('auth.login'))
 
         # Mise à jour de la date de connexion
@@ -251,8 +230,6 @@ def login():
         # 3. Connexion de l'utilisateur
         login_user(user, remember=remember)
         
-        flash(f"Bon retour parmi nous, {user.nom_utilisateur} !", "success")
-        
         # Redirection vers le dashboard admin
         return redirect(url_for('admin.dashboard'))
 
@@ -261,14 +238,12 @@ def login():
 @auth_bp.route("/deconnexion")
 @login_required
 def logout():
-    """Déconnexion"""
     logout_user()
-    flash("Vous avez été déconnecté avec succès.", "info")
+    flash("Vous avez été déconnecté.", "info")
     return redirect(url_for('main.index'))
 
 @auth_bp.route("/forgot-password", methods=['GET', 'POST'])
 def forgot_password():
-    """Demande de réinitialisation de mot de passe"""
     if request.method == 'POST':
         email = request.form.get('email')
         user = Utilisateur.query.filter_by(email=email).first()
@@ -276,43 +251,27 @@ def forgot_password():
         if user:
             token = generer_jeton(email, 'recover-password-salt')
             recover_url = url_for('auth.reset_password', token=token, _external=True)
+            envoyer_email(email, "Réinitialisation de mot de passe", 'email_reset.html', recover_url=recover_url)
             
-            # Garder HTTP pour le développement local
-            # Ne pas forcer HTTPS en local
-                
-            envoyer_email(email, "Réinitialisation de votre mot de passe", 'email_reset.html', recover_url=recover_url)
-            
-        # Toujours afficher le même message pour des raisons de sécurité
-        flash("Si cette adresse email existe dans notre base, un lien de réinitialisation a été envoyé.", "info")
+        flash("Si cet email existe, un lien a été envoyé.", "info")
         return redirect(url_for('auth.login'))
         
     return render_template("auth/forgot_password.html")
 
 @auth_bp.route("/reset-password/<token>", methods=['GET', 'POST'])
 def reset_password(token):
-    """Réinitialisation du mot de passe"""
-    email = verifier_jeton(token, 'recover-password-salt', expiration=1800)  # 30 minutes
+    email = verifier_jeton(token, 'recover-password-salt', expiration=1800)
     if not email:
-        flash("Le lien de réinitialisation est invalide ou a expiré.", "danger")
+        flash("Le lien est invalide ou a expiré.", "danger")
         return redirect(url_for('auth.forgot_password'))
         
     if request.method == 'POST':
         new_password = request.form.get('newPassword')
-        confirm_password = request.form.get('confirmPassword')
-        
-        if new_password != confirm_password:
-            flash("Les mots de passe ne correspondent pas.", "danger")
-            return render_template("auth/reset_password.html", token=token)
-        
-        if len(new_password) < 6:
-            flash("Le mot de passe doit contenir au moins 6 caractères.", "danger")
-            return render_template("auth/reset_password.html", token=token)
-        
         user = Utilisateur.query.filter_by(email=email).first_or_404()
         user.mot_de_passe_hache = generate_password_hash(new_password)
         db.session.commit()
         
-        flash("Votre mot de passe a été mis à jour avec succès ! Vous pouvez maintenant vous connecter.", "success")
+        flash("Mot de passe mis à jour !", "success")
         return redirect(url_for('auth.login'))
         
     return render_template("auth/reset_password.html", token=token)
@@ -322,7 +281,40 @@ def reset_password(token):
 @auth_bp.route('/login/<name>')
 def social_login(name):
     """Route pour l'authentification sociale (Google, GitHub)"""
-    # Récupérer l'instance OAuth depuis l'application
+    
+    # CAS SPÉCIAL GITHUB - Utiliser notre propre implémentation
+    if name == 'github':
+        # Générer un état aléatoire pour la sécurité
+        state = secrets.token_urlsafe(16)
+        session['oauth_state'] = state
+        
+        # URL de callback - celle que vous utilisez
+        redirect_uri = url_for('auth.auth_callback', name='github', _external=True)
+        
+        # Forcer HTTP si nécessaire
+        if redirect_uri.startswith('https://'):
+            redirect_uri = redirect_uri.replace('https://', 'http://', 1)
+        
+        # Paramètres pour GitHub
+        params = {
+            'client_id': GITHUB_CLIENT_ID,
+            'redirect_uri': redirect_uri,
+            'scope': 'user:email',
+            'state': state,
+            'response_type': 'code'
+        }
+        
+        # URL d'autorisation GitHub
+        github_auth_url = 'https://github.com/login/oauth/authorize'
+        
+        print(f"=== GITHUB OAUTH DEBUG ===")
+        print(f"Redirect URI: {redirect_uri}")
+        print(f"State: {state}")
+        print(f"URL complète: {github_auth_url}?{urlencode(params)}")
+        
+        return redirect(f"{github_auth_url}?{urlencode(params)}")
+    
+    # Pour les autres providers (Google, etc.) on garde l'ancien système
     oauth = current_app.extensions.get('oauth')
     if not oauth:
         flash("Configuration OAuth manquante.", "danger")
@@ -334,24 +326,120 @@ def social_login(name):
         return redirect(url_for('auth.login'))
     
     redirect_uri = url_for('auth.auth_callback', name=name, _external=True)
-    
-    # IMPORTANT: Pour le développement local, on garde HTTP
-    # La ligne qui forçait le HTTPS a été supprimée
-    
-    print(f"DEBUG: Redirect URI: {redirect_uri}")
-    
-    # Paramètres supplémentaires selon le provider
-    if name == 'github':
-        return client.authorize_redirect(redirect_uri)
-    elif name == 'google':
-        return client.authorize_redirect(redirect_uri)
-    else:
-        return client.authorize_redirect(redirect_uri)
+    return client.authorize_redirect(redirect_uri)
 
 @auth_bp.route('/auth/<name>')
 def auth_callback(name):
     """Callback pour l'authentification sociale"""
-    # Récupérer l'instance OAuth depuis l'application
+    
+    # CAS SPÉCIAL GITHUB - Implémentation manuelle
+    if name == 'github':
+        print(f"=== GITHUB CALLBACK DEBUG ===")
+        print(f"URL reçue: {request.url}")
+        print(f"Arguments: {request.args}")
+        print(f"Session state: {session.get('oauth_state')}")
+        
+        # Vérifier l'état (sécurité CSRF)
+        state = request.args.get('state')
+        code = request.args.get('code')
+        error = request.args.get('error')
+        
+        if error:
+            flash(f"Erreur GitHub: {error}", "danger")
+            return redirect(url_for('auth.login'))
+        
+        if not state or state != session.get('oauth_state'):
+            flash("Erreur de sécurité OAuth (state invalide).", "danger")
+            return redirect(url_for('auth.login'))
+        
+        if not code:
+            flash("Code d'autorisation manquant.", "danger")
+            return redirect(url_for('auth.login'))
+        
+        # Échanger le code contre un access_token
+        token_response = requests.post(
+            GITHUB_TOKEN_URL,
+            headers={"Accept": "application/json"},
+            data={
+                "client_id": GITHUB_CLIENT_ID,
+                "client_secret": GITHUB_CLIENT_SECRET,
+                "code": code,
+                "redirect_uri": url_for('auth.auth_callback', name='github', _external=True)
+            },
+        )
+        
+        token_json = token_response.json()
+        print(f"Réponse token: {token_json}")
+        
+        if "access_token" not in token_json:
+            error_desc = token_json.get('error_description', 'Erreur inconnue')
+            flash(f"Impossible de récupérer le token GitHub: {error_desc}", "danger")
+            return redirect(url_for('auth.login'))
+        
+        access_token = token_json["access_token"]
+        
+        # Récupérer les informations de l'utilisateur
+        user_response = requests.get(
+            GITHUB_USER_URL,
+            headers={
+                "Authorization": f"token {access_token}",
+                "Accept": "application/json"
+            }
+        )
+        
+        if user_response.status_code != 200:
+            flash("Impossible de récupérer les informations utilisateur GitHub.", "danger")
+            return redirect(url_for('auth.login'))
+        
+        user_info = user_response.json()
+        
+        # Récupérer l'email (GitHub peut ne pas fournir l'email public)
+        email = user_info.get('email')
+        if not email:
+            # Récupérer les emails privés
+            emails_response = requests.get(
+                'https://api.github.com/user/emails',
+                headers={"Authorization": f"token {access_token}"}
+            )
+            if emails_response.status_code == 200:
+                emails = emails_response.json()
+                primary_email = next((e for e in emails if e.get('primary')), None)
+                email = primary_email.get('email') if primary_email else None
+        
+        if not email:
+            flash("Impossible de récupérer votre email GitHub.", "danger")
+            return redirect(url_for('auth.login'))
+        
+        pseudo = user_info.get('login')
+        avatar = user_info.get('avatar_url')
+        
+        # Gestion de l'utilisateur en DB
+        user = Utilisateur.query.filter_by(email=email).first()
+        if not user:
+            user = Utilisateur(
+                email=email,
+                nom_utilisateur=pseudo,
+                est_confirme=True,
+                mot_de_passe_hache=None
+            )
+            db.session.add(user)
+        
+        # Mise à jour du token et avatar
+        user.jeton_github = access_token
+        if avatar:
+            user.photo_profil = avatar
+        
+        db.session.commit()
+        
+        # Nettoyage session
+        session.pop('oauth_state', None)
+        
+        # Connexion et redirection
+        login_user(user)
+        flash(f"Bienvenue {user.nom_utilisateur} !", "success")
+        return redirect(url_for('admin.dashboard'))
+    
+    # Pour les autres providers (Google, etc.) on garde l'ancien code
     oauth = current_app.extensions.get('oauth')
     if not oauth:
         flash("Configuration OAuth manquante.", "danger")
@@ -362,76 +450,38 @@ def auth_callback(name):
         flash(f"Provider OAuth '{name}' non supporté.", "danger")
         return redirect(url_for('auth.login'))
     
-    try:
-        token = client.authorize_access_token()
-        access_token = token.get('access_token')
-    except Exception as e:
-        print(f"Erreur OAuth: {e}")
-        flash("Erreur lors de l'authentification. Veuillez réessayer.", "danger")
-        return redirect(url_for('auth.login'))
+    token = client.authorize_access_token()
+    access_token = token.get('access_token')
     
     # 1. Récupération des infos selon le provider
-    try:
-        if name == 'google':
-            user_info = client.get('https://www.googleapis.com/oauth2/v3/userinfo').json()
-            email = user_info.get('email')
-            pseudo = user_info.get('name', email.split('@')[0])
-            avatar = user_info.get('picture')
-        elif name == 'github':
-            user_info = client.get('user').json()
-            email = user_info.get('email')
-            if not email:
-                emails = client.get('user/emails').json()
-                # Chercher l'email principal
-                for e in emails:
-                    if e.get('primary'):
-                        email = e.get('email')
-                        break
-                if not email:
-                    email = emails[0].get('email') if emails else None
-            pseudo = user_info.get('login')
-            avatar = user_info.get('avatar_url')
-        else:
-            flash(f"Provider '{name}' non implémenté.", "danger")
-            return redirect(url_for('auth.login'))
-    except Exception as e:
-        print(f"Erreur récupération infos utilisateur: {e}")
-        flash("Erreur lors de la récupération de vos informations.", "danger")
+    if name == 'google':
+        user_info = client.get('https://www.googleapis.com/oauth2/v3/userinfo').json()
+        email = user_info.get('email')
+        pseudo = user_info.get('name', email.split('@')[0])
+        avatar = user_info.get('picture')
+    else:
+        flash(f"Provider '{name}' non implémenté.", "danger")
         return redirect(url_for('auth.login'))
-    
-    if not email:
-        flash("Impossible de récupérer votre adresse email.", "danger")
-        return redirect(url_for('auth.login'))
-    
+
     # 2. Gestion de l'utilisateur en DB
     user = Utilisateur.query.filter_by(email=email).first()
     if not user:
-        # Nouvel utilisateur
         user = Utilisateur(
             email=email, 
             nom_utilisateur=pseudo, 
             est_confirme=True, 
-            mot_de_passe_hache=None,
-            photo_profil='default-avatar.jpg',
-            photo_couverture='default-cover.jpg'
+            mot_de_passe_hache=None
         )
         db.session.add(user)
-        flash("Votre compte a été créé avec succès !", "success")
-    else:
-        flash(f"Bon retour parmi nous, {user.nom_utilisateur} !", "success")
-    
-    # 3. MISE À JOUR AUTOMATIQUE DU JETON ET AVATAR
-    if name == 'github' and access_token:
-        user.jeton_github = access_token
-    
-    # Sauvegarder l'avatar si c'est une URL (pas un fichier local)
-    if avatar and avatar.startswith('http'):
-        user.photo_profil = avatar  # C'est une URL, pas un fichier
+
+    if avatar:
+        user.photo_profil = avatar
     
     db.session.commit()
     
     # 4. Connexion et Redirection vers ADMIN
     login_user(user)
+    flash(f"Bienvenue {user.nom_utilisateur} !", "success")
     return redirect(url_for('admin.dashboard'))
 
 # ============================================
@@ -440,7 +490,6 @@ def auth_callback(name):
 
 @main_bp.route("/")
 def index():
-    """Page d'accueil du site"""
     return render_template('index.html')
 
 # ============================================
@@ -478,16 +527,6 @@ def dashboard():
 
     return render_template('admin/dashboard.html', repos=repos)
 
-
-
-
-
-"""=============================================="""
-#AFFICHAGE DES REPOS
-import requests
-from flask import render_template, flash, redirect, url_for
-from flask_login import login_required, current_user
-
 @admin_bp.route('/import-view')
 @login_required
 def import_view():
@@ -518,7 +557,7 @@ def import_view():
 def list_repos():
     """Affiche uniquement les projets déjà présents dans PostgreSQL"""
     projets = Projet.query.filter_by(utilisateur_id=current_user.id).order_by(Projet.id.desc()).all()
-    return render_template('list_repos.html', projets=projets)
+    return render_template('admin/list_repos.html', projets=projets)
 
 @admin_bp.route('/import-repo/<int:github_id>', methods=['POST'])
 @login_required
@@ -550,7 +589,6 @@ def import_repo(github_id):
 
     return redirect(url_for('admin.dashboard'))
 
-"""=============================================="""
 @admin_bp.route('/edit-project/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_project(id):
@@ -612,7 +650,7 @@ def edit_project(id):
 @admin_bp.route('/delete-project/<int:id>', methods=['POST'])
 @login_required
 def delete_project(id):
-    """Supprime un projet de la base de données"""
+    """Supprime un projet de la base de données (le retire du front-end)"""
     projet = Projet.query.filter_by(id=id, utilisateur_id=current_user.id).first_or_404()
     
     if projet.image_couverture:
@@ -631,7 +669,7 @@ def delete_project(id):
 @admin_bp.route('/refresh-github', methods=['POST'])
 @login_required
 def refresh_repos():
-    """Redirige vers le dashboard pour forcer un appel API GitHub"""
+    """Redirige simplement vers le dashboard pour forcer un appel API GitHub"""
     return redirect(url_for('admin.dashboard'))
 
 # --- ROUTES DE PROFIL ET MEDIA ---
@@ -640,8 +678,10 @@ def refresh_repos():
 @login_required
 def edit_profile():
     """
-    Gère l'édition du profil utilisateur
+    Gère l'édition du profil utilisateur avec une structure media/ à la racine du projet.
+    Dossiers : media/profiles/, media/covers/, media/docs/
     """
+
     if request.method == 'POST':
         try:
             # === 1. INFORMATIONS PERSONNELLES ===
@@ -744,7 +784,6 @@ def edit_profile():
 @admin_bp.route('/portfolio/edit', methods=['GET', 'POST'])
 @login_required
 def edit_portfolio_content():
-    """Édition du contenu du portfolio"""
     # Récupérer ou créer la config pour l'utilisateur
     config = PortfolioConfig.query.filter_by(utilisateur_id=current_user.id).first()
     if not config:
@@ -806,7 +845,6 @@ def edit_portfolio_content():
 @admin_bp.route('/about/edit', methods=['GET', 'POST'])
 @login_required
 def about_edit():
-    """Édition de la page À propos"""
     config = AboutPage.query.filter_by(utilisateur_id=current_user.id).first()
     
     if request.method == 'POST':
@@ -905,29 +943,10 @@ def about_edit():
 
 # --- ROUTES DE SERVICE DE FICHIERS POUR L'ADMIN ---
 
-import os
-from flask import current_app, send_from_directory, abort
-
-# Route publique pour le portfolio (à mettre dans la partie publique de routes.py)
-@admin_bp.route('/media/<folder>/<filename>')
-def serve_portfolio_media(folder, filename):
-    """Sert les médias pour les visiteurs du portfolio"""
-    # Liste blanche des dossiers autorisés pour éviter les failles de sécurité
-    allowed_folders = ['profiles', 'covers', 'docs', 'projects', 'about', 'uploads']
-    
-    if folder not in allowed_folders:
-        abort(404)
-
-    # On pointe vers le dossier media à la racine
-    # current_app.root_path est le dossier GITFETCH-MONOLITHIQUE
-    media_dir = os.path.join(current_app.root_path, 'media', folder)
-    
-    return send_from_directory(media_dir, filename)
-
-@admin_bp.route('/admin/media/<type>/<filename>')
+@admin_bp.route('/media/<type>/<filename>')
 @login_required
-def serve_admin_media(type, filename):
-    """Sert les fichiers depuis le dossier media avec vérification de propriété"""
+def serve_media(type, filename):
+    """Sert les fichiers depuis le dossier media pour l'admin"""
     
     subdirs = {
         'avatar': 'profiles',
@@ -941,140 +960,77 @@ def serve_admin_media(type, filename):
     if not subdir:
         abort(404)
     
-    # Chemin vers le dossier media racine
-    media_dir = os.path.join(current_app.root_path, 'media', subdir)
+    media_dir = get_media_path(subdir)
     
-    # --- LOGIQUE DE SÉCURITÉ ---
-    # Vérifier que le fichier appartient bien à l'utilisateur connecté
-    prefix_map = {
-        'avatar': f'avatar_{current_user.id}_',
-        'cover': f'cover_{current_user.id}_',
-        'cv': f'cv_{current_user.id}_'
-    }
-
-    if type in prefix_map:
-        if not filename.startswith(prefix_map[type]):
-            abort(403)
-            
+    # Sécurité : vérifier que le fichier appartient à l'utilisateur
+    if type == 'avatar' and not filename.startswith(f'avatar_{current_user.id}_'):
+        abort(403)
+    elif type == 'cover' and not filename.startswith(f'cover_{current_user.id}_'):
+        abort(403)
+    elif type == 'cv' and not filename.startswith(f'cv_{current_user.id}_'):
+        abort(403)
     elif type == 'proj':
-        # Extraction de l'ID projet (format attendu : proj_ID_nom.jpg)
-        try:
-            parts = filename.split('_')
-            if len(parts) > 1 and parts[1].isdigit():
-                projet_id = int(parts[1])
-                projet = Projet.query.filter_by(id=projet_id, utilisateur_id=current_user.id).first()
-                if not projet:
-                    abort(403)
-            else:
+        # Pour les projets, on vérifie que le projet appartient à l'utilisateur
+        projet_id = filename.split('_')[1] if '_' in filename else None
+        if projet_id and projet_id.isdigit():
+            projet = Projet.query.filter_by(id=int(projet_id), utilisateur_id=current_user.id).first()
+            if not projet:
                 abort(403)
-        except Exception:
-            abort(403)
-            
+    
     return send_from_directory(media_dir, filename)
 
-@admin_bp.route('/admin/init-media-folders')
-@login_required
+@admin_bp.route('/init-media-folders')
 def init_media_folders():
     """Crée la structure media/ à la racine du projet"""
     try:
-        # Dans un monolithe, root_path est la racine du projet
-        media_path = os.path.join(current_app.root_path, 'media')
+        project_root = current_app.root_path
+        media_path = os.path.join(project_root, 'media')
         
         subdirs = ['profiles', 'covers', 'docs', 'projects', 'about', 'uploads']
-        created = []
         
         for subdir in subdirs:
             dir_path = os.path.join(media_path, subdir)
             if not os.path.exists(dir_path):
                 os.makedirs(dir_path, exist_ok=True)
-                created.append(subdir)
+                print(f"Créé: {dir_path}")
         
-        return f"Structure media prête. Dossiers créés : {', '.join(created) if created else 'Aucun (déjà existants)'}"
+        return f'''
+        <h1>Structure media créée avec succès!</h1>
+        <p>Racine du projet: {project_root}</p>
+        <p>Dossier media: {media_path}</p>
+        <ul>
+            <li>{os.path.join(media_path, 'profiles')}</li>
+            <li>{os.path.join(media_path, 'covers')}</li>
+            <li>{os.path.join(media_path, 'docs')}</li>
+            <li>{os.path.join(media_path, 'projects')}</li>
+            <li>{os.path.join(media_path, 'about')}</li>
+            <li>{os.path.join(media_path, 'uploads')}</li>
+        </ul>
+        <p><a href="{url_for('admin.edit_profile')}">Retour à l'édition du profil</a></p>
+        '''
+    
     except Exception as e:
-        return f"Erreur : {str(e)}"
-
+        return f"Erreur lors de la création de la structure media: {str(e)}"
 
 # ============================================
-# BLUEPRINT GITHUB (Routes OAuth GitHub)
+# BLUEPRINT GITHUB (Routes OAuth GitHub) - DÉSACTIVÉ
 # ============================================
+# Note: Ce blueprint est conservé mais n'est plus utilisé pour l'authentification
+# L'authentification GitHub se fait maintenant via /auth/login/github et /auth/auth/github
 
 @github_bp.route('/authorize')
 @login_required
 def authorize():
-    """Redirige vers GitHub pour l'autorisation OAuth"""
-    if not GITHUB_CLIENT_ID or not GITHUB_CLIENT_SECRET:
-        flash('Configuration GitHub manquante. Contactez l\'administrateur.', 'error')
-        return redirect(url_for('admin.dashboard'))
-    
-    # Générer un état aléatoire pour la sécurité
-    state = secrets.token_urlsafe(16)
-    session['oauth_state'] = state
-    
-    # URL de callback
-    redirect_uri = url_for('github_bp.callback', _external=True)
-    
-    # IMPORTANT: Pour le développement local, on garde HTTP
-    # Ne pas forcer HTTPS en local
-    
-    # Paramètres de la requête OAuth
-    params = {
-        'client_id': GITHUB_CLIENT_ID,
-        'redirect_uri': redirect_uri,
-        'scope': 'repo read:user user:email',
-        'state': state
-    }
-    
-    # Stocker l'URL de redirection après autorisation
-    next_url = request.args.get('next', url_for('admin.dashboard'))
-    session['next_url'] = next_url
-    print(f"Callback URL: {redirect_uri}")
-    
-    return redirect(f"{GITHUB_AUTHORIZE_URL}?{urlencode(params)}")
+    """Route redirigeant vers la nouvelle méthode d'authentification"""
+    flash("Veuillez utiliser le lien 'Se connecter avec GitHub' sur la page de connexion.", "info")
+    return redirect(url_for('auth.social_login', name='github'))
 
 @github_bp.route('/callback')
 @login_required
 def callback():
-    """Callback après autorisation GitHub"""
-    # Vérifier l'état (sécurité CSRF)
-    state = request.args.get('state')
-    code = request.args.get('code')
-
-    if not state or state != session.get('oauth_state'):
-        flash("Erreur de sécurité OAuth (state invalide).", "error")
-        return redirect(url_for('admin.dashboard'))
-
-    if not code:
-        flash("Code d'autorisation manquant.", "error")
-        return redirect(url_for('admin.dashboard'))
-
-    # Échanger le code contre un access_token
-    token_response = requests.post(
-        GITHUB_TOKEN_URL,
-        headers={"Accept": "application/json"},
-        data={
-            "client_id": GITHUB_CLIENT_ID,
-            "client_secret": GITHUB_CLIENT_SECRET,
-            "code": code,
-        },
-    )
-
-    token_json = token_response.json()
-
-    if "access_token" not in token_json:
-        flash("Impossible de récupérer le token GitHub.", "error")
-        return redirect(url_for('admin.dashboard'))
-
-    access_token = token_json["access_token"]
-
-    # Sauvegarder le token en base
-    current_user.jeton_github = access_token
-    db.session.commit()
-
-    # Nettoyage session
-    session.pop('oauth_state', None)
-
-    flash("Compte GitHub connecté avec succès !", "success")
-    return redirect(url_for('admin.dashboard'))
+    """Route redirigeant vers la nouvelle méthode d'authentification"""
+    flash("Veuillez utiliser le lien 'Se connecter avec GitHub' sur la page de connexion.", "info")
+    return redirect(url_for('auth.social_login', name='github'))
 
 @github_bp.route('/revoke')
 @login_required
@@ -1127,9 +1083,8 @@ def debug_github():
 # BLUEPRINT PORTFOLIO (Routes publiques)
 # ============================================
 
-@portfolio_bp.route('/portfolio')
+@portfolio_bp.route('/')
 def home():
-    """Page d'accueil du portfolio"""
     context = get_common_context()
     user = context.get('user')
     
