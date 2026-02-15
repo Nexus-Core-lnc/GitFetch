@@ -1,0 +1,1202 @@
+{% extends "admin/master.html" %}
+
+{% block title %}Configuration Portfolio - GitFetch{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuration Portfolio - GitFetch</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #ffc107;
+            --primary-dark: #f9a825;
+            --dark-bg: #0a192f;
+            --darker-bg: #112240;
+            --light-text: #ccd6f6;
+            --gray-text: #666;
+            --white: #ffffff;
+            --light-bg: #f9f9f9;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.15);
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+        }
+
+        body {
+            font-family: "Poppins", sans-serif;
+            color: #333;
+            line-height: 1.6;
+            background-color: var(--white);
+        }
+
+        h1, h2, h3, h4 {
+            font-family: "Montserrat", sans-serif;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 28px;
+            background: var(--primary-color);
+            color: #000;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-family: "Poppins", sans-serif;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 193, 7, 0.3);
+            background: var(--primary-dark);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+            border: none;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            box-shadow: 0 10px 20px rgba(220, 53, 69, 0.3);
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+            padding: 80px 0 60px;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: "";
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 193, 7, 0.03);
+            border-radius: 50%;
+            top: -200px;
+            right: -100px;
+        }
+
+        .page-header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .page-header-text h1 {
+            font-size: 46px;
+            margin-bottom: 15px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out forwards;
+        }
+
+        .page-header-text h1 .highlight {
+            color: var(--primary-color);
+            position: relative;
+            display: inline-block;
+        }
+
+        .page-header-text h1 .highlight::after {
+            content: "";
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background-color: rgba(255, 193, 7, 0.2);
+            z-index: -1;
+        }
+
+        .page-header-text p {
+            color: var(--light-text);
+            font-size: 18px;
+            max-width: 700px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.3s forwards;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-5px);
+        }
+
+        /* Edit Section */
+        .edit-section {
+            padding: 60px 0;
+            background: var(--white);
+        }
+
+        .edit-form-container {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .form-header {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--light-bg);
+        }
+
+        .form-header h2 {
+            font-size: 32px;
+            color: var(--dark-bg);
+            margin-bottom: 10px;
+        }
+
+        .form-header p {
+            color: var(--gray-text);
+            font-size: 16px;
+        }
+
+        /* Section Cards */
+        .section-card {
+            background: var(--light-bg);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #000;
+        }
+
+        .section-header h3 {
+            font-size: 24px;
+            color: var(--dark-bg);
+        }
+
+        /* Form Groups */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        .form-grid.single-column {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--dark-bg);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+        }
+
+        .form-group label i {
+            color: var(--primary-color);
+        }
+
+        .label-hint {
+            display: block;
+            font-size: 13px;
+            color: var(--gray-text);
+            font-weight: 400;
+            margin-top: 3px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            padding: 14px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-family: "Poppins", sans-serif;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Dynamic Items */
+        .dynamic-items-section {
+            margin-top: 20px;
+        }
+
+        .dynamic-item {
+            background: var(--white);
+            border: 2px solid #eee;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .dynamic-item:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.1);
+        }
+
+        .item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .item-number {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: var(--dark-bg);
+        }
+
+        .item-number i {
+            color: var(--primary-color);
+        }
+
+        .btn-remove {
+            background: transparent;
+            border: 1px solid var(--danger-color);
+            color: var(--danger-color);
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        .btn-remove:hover {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .add-item-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background: transparent;
+            border: 2px dashed var(--primary-color);
+            color: var(--primary-color);
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+
+        .add-item-btn:hover {
+            background: rgba(255, 193, 7, 0.1);
+            border-style: solid;
+        }
+
+        /* Icon Selector */
+        .icon-selector {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .selected-icon {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 14px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            background: var(--white);
+            transition: all 0.3s;
+        }
+
+        .selected-icon:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.1);
+        }
+
+        .selected-icon i {
+            font-size: 24px;
+            color: var(--primary-color);
+            width: 30px;
+            text-align: center;
+        }
+
+        .selected-icon span {
+            color: var(--gray-text);
+            font-size: 14px;
+        }
+
+        /* Icon Picker Modal */
+        .icon-picker-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-picker-modal.active {
+            display: flex;
+        }
+
+        .icon-picker-content {
+            background: var(--white);
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .icon-picker-header {
+            padding: 25px 30px;
+            border-bottom: 2px solid var(--light-bg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .icon-picker-header h3 {
+            font-size: 24px;
+            color: var(--dark-bg);
+            margin: 0;
+        }
+
+        .icon-picker-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--light-bg);
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .icon-picker-close:hover {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .icon-picker-search {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--light-bg);
+        }
+
+        .icon-picker-search input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: "Poppins", sans-serif;
+        }
+
+        .icon-picker-search input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.1);
+        }
+
+        .icon-picker-categories {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--light-bg);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 8px 16px;
+            border: 2px solid #eee;
+            background: var(--white);
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--gray-text);
+        }
+
+        .category-btn:hover,
+        .category-btn.active {
+            border-color: var(--primary-color);
+            background: rgba(255, 193, 7, 0.1);
+            color: var(--primary-color);
+        }
+
+        .icon-picker-grid {
+            padding: 20px 30px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .icons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+        }
+
+        .icon-option {
+            aspect-ratio: 1;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--white);
+        }
+
+        .icon-option:hover {
+            border-color: var(--primary-color);
+            background: rgba(255, 193, 7, 0.1);
+            transform: scale(1.05);
+        }
+
+        .icon-option i {
+            font-size: 28px;
+            color: var(--dark-bg);
+        }
+
+        .icon-option:hover i {
+            color: var(--primary-color);
+        }
+
+        .no-icons-message {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray-text);
+        }
+
+        .no-icons-message i {
+            font-size: 48px;
+            opacity: 0.3;
+            margin-bottom: 15px;
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid var(--light-bg);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .page-header-text h1 {
+                font-size: 32px;
+            }
+
+            .edit-form-container {
+                padding: 25px;
+            }
+
+            .section-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="page-header-content">
+                <div class="page-header-text">
+                    <h1>Configuration <span class="highlight">Portfolio</span></h1>
+                    <p>Personnalisez l'apparence et le contenu de votre portfolio professionnel</p>
+                </div>
+                <a href="{{ url_for('admin.dashboard') }}" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Retour</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Edit Section -->
+    <section class="edit-section">
+        <div class="container">
+            <div class="edit-form-container">
+                <div class="form-header">
+                    <h2><i class="fas fa-cog"></i> Paramètres du Portfolio</h2>
+                    <p>Configurez les différentes sections de votre portfolio en temps réel</p>
+                </div>
+
+                <form method="POST" class="portfolio-form">
+                    
+                    <!-- Section Hero -->
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-home"></i>
+                            </div>
+                            <h3>Section Hero (Accueil)</h3>
+                        </div>
+
+                        <div class="form-grid single-column">
+                            <div class="form-group">
+                                <label>
+                                    <i class="fas fa-heading"></i>
+                                    Slogan principal
+                                    <span class="label-hint">Le texte s'affichera en majuscules par défaut via votre CSS</span>
+                                </label>
+                                <input type="text" name="hero_titre" value="{{ config.hero_titre }}" 
+                                       placeholder="Ex: Créons ensemble votre présence digitale">
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <i class="fas fa-align-left"></i>
+                                    Description sous le slogan
+                                </label>
+                                <textarea name="hero_description" rows="3" 
+                                          placeholder="Décrivez votre activité principale...">{{ config.hero_description }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section À Propos -->
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <h3>Section À Propos</h3>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>
+                                    <i class="fas fa-heading"></i>
+                                    Titre principal
+                                </label>
+                                <input type="text" name="about_titre" value="{{ config.about_titre }}" 
+                                       placeholder="Ex: Spécialiste IT & Solutions Web">
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <i class="fas fa-text-width"></i>
+                                    Sous-titre
+                                </label>
+                                <input type="text" name="about_soustitre" value="{{ config.about_soustitre }}" 
+                                       placeholder="Ex: Précision. Performance. Innovation.">
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label>
+                                    <i class="fas fa-align-left"></i>
+                                    Paragraphe descriptif
+                                </label>
+                                <textarea name="about_description" rows="5" 
+                                          placeholder="Présentez votre parcours et expertise...">{{ config.about_description }}</textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <i class="fas fa-link"></i>
+                                    Texte du lien "En savoir plus"
+                                </label>
+                                <input type="text" name="about_lien_texte" value="{{ config.about_lien_texte }}" 
+                                       placeholder="Ex: Découvrir mon parcours">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Items Spécialités -->
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <h3>Spécialités & Expertises</h3>
+                        </div>
+
+                        <div class="dynamic-items-section" id="skills-section">
+                            {% for skill in config.about_skills_json|default([], true) %}
+                            <div class="dynamic-item">
+                                <div class="item-header">
+                                    <span class="item-number">
+                                        <i class="fas fa-grip-vertical"></i>
+                                        Spécialité #{{ loop.index }}
+                                    </span>
+                                    <button type="button" class="btn btn-small btn-remove" onclick="this.closest('.dynamic-item').remove()">
+                                        <i class="fas fa-times"></i> Supprimer
+                                    </button>
+                                </div>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label>
+                                            <i class="fas fa-tag"></i>
+                                            Nom de la spécialité
+                                        </label>
+                                        <input type="text" name="skill_item_nom[]" value="{{ skill.nom }}" 
+                                               placeholder="Ex: SÉCURITÉ" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>
+                                            <i class="fas fa-icons"></i>
+                                            Icône de la spécialité
+                                        </label>
+                                        <div class="icon-selector" onclick="openIconPicker(this, 'skill')">
+                                            <input type="hidden" name="skill_item_icon[]" value="{{ skill.icon }}" required>
+                                            <div class="selected-icon">
+                                                <i class="{{ skill.icon }}"></i>
+                                                <span>Changer l'icône</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <button type="button" class="add-item-btn" onclick="addSkillItem()">
+                            <i class="fas fa-plus"></i>
+                            Ajouter une spécialité
+                        </button>
+                    </div>
+
+                    <!-- Stack Technique -->
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <h3>Stack Technique</h3>
+                        </div>
+
+                        <div class="dynamic-items-section" id="tech-section">
+                            {% for tech in config.tech_stack_json|default([], true) %}
+                            <div class="dynamic-item">
+                                <div class="item-header">
+                                    <span class="item-number">
+                                        <i class="fas fa-grip-vertical"></i>
+                                        Technologie #{{ loop.index }}
+                                    </span>
+                                    <button type="button" class="btn btn-small btn-remove" onclick="this.closest('.dynamic-item').remove()">
+                                        <i class="fas fa-times"></i> Supprimer
+                                    </button>
+                                </div>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label>
+                                            <i class="fas fa-laptop-code"></i>
+                                            Nom de la technologie
+                                        </label>
+                                        <input type="text" name="tech_nom[]" value="{{ tech.nom }}" 
+                                               placeholder="Ex: Python" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>
+                                            <i class="fas fa-percentage"></i>
+                                            Niveau de maîtrise (%)
+                                        </label>
+                                        <input type="number" name="tech_pourcent[]" value="{{ tech.pourcent }}" 
+                                               min="0" max="100" placeholder="85" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>
+                                            <i class="fas fa-icons"></i>
+                                            Icône
+                                        </label>
+                                        <div class="icon-selector" onclick="openIconPicker(this, 'tech')">
+                                            <input type="hidden" name="tech_icon[]" value="{{ tech.icon }}">
+                                            <div class="selected-icon">
+                                                <i class="{{ tech.icon if tech.icon else 'fas fa-code' }}"></i>
+                                                <span>Changer l'icône</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>
+                                            <i class="fas fa-folder"></i>
+                                            Catégorie
+                                        </label>
+                                        <input type="text" name="tech_cat[]" value="{{ tech.cat }}" 
+                                               placeholder="Ex: BACK-END">
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <button type="button" class="add-item-btn" onclick="addTechStack()">
+                            <i class="fas fa-plus"></i>
+                            Ajouter une compétence technique
+                        </button>
+                    </div>
+
+                    <!-- Autres Titres -->
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-palette"></i>
+                            </div>
+                            <h3>Titres des autres sections</h3>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>
+                                    <i class="fas fa-project-diagram"></i>
+                                    Titre de la section Projets
+                                </label>
+                                <input type="text" name="projects_titre" value="{{ config.projects_titre }}" 
+                                       placeholder="Ex: Mes Réalisations">
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <i class="fas fa-envelope"></i>
+                                    Titre de la section Contact (CTA)
+                                </label>
+                                <input type="text" name="cta_titre" value="{{ config.cta_titre }}" 
+                                       placeholder="Ex: Travaillons Ensemble">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i>
+                            Enregistrer toutes les modifications
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Icon Picker Modal -->
+    <div class="icon-picker-modal" id="iconPickerModal">
+        <div class="icon-picker-content">
+            <div class="icon-picker-header">
+                <h3><i class="fas fa-icons"></i> Choisir une icône</h3>
+                <button class="icon-picker-close" onclick="closeIconPicker()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="icon-picker-search">
+                <input type="text" id="iconSearch" placeholder="Rechercher une icône..." 
+                       oninput="filterIcons(this.value)">
+            </div>
+
+            <div class="icon-picker-categories">
+                <button class="category-btn active" onclick="filterByCategory('all')">Tout</button>
+                <button class="category-btn" onclick="filterByCategory('business')">Business</button>
+                <button class="category-btn" onclick="filterByCategory('tech')">Tech</button>
+                <button class="category-btn" onclick="filterByCategory('design')">Design</button>
+                <button class="category-btn" onclick="filterByCategory('communication')">Communication</button>
+                <button class="category-btn" onclick="filterByCategory('misc')">Autres</button>
+            </div>
+
+            <div class="icon-picker-grid">
+                <div class="icons-grid" id="iconsGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Base d'icônes organisée par catégorie
+        const iconDatabase = {
+            business: [
+                'fas fa-briefcase', 'fas fa-chart-line', 'fas fa-handshake', 'fas fa-bullseye',
+                'fas fa-trophy', 'fas fa-award', 'fas fa-medal', 'fas fa-star',
+                'fas fa-clipboard-check', 'fas fa-tasks', 'fas fa-project-diagram', 'fas fa-sitemap'
+            ],
+            tech: [
+                'fas fa-laptop-code', 'fas fa-code', 'fas fa-terminal', 'fas fa-database',
+                'fas fa-server', 'fas fa-network-wired', 'fas fa-microchip', 'fas fa-robot',
+                'fab fa-python', 'fab fa-js', 'fab fa-react', 'fab fa-node',
+                'fab fa-docker', 'fab fa-git', 'fab fa-github', 'fab fa-npm',
+                'fas fa-shield-alt', 'fas fa-lock', 'fas fa-key', 'fas fa-fingerprint',
+                'fas fa-mobile-alt', 'fas fa-tablet-alt', 'fas fa-desktop', 'fas fa-cloud'
+            ],
+            design: [
+                'fas fa-paint-brush', 'fas fa-palette', 'fas fa-pencil-ruler', 'fas fa-drafting-compass',
+                'fas fa-magic', 'fas fa-wand-magic', 'fas fa-fill-drip', 'fas fa-eye',
+                'fab fa-figma', 'fab fa-sketch', 'fas fa-bezier-curve', 'fas fa-vector-square'
+            ],
+            communication: [
+                'fas fa-comments', 'fas fa-comment-dots', 'fas fa-envelope', 'fas fa-paper-plane',
+                'fas fa-phone', 'fas fa-video', 'fas fa-microphone', 'fas fa-headset',
+                'fas fa-bullhorn', 'fas fa-rss', 'fab fa-slack', 'fab fa-discord'
+            ],
+            misc: [
+                'fas fa-lightbulb', 'fas fa-rocket', 'fas fa-fire', 'fas fa-bolt',
+                'fas fa-heart', 'fas fa-thumbs-up', 'fas fa-check', 'fas fa-check-circle',
+                'fas fa-cog', 'fas fa-tools', 'fas fa-wrench', 'fas fa-hammer',
+                'fas fa-globe', 'fas fa-map-marker-alt', 'fas fa-flag', 'fas fa-bookmark',
+                'fas fa-user', 'fas fa-users', 'fas fa-user-tie', 'fas fa-graduation-cap',
+                'fas fa-book', 'fas fa-file-alt', 'fas fa-folder', 'fas fa-archive'
+            ]
+        };
+
+        let currentIconSelector = null;
+        let currentIconType = null;
+
+        // Ouvrir le sélecteur d'icônes
+        function openIconPicker(selector, type) {
+            currentIconSelector = selector;
+            currentIconType = type;
+            
+            const modal = document.getElementById('iconPickerModal');
+            modal.classList.add('active');
+            
+            // Réinitialiser et afficher toutes les icônes
+            document.getElementById('iconSearch').value = '';
+            filterByCategory('all');
+        }
+
+        // Fermer le sélecteur
+        function closeIconPicker() {
+            const modal = document.getElementById('iconPickerModal');
+            modal.classList.remove('active');
+            currentIconSelector = null;
+            currentIconType = null;
+        }
+
+        // Fermer en cliquant en dehors
+        document.getElementById('iconPickerModal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeIconPicker();
+            }
+        });
+
+        // Filtrer par catégorie
+        function filterByCategory(category) {
+            // Mettre à jour les boutons actifs
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Obtenir les icônes de la catégorie
+            let icons = [];
+            if (category === 'all') {
+                Object.values(iconDatabase).forEach(cat => {
+                    icons = icons.concat(cat);
+                });
+            } else {
+                icons = iconDatabase[category] || [];
+            }
+
+            // Afficher les icônes
+            displayIcons(icons);
+        }
+
+        // Filtrer par recherche
+        function filterIcons(searchTerm) {
+            if (!searchTerm.trim()) {
+                filterByCategory('all');
+                return;
+            }
+
+            // Rechercher dans toutes les icônes
+            let allIcons = [];
+            Object.values(iconDatabase).forEach(cat => {
+                allIcons = allIcons.concat(cat);
+            });
+
+            const filtered = allIcons.filter(icon => 
+                icon.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+
+            displayIcons(filtered);
+        }
+
+        // Afficher les icônes dans la grille
+        function displayIcons(icons) {
+            const grid = document.getElementById('iconsGrid');
+            
+            if (icons.length === 0) {
+                grid.innerHTML = `
+                    <div class="no-icons-message">
+                        <i class="fas fa-search"></i>
+                        <p>Aucune icône trouvée</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = icons.map(iconClass => `
+                <div class="icon-option" onclick="selectIcon('${iconClass}')">
+                    <i class="${iconClass}"></i>
+                </div>
+            `).join('');
+        }
+
+        // Sélectionner une icône
+        function selectIcon(iconClass) {
+            if (!currentIconSelector) return;
+
+            // Mettre à jour l'input caché et l'affichage
+            const hiddenInput = currentIconSelector.querySelector('input[type="hidden"]');
+            const iconDisplay = currentIconSelector.querySelector('.selected-icon i');
+            
+            hiddenInput.value = iconClass;
+            iconDisplay.className = iconClass;
+
+            // Fermer la modal
+            closeIconPicker();
+        }
+
+        // Compteurs pour les items dynamiques
+        let skillCount = {{ config.about_skills_json|default([], true)|length }};
+        let techCount = {{ config.tech_stack_json|default([], true)|length }};
+
+        // Ajouter une spécialité
+        function addSkillItem() {
+            skillCount++;
+            const container = document.getElementById('skills-section');
+            const html = `
+            <div class="dynamic-item">
+                <div class="item-header">
+                    <span class="item-number">
+                        <i class="fas fa-grip-vertical"></i>
+                        Spécialité #${skillCount}
+                    </span>
+                    <button type="button" class="btn btn-small btn-remove" onclick="this.closest('.dynamic-item').remove()">
+                        <i class="fas fa-times"></i> Supprimer
+                    </button>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-tag"></i>
+                            Nom de la spécialité
+                        </label>
+                        <input type="text" name="skill_item_nom[]" placeholder="Ex: SÉCURITÉ" required>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-icons"></i>
+                            Icône de la spécialité
+                        </label>
+                        <div class="icon-selector" onclick="openIconPicker(this, 'skill')">
+                            <input type="hidden" name="skill_item_icon[]" value="fas fa-star" required>
+                            <div class="selected-icon">
+                                <i class="fas fa-star"></i>
+                                <span>Changer l'icône</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+            container.insertAdjacentHTML('beforeend', html);
+        }
+
+        // Ajouter une compétence technique
+        function addTechStack() {
+            techCount++;
+            const container = document.getElementById('tech-section');
+            const html = `
+            <div class="dynamic-item">
+                <div class="item-header">
+                    <span class="item-number">
+                        <i class="fas fa-grip-vertical"></i>
+                        Technologie #${techCount}
+                    </span>
+                    <button type="button" class="btn btn-small btn-remove" onclick="this.closest('.dynamic-item').remove()">
+                        <i class="fas fa-times"></i> Supprimer
+                    </button>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-laptop-code"></i>
+                            Nom de la technologie
+                        </label>
+                        <input type="text" name="tech_nom[]" placeholder="Ex: Python" required>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-percentage"></i>
+                            Niveau de maîtrise (%)
+                        </label>
+                        <input type="number" name="tech_pourcent[]" min="0" max="100" placeholder="85" required>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-icons"></i>
+                            Icône
+                        </label>
+                        <div class="icon-selector" onclick="openIconPicker(this, 'tech')">
+                            <input type="hidden" name="tech_icon[]" value="fas fa-code">
+                            <div class="selected-icon">
+                                <i class="fas fa-code"></i>
+                                <span>Changer l'icône</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-folder"></i>
+                            Catégorie
+                        </label>
+                        <input type="text" name="tech_cat[]" placeholder="Ex: BACK-END">
+                    </div>
+                </div>
+            </div>`;
+            container.insertAdjacentHTML('beforeend', html);
+        }
+
+        // Animation au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialiser avec toutes les icônes
+            filterByCategory('all');
+
+            // Feedback lors de la soumission
+            const form = document.querySelector('.portfolio-form');
+            if (form) {
+                form.addEventListener('submit', function() {
+                    const submitBtn = this.querySelector('.btn-success');
+                    if (submitBtn) {
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement en cours...';
+                        submitBtn.disabled = true;
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+{% endblock %}
