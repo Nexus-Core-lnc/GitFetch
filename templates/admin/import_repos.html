@@ -14,6 +14,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
+        /* Votre CSS existant - inchangé */
         * {
             margin: 0;
             padding: 0;
@@ -86,7 +87,7 @@
 
         .btn-small {
             padding: 8px 16px;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .btn-dark {
@@ -306,6 +307,7 @@
 
         .import-form {
             margin: 0;
+            flex: 1;
         }
 
         .import-form button {
@@ -374,15 +376,6 @@
             to {
                 opacity: 1;
                 transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
             }
         }
 
@@ -460,7 +453,7 @@
                                 {{ repo.language }}
                             </div>
                             {% endif %}
-                            {% if repo.stargazers_count %}
+                            {% if repo.stargazers_count and repo.stargazers_count > 0 %}
                             <div class="repo-stars">
                                 <i class="fas fa-star"></i>
                                 {{ repo.stargazers_count }}
@@ -469,9 +462,10 @@
                         </div>
                         
                         <div class="repo-actions">
-                            <form action="{{ url_for('admin.import_view', github_id=repo.id) }}" method="POST" class="import-form">
+                            {# CORRECTION 1: Utilisation de import_repo au lieu de import_view #}
+                            <form action="{{ url_for('admin.import_repo', github_id=repo.id) }}" method="POST" class="import-form">
                                 <input type="hidden" name="repo_name" value="{{ repo.name }}">
-                                <input type="hidden" name="repo_desc" value="{{ repo.description }}">
+                                <input type="hidden" name="repo_desc" value="{{ repo.description or '' }}">
                                 <input type="hidden" name="repo_url" value="{{ repo.html_url }}">
                                 <button type="submit" class="btn btn-import btn-small">
                                     <i class="fas fa-download"></i>
@@ -492,7 +486,8 @@
                 <i class="fas fa-cloud-download-alt"></i>
                 <h3>Aucun dépôt trouvé</h3>
                 <p>Nous n'avons pas pu récupérer vos dépôts GitHub. Vérifiez votre connexion API ou assurez-vous que votre compte GitHub contient des dépôts publics.</p>
-                <a href="{{ url_for('admin.import_views') }}" class="btn btn-dark">
+                {# CORRECTION 2: Correction du nom de la route #}
+                <a href="{{ url_for('admin.import_view') }}" class="btn btn-dark">
                     <i class="fas fa-sync-alt"></i>
                     Rafraîchir la liste
                 </a>
@@ -525,34 +520,18 @@
                 observer.observe(element);
             });
 
-            // Animation des cartes au survol
-            const cards = document.querySelectorAll(".repo-card");
-            cards.forEach((card) => {
-                card.addEventListener("mouseenter", function() {
-                    this.style.transform = "translateY(-10px)";
-                });
-
-                card.addEventListener("mouseleave", function() {
-                    this.style.transform = "translateY(0)";
-                });
-            });
-
-            // Animation des boutons au survol
-            const buttons = document.querySelectorAll(".btn");
-            buttons.forEach((button) => {
-                button.addEventListener("mouseenter", function() {
-                    this.style.transform = "translateY(-3px)";
-                });
-
-                button.addEventListener("mouseleave", function() {
-                    this.style.transform = "translateY(0)";
-                });
-            });
-
             // Confirmation d'importation
             const importForms = document.querySelectorAll(".import-form");
             importForms.forEach(form => {
                 form.addEventListener("submit", function(e) {
+                    const repoName = this.querySelector('input[name="repo_name"]').value;
+                    
+                    // Demander confirmation
+                    if (!confirm(`Voulez-vous vraiment importer le projet "${repoName}" ?`)) {
+                        e.preventDefault();
+                        return false;
+                    }
+                    
                     const button = this.querySelector("button");
                     const originalText = button.innerHTML;
                     
@@ -560,11 +539,11 @@
                     button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Importation...';
                     button.disabled = true;
                     
-                    // Réinitialiser après 3 secondes (au cas où)
+                    // Réinitialiser après 5 secondes (au cas où la requête prend trop de temps)
                     setTimeout(() => {
                         button.innerHTML = originalText;
                         button.disabled = false;
-                    }, 3000);
+                    }, 5000);
                 });
             });
         });

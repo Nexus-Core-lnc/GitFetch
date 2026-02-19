@@ -11,6 +11,7 @@ from werkzeug.utils import secure_filename
 from urllib.parse import urlencode
 from dotenv import load_dotenv
 from models import db, Utilisateur, Projet, PortfolioConfig, AboutPage
+from sqlalchemy import inspect, text
 
 # Charger le fichier .env
 load_dotenv()
@@ -152,6 +153,22 @@ def get_common_context():
         'user': user
     }
 
+def ensure_token_column_exists():
+    """Vérifie et crée la colonne jeton_identification si elle n'existe pas"""
+    try:
+        inspector = inspect(db.engine)
+        columns = [col['name'] for col in inspector.get_columns('utilisateurs')]
+        
+        if 'jeton_identification' not in columns:
+            with db.engine.connect() as conn:
+                conn.execute(text('ALTER TABLE utilisateurs ADD COLUMN jeton_identification VARCHAR(255)'))
+                conn.commit()
+            print("✅ Colonne 'jeton_identification' ajoutée à la table utilisateurs")
+            return True
+    except Exception as e:
+        print(f"⚠️ Erreur lors de la vérification/création de la colonne: {e}")
+        return False
+
 # ============================================
 # BLUEPRINT AUTH (Authentification)
 # ============================================
@@ -219,15 +236,29 @@ def login():
             flash('Veuillez confirmer votre email avant de vous connecter.', 'warning')
             return redirect(url_for('auth.login'))
 
-        # Mise à jour de la date de connexion
+        # 3. MISE À JOUR DU JETON D'IDENTIFICATION
         try:
+            # S'assurer que la colonne existe
+            ensure_token_column_exists()
+            
+            # Générer un nouveau token unique à chaque connexion
+            nouveau_token = secrets.token_urlsafe(32)
+            
+            # Mettre à jour le token dans la base de données
+            user.jeton_identification = nouveau_token
             user.derniere_connexion = datetime.utcnow()
             db.session.commit()
+            
+            print(f"✅ Nouveau jeton généré pour {user.email}: {nouveau_token[:15]}...")
+            
+            # Stocker le token en session
+            session['jeton_identification'] = nouveau_token
+            
         except Exception as e:
             db.session.rollback()
-            print(f"Erreur lors de la mise à jour de la date : {e}")
+            print(f"⚠️ Erreur lors de la mise à jour du token: {e}")
 
-        # 3. Connexion de l'utilisateur
+        # 4. Connexion de l'utilisateur
         login_user(user, remember=remember)
         
         # Redirection vers le dashboard admin
@@ -238,6 +269,16 @@ def login():
 @auth_bp.route("/deconnexion")
 @login_required
 def logout():
+    # Nettoyer le token à la déconnexion (optionnel)
+    try:
+        if hasattr(current_user, 'jeton_identification'):
+            current_user.jeton_identification = None
+            db.session.commit()
+    except:
+        pass
+    
+    # Nettoyer la session
+    session.pop('jeton_identification', None)
     logout_user()
     flash("Vous avez été déconnecté.", "info")
     return redirect(url_for('main.index'))
@@ -275,6 +316,18 @@ def reset_password(token):
         return redirect(url_for('auth.login'))
         
     return render_template("auth/reset_password.html", token=token)
+
+@auth_bp.route('/debug-token')
+@login_required
+def debug_token():
+    """Route pour déboguer et voir le jeton actuel"""
+    return {
+        'user_id': current_user.id,
+        'email': current_user.email,
+        'jeton_identification': getattr(current_user, 'jeton_identification', 'Champ non existant'),
+        'jeton_github': current_user.jeton_github,
+        'session_token': session.get('jeton_identification')
+    }
 
 # --- AUTHENTIFICATION SOCIALE (OAUTH) ---
 
@@ -429,6 +482,15 @@ def auth_callback(name):
         if avatar:
             user.photo_profil = avatar
         
+        # Générer un jeton d'identification pour la connexion OAuth aussi
+        try:
+            ensure_token_column_exists()
+            nouveau_token = secrets.token_urlsafe(32)
+            user.jeton_identification = nouveau_token
+            session['jeton_identification'] = nouveau_token
+        except:
+            pass
+        
         db.session.commit()
         
         # Nettoyage session
@@ -476,6 +538,15 @@ def auth_callback(name):
 
     if avatar:
         user.photo_profil = avatar
+    
+    # Générer un jeton d'identification
+    try:
+        ensure_token_column_exists()
+        nouveau_token = secrets.token_urlsafe(32)
+        user.jeton_identification = nouveau_token
+        session['jeton_identification'] = nouveau_token
+    except:
+        pass
     
     db.session.commit()
     
@@ -530,27 +601,41 @@ def dashboard():
 @admin_bp.route('/import-view')
 @login_required
 def import_view():
-    """Affiche la page des dépôts GitHub disponibles pour l'importation"""
-    repos = []
-    if current_user.jeton_github:
-        headers = {
-            'Authorization': f'token {current_user.jeton_github}',
-            'Accept': 'application/vnd.github.v3+json'
-        }
-        github_url = 'https://api.github.com/user/repos?sort=updated&per_page=50&affiliation=owner'
-        
-        try:
-            response = requests.get(github_url, headers=headers, timeout=10)
-            if response.status_code == 200:
-                repos = response.json()
-            else:
-                flash(f"Impossible de récupérer les dépôts GitHub (Code: {response.status_code})", "warning")
-        except Exception as e:
-            flash(f"Erreur de connexion à GitHub: {str(e)}", "danger")
-    else:
-        flash("Veuillez configurer votre token GitHub dans les paramètres de profil", "warning")
+    repos_dict = {}
+    if not current_user.jeton_github:
+        flash("Veuillez enregistrer votre nouveau jeton dans votre profil.", "warning")
+        return redirect(url_for('admin.profile'))
 
-    return render_template('admin/import_repos.html', repos=repos)
+    headers = {
+        'Authorization': f'token {current_user.jeton_github}',
+        'Accept': 'application/vnd.github.v3+json'
+    }
+    
+    try:
+        # On demande explicitement TOUT (privé + public) et TOUTES les affiliations
+        url = 'https://api.github.com/user/repos?visibility=all&affiliation=owner,collaborator&per_page=100'
+        response = requests.get(url, headers=headers, timeout=10)
+        
+        if response.status_code == 200:
+            for r in response.json():
+                # On identifie les projets des autres (Bantou-Pass, etc.)
+                if r['owner']['login'].lower() != current_user.nom_utilisateur.lower():
+                    r['user_role'] = f"Invité par {r['owner']['login']}"
+                else:
+                    r['user_role'] = "Propriétaire"
+                repos_dict[r['id']] = r
+            
+            repos_list = list(repos_dict.values())
+            repos_list.sort(key=lambda x: x.get('updated_at', ''), reverse=True)
+            flash(f"✅ {len(repos_list)} dépôts trouvés avec le nouveau jeton !", "success")
+            return render_template('admin/import_repos.html', repos=repos_list)
+        else:
+            flash(f"Erreur GitHub ({response.status_code}) : Vérifiez si le jeton est bien copié.", "danger")
+            
+    except Exception as e:
+        flash(f"Erreur : {str(e)}", "danger")
+    
+    return render_template('admin/import_repos.html', repos=[])
 
 @admin_bp.route('/list-repos')
 @login_required
@@ -598,10 +683,10 @@ def edit_project(id):
     if request.method == 'POST':
         try:
             # Informations de base
-            projet.nom = request.form.get('nom')
-            projet.description = request.form.get('description')
-            projet.demo_url = request.form.get('demo_url')
-            projet.structure_nom = request.form.get('structure_nom')
+            projet.nom = request.form.get('nom', projet.nom)
+            projet.description = request.form.get('description', projet.description)
+            projet.demo_url = request.form.get('demo_url', projet.demo_url)
+            projet.structure_nom = request.form.get('structure_nom', projet.structure_nom)
             
             # Gestion de la collaboration
             est_collab = request.form.get('est_collaboration')
@@ -627,6 +712,9 @@ def edit_project(id):
                 else:
                     flash("Format de fichier non supporté. Utilisez PNG, JPG ou GIF.", "warning")
 
+            # Mettre à jour la date de modification
+            projet.date_mise_a_jour = datetime.utcnow()
+            
             db.session.commit()
             flash("Informations mises à jour avec succès !", "success")
             return redirect(url_for('admin.list_repos'))
@@ -634,6 +722,8 @@ def edit_project(id):
         except Exception as e:
             db.session.rollback()
             flash(f"Erreur lors de l'enregistrement: {str(e)}", "danger")
+            # Recharger la page avec les données actuelles
+            return redirect(url_for('admin.edit_project', id=id))
 
     # Pour l'affichage GET : convertir la liste en chaîne pour le formulaire
     technologies_texte = ""
@@ -767,6 +857,9 @@ def edit_profile():
                 else:
                     flash('Format de fichier non supporté pour le CV. Utilisez PDF, DOC ou DOCX.', 'warning')
             
+            # Mise à jour de la date de dernière connexion (comme marqueur de modification)
+            current_user.derniere_connexion = datetime.utcnow()
+            
             # === 9. SAUVEGARDE EN BASE DE DONNÉES ===
             db.session.commit()
             flash('Profil mis à jour avec succès!', 'success')
@@ -789,53 +882,56 @@ def edit_portfolio_content():
     if not config:
         config = PortfolioConfig(utilisateur_id=current_user.id)
         db.session.add(config)
+        db.session.flush()  # Pour obtenir l'ID sans commit
 
     if request.method == 'POST':
-        # --- TEXTES SIMPLES ---
-        config.hero_titre = request.form.get('hero_titre')
-        config.hero_description = request.form.get('hero_description')
-        config.about_titre = request.form.get('about_titre')
-        config.about_soustitre = request.form.get('about_soustitre')
-        config.about_description = request.form.get('about_description')
-        config.about_lien_texte = request.form.get('about_lien_texte')
-        config.projects_titre = request.form.get('projects_titre')
-        config.cta_titre = request.form.get('cta_titre')
-
-        # --- GESTION DES SPÉCIALITÉS ---
-        s_noms = request.form.getlist('skill_item_nom[]')
-        s_icons = request.form.getlist('skill_item_icon[]')
-        
-        skills_list = []
-        for n, i in zip(s_noms, s_icons):
-            if n.strip():
-                skills_list.append({"nom": n, "icon": i})
-        config.about_skills_json = skills_list
-
-        # --- GESTION DE LA STACK TECHNIQUE ---
-        t_noms = request.form.getlist('tech_nom[]')
-        t_percents = request.form.getlist('tech_pourcent[]')
-        t_icons = request.form.getlist('tech_icon[]')
-        t_cats = request.form.getlist('tech_cat[]')
-
-        tech_list = []
-        for n, p, i, c in zip(t_noms, t_percents, t_icons, t_cats):
-            if n.strip():
-                tech_list.append({
-                    "nom": n, 
-                    "pourcent": p, 
-                    "icon": i, 
-                    "cat": c
-                })
-        
-        config.tech_stack_json = tech_list
-
         try:
+            # --- TEXTES SIMPLES ---
+            config.hero_titre = request.form.get('hero_titre', config.hero_titre)
+            config.hero_description = request.form.get('hero_description', config.hero_description)
+            config.about_titre = request.form.get('about_titre', config.about_titre)
+            config.about_soustitre = request.form.get('about_soustitre', config.about_soustitre)
+            config.about_description = request.form.get('about_description', config.about_description)
+            config.about_lien_texte = request.form.get('about_lien_texte', config.about_lien_texte)
+            config.projects_titre = request.form.get('projects_titre', config.projects_titre)
+            config.cta_titre = request.form.get('cta_titre', config.cta_titre)
+
+            # --- GESTION DES SPÉCIALITÉS ---
+            s_noms = request.form.getlist('skill_item_nom[]')
+            s_icons = request.form.getlist('skill_item_icon[]')
+            
+            skills_list = []
+            for n, i in zip(s_noms, s_icons):
+                if n and n.strip():
+                    skills_list.append({"nom": n.strip(), "icon": i})
+            config.about_skills_json = skills_list if skills_list else []
+
+            # --- GESTION DE LA STACK TECHNIQUE ---
+            t_noms = request.form.getlist('tech_nom[]')
+            t_percents = request.form.getlist('tech_pourcent[]')
+            t_icons = request.form.getlist('tech_icon[]')
+            t_cats = request.form.getlist('tech_cat[]')
+
+            tech_list = []
+            for n, p, i, c in zip(t_noms, t_percents, t_icons, t_cats):
+                if n and n.strip():
+                    tech_list.append({
+                        "nom": n.strip(), 
+                        "pourcent": p, 
+                        "icon": i, 
+                        "cat": c
+                    })
+            
+            config.tech_stack_json = tech_list if tech_list else []
+
+            # Sauvegarde en base
             db.session.commit()
             flash("Portfolio mis à jour avec succès !", "success")
+            
         except Exception as e:
             db.session.rollback()
             flash(f"Erreur lors de l'enregistrement : {str(e)}", "danger")
-
+        
         return redirect(url_for('admin.edit_portfolio_content'))
 
     return render_template('admin/edit_portfolio.html', config=config)
@@ -850,96 +946,174 @@ def about_edit():
     if request.method == 'POST':
         if not config:
             config = AboutPage(utilisateur_id=current_user.id)
+            db.session.add(config)
         
-        # Traitement des fichiers
-        # Hero image
-        if 'hero_image' in request.files:
-            file = request.files['hero_image']
-            if file and file.filename:
-                new_filename = save_media_file(file, 'about', current_user.id)
-                if new_filename:
-                    if config.hero_image:
-                        delete_media_file(config.hero_image, 'about')
-                    config.hero_image = new_filename
-        if request.form.get('hero_image_delete'):
-            if config.hero_image:
-                delete_media_file(config.hero_image, 'about')
-                config.hero_image = None
+        try:
+            # Traitement des fichiers
+            # Hero image
+            if 'hero_image' in request.files:
+                file = request.files['hero_image']
+                if file and file.filename:
+                    new_filename = save_media_file(file, 'about', current_user.id)
+                    if new_filename:
+                        if config.hero_image:
+                            delete_media_file(config.hero_image, 'about')
+                        config.hero_image = new_filename
+            if request.form.get('hero_image_delete'):
+                if config.hero_image:
+                    delete_media_file(config.hero_image, 'about')
+                    config.hero_image = None
+            
+            # Philosophie image
+            if 'philosophie_image' in request.files:
+                file = request.files['philosophie_image']
+                if file and file.filename:
+                    new_filename = save_media_file(file, 'about', current_user.id)
+                    if new_filename:
+                        if config.philosophie_image:
+                            delete_media_file(config.philosophie_image, 'about')
+                        config.philosophie_image = new_filename
+            if request.form.get('philosophie_image_delete'):
+                if config.philosophie_image:
+                    delete_media_file(config.philosophie_image, 'about')
+                    config.philosophie_image = None
+            
+            # Parcours image
+            if 'parcours_image' in request.files:
+                file = request.files['parcours_image']
+                if file and file.filename:
+                    new_filename = save_media_file(file, 'about', current_user.id)
+                    if new_filename:
+                        if config.parcours_image:
+                            delete_media_file(config.parcours_image, 'about')
+                        config.parcours_image = new_filename
+            if request.form.get('parcours_image_delete'):
+                if config.parcours_image:
+                    delete_media_file(config.parcours_image, 'about')
+                    config.parcours_image = None
+            
+            # Competences image
+            if 'competences_image' in request.files:
+                file = request.files['competences_image']
+                if file and file.filename:
+                    new_filename = save_media_file(file, 'about', current_user.id)
+                    if new_filename:
+                        if config.competences_image:
+                            delete_media_file(config.competences_image, 'about')
+                        config.competences_image = new_filename
+            if request.form.get('competences_image_delete'):
+                if config.competences_image:
+                    delete_media_file(config.competences_image, 'about')
+                    config.competences_image = None
+            
+            # Certifications image
+            if 'certifications_image' in request.files:
+                file = request.files['certifications_image']
+                if file and file.filename:
+                    new_filename = save_media_file(file, 'about', current_user.id)
+                    if new_filename:
+                        if config.certifications_image:
+                            delete_media_file(config.certifications_image, 'about')
+                        config.certifications_image = new_filename
+            if request.form.get('certifications_image_delete'):
+                if config.certifications_image:
+                    delete_media_file(config.certifications_image, 'about')
+                    config.certifications_image = None
+            
+            # Texte - CORRECTION : retrait de hero_sous_titre qui n'existe pas
+            config.hero_titre = request.form.get('hero_titre', config.hero_titre)
+            config.hero_texte = request.form.get('hero_texte', config.hero_texte)
+            config.hero_bouton_1_texte = request.form.get('hero_bouton_1_texte', config.hero_bouton_1_texte)
+            config.hero_bouton_1_lien = request.form.get('hero_bouton_1_lien', config.hero_bouton_1_lien)
+            config.hero_bouton_2_texte = request.form.get('hero_bouton_2_texte', config.hero_bouton_2_texte)
+            config.hero_bouton_2_lien = request.form.get('hero_bouton_2_lien', config.hero_bouton_2_lien)
+            
+            config.philosophie_titre = request.form.get('philosophie_titre', config.philosophie_titre)
+            config.philosophie_sous_titre = request.form.get('philosophie_sous_titre', config.philosophie_sous_titre)
+            config.philosophie_description_1 = request.form.get('philosophie_description_1', config.philosophie_description_1)
+            config.philosophie_description_2 = request.form.get('philosophie_description_2', config.philosophie_description_2)
+            
+            config.competences_titre = request.form.get('competences_titre', config.competences_titre)
+            config.competences_sous_titre = request.form.get('competences_sous_titre', config.competences_sous_titre)
+            
+            config.certifications_titre = request.form.get('certifications_titre', config.certifications_titre)
+            config.certifications_sous_titre = request.form.get('certifications_sous_titre', config.certifications_sous_titre)
+            
+            # --- GESTION DES JSON ---
+            # Valeurs
+            v_icons = request.form.getlist('valeur_icone[]')
+            v_titres = request.form.getlist('valeur_titre[]')
+            v_descriptions = request.form.getlist('valeur_description[]')
+            
+            valeurs_list = []
+            for icon, titre, desc in zip(v_icons, v_titres, v_descriptions):
+                if titre and titre.strip():
+                    valeurs_list.append({
+                        "icon": icon,
+                        "titre": titre.strip(),
+                        "description": desc
+                    })
+            config.values_json = valeurs_list if valeurs_list else []
+            
+            # Parcours
+            p_periodes = request.form.getlist('parcours_periode[]')
+            p_titres = request.form.getlist('parcours_titre[]')
+            p_descriptions = request.form.getlist('parcours_description[]')
+            
+            parcours_list = []
+            for periode, titre, desc in zip(p_periodes, p_titres, p_descriptions):
+                if titre and titre.strip():
+                    parcours_list.append({
+                        "periode": periode,
+                        "titre": titre.strip(),
+                        "description": desc
+                    })
+            config.parcours_json = parcours_list if parcours_list else []
+            
+            # Compétences
+            c_icons = request.form.getlist('competence_icone[]')
+            c_titres = request.form.getlist('competence_titre[]')
+            c_descriptions = request.form.getlist('competence_description[]')
+            
+            competences_list = []
+            for icon, titre, desc in zip(c_icons, c_titres, c_descriptions):
+                if titre and titre.strip():
+                    competences_list.append({
+                        "icon": icon,
+                        "titre": titre.strip(),
+                        "description": desc
+                    })
+            config.competences_json = competences_list if competences_list else []
+            
+            # Certifications
+            cert_titres = request.form.getlist('certification_titre[]')
+            cert_organismes = request.form.getlist('certification_organisme[]')
+            cert_descriptions = request.form.getlist('certification_description[]')
+            
+            certifications_list = []
+            for titre, organisme, desc in zip(cert_titres, cert_organismes, cert_descriptions):
+                if titre and titre.strip():
+                    certifications_list.append({
+                        "titre": titre.strip(),
+                        "organisme": organisme,
+                        "description": desc
+                    })
+            config.certifications_json = certifications_list if certifications_list else []
+            
+            # Mise à jour de la date
+            config.date_mise_a_jour = datetime.utcnow()
+            
+            db.session.commit()
+            flash('Page À propos mise à jour avec succès!', 'success')
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Erreur lors de la mise à jour: {str(e)}', 'danger')
         
-        # Philosophie image
-        if 'philosophie_image' in request.files:
-            file = request.files['philosophie_image']
-            if file and file.filename:
-                new_filename = save_media_file(file, 'about', current_user.id)
-                if new_filename:
-                    if config.philosophie_image:
-                        delete_media_file(config.philosophie_image, 'about')
-                    config.philosophie_image = new_filename
-        if request.form.get('philosophie_image_delete'):
-            if config.philosophie_image:
-                delete_media_file(config.philosophie_image, 'about')
-                config.philosophie_image = None
-        
-        # Parcours image
-        if 'parcours_image' in request.files:
-            file = request.files['parcours_image']
-            if file and file.filename:
-                new_filename = save_media_file(file, 'about', current_user.id)
-                if new_filename:
-                    if config.parcours_image:
-                        delete_media_file(config.parcours_image, 'about')
-                    config.parcours_image = new_filename
-        if request.form.get('parcours_image_delete'):
-            if config.parcours_image:
-                delete_media_file(config.parcours_image, 'about')
-                config.parcours_image = None
-        
-        # Competences image
-        if 'competences_image' in request.files:
-            file = request.files['competences_image']
-            if file and file.filename:
-                new_filename = save_media_file(file, 'about', current_user.id)
-                if new_filename:
-                    if config.competences_image:
-                        delete_media_file(config.competences_image, 'about')
-                    config.competences_image = new_filename
-        if request.form.get('competences_image_delete'):
-            if config.competences_image:
-                delete_media_file(config.competences_image, 'about')
-                config.competences_image = None
-        
-        # Certifications image
-        if 'certifications_image' in request.files:
-            file = request.files['certifications_image']
-            if file and file.filename:
-                new_filename = save_media_file(file, 'about', current_user.id)
-                if new_filename:
-                    if config.certifications_image:
-                        delete_media_file(config.certifications_image, 'about')
-                    config.certifications_image = new_filename
-        if request.form.get('certifications_image_delete'):
-            if config.certifications_image:
-                delete_media_file(config.certifications_image, 'about')
-                config.certifications_image = None
-        
-        # Texte
-        config.hero_titre = request.form.get('hero_titre')
-        config.hero_sous_titre = request.form.get('hero_sous_titre')
-        config.philosophie_titre = request.form.get('philosophie_titre')
-        config.philosophie_contenu = request.form.get('philosophie_contenu')
-        config.parcours_titre = request.form.get('parcours_titre')
-        config.parcours_contenu = request.form.get('parcours_contenu')
-        config.competences_titre = request.form.get('competences_titre')
-        config.competences_contenu = request.form.get('competences_contenu')
-        config.certifications_titre = request.form.get('certifications_titre')
-        
-        db.session.add(config)
-        db.session.commit()
-        
-        flash('Page À propos mise à jour avec succès!', 'success')
         return redirect(url_for('admin.about_edit'))
     
     return render_template('admin/about_edit.html', config=config)
+
 
 # --- ROUTES DE SERVICE DE FICHIERS POUR L'ADMIN ---
 
@@ -971,11 +1145,14 @@ def serve_media(type, filename):
         abort(403)
     elif type == 'proj':
         # Pour les projets, on vérifie que le projet appartient à l'utilisateur
-        projet_id = filename.split('_')[1] if '_' in filename else None
-        if projet_id and projet_id.isdigit():
-            projet = Projet.query.filter_by(id=int(projet_id), utilisateur_id=current_user.id).first()
-            if not projet:
-                abort(403)
+        try:
+            projet_id = filename.split('_')[1] if '_' in filename else None
+            if projet_id and projet_id.isdigit():
+                projet = Projet.query.filter_by(id=int(projet_id), utilisateur_id=current_user.id).first()
+                if not projet:
+                    abort(403)
+        except (IndexError, ValueError):
+            abort(403)
     
     return send_from_directory(media_dir, filename)
 
@@ -1083,7 +1260,7 @@ def debug_github():
 # BLUEPRINT PORTFOLIO (Routes publiques)
 # ============================================
 
-@portfolio_bp.route('/')
+@portfolio_bp.route('/portfolio')
 def home():
     context = get_common_context()
     user = context.get('user')
@@ -1184,3 +1361,50 @@ def serve_public_media(folder, filename):
                 f.write(f"Default {folder} file placeholder")
         
         return send_from_directory(media_dir, default_file)
+    
+    
+@admin_bp.route('/authorize')
+@login_required
+def authorize_page():
+    """
+    Page d'autorisation GitHub qui affiche la demande de permissions
+    """
+    # Si l'utilisateur a déjà un token, on le redirige vers le dashboard
+    if current_user.jeton_github:
+        flash("Vous êtes déjà connecté à GitHub.", "info")
+        return redirect(url_for('admin.dashboard'))
+    
+    return render_template('admin/authorize.html')
+
+@admin_bp.route('/start-github-auth')
+@login_required
+def start_github_auth():
+    """
+    Démarre le processus d'authentification GitHub
+    """
+    return redirect(url_for('auth.social_login', name='github'))
+
+@admin_bp.route('/skipp-authorize')
+@login_required
+def skipp_authorize():
+    """
+    Permet de passer l'autorisation GitHub pour le moment
+    """
+    flash("Vous pourrez connecter GitHub plus tard depuis la page de profil.", "info")
+    return redirect(url_for('admin.dashboard'))
+
+# @admin_bp.route('/start-github-auth')
+# @login_required
+# def start_github_auth():
+#     """
+#     Démarre le processus d'authentification GitHub
+#     """
+#     # Vérifier que les variables d'environnement sont configurées
+#     if not GITHUB_CLIENT_ID or not GITHUB_CLIENT_SECRET:
+#         flash("Erreur de configuration GitHub. Contactez l'administrateur.", "danger")
+#         print(f"DEBUG - GITHUB_CLIENT_ID: {GITHUB_CLIENT_ID}")
+#         print(f"DEBUG - GITHUB_CLIENT_SECRET: {'Présent' if GITHUB_CLIENT_SECRET else 'Absent'}")
+#         return redirect(url_for('admin.authorize_page'))
+    
+#     # Rediriger vers l'authentification GitHub
+#     return redirect(url_for('auth.social_login', name='github'))

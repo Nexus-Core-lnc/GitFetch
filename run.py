@@ -150,13 +150,15 @@ if __name__ == "__main__":
     
     port = int(os.getenv("PORT", 5000))
     debug = os.getenv("FLASK_DEBUG", "True") == "True"
-    host = os.getenv("HOST", "127.0.0.1")
+    host = os.getenv("HOST", "0.0.0.0")  # 0.0.0.0 pour écouter sur toutes les interfaces
     
     print(f"╔══════════════════════════════════════════════════════════╗")
     print(f"║                                                          ║")
     print(f"║   🚀 GitFetch - Application Monolithique                 ║")
     print(f"║                                                          ║")
-    print(f"║   📍 Accès local : http://{host}:{port}                   ║")
+    print(f"║   📍 Accès local : http://127.0.0.1:{port}                ║")
+    print(f"║   🌐 Votre IP : 192.168.56.209                            ║")
+    print(f"║   📱 Accès réseau : http://192.168.56.209:{port}          ║")
     print(f"║   🔧 Mode debug : {'Activé' if debug else 'Désactivé'}                   ║")
     print(f"║                                                          ║")
     print(f"║   📋 Routes disponibles :                                ║")
@@ -167,5 +169,14 @@ if __name__ == "__main__":
     print(f"║   • GitHub OAuth : /github/*                             ║")
     print(f"║                                                          ║")
     print(f"╚══════════════════════════════════════════════════════════╝")
+    
+    print(f"\n📌 POUR PARTAGER SUR LE RÉSEAU :")
+    print(f"   → Donnez cette adresse : http://192.168.56.209:{port}")
+    print(f"   → Assurez-vous que le pare-feu Windows autorise le port {port}")
+    print(f"   → Les autres appareils doivent être sur le même réseau Wi-Fi\n")
+    
+    # Vérification que le VPN n'interfère pas
+    print(f"⚠️  Note: Vous avez ProtonVPN actif (10.2.0.2)")
+    print(f"   Si des problèmes de connexion surviennent, désactivez le VPN\n")
     
     app.run(host=host, port=port, debug=debug)

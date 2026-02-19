@@ -294,6 +294,7 @@
         .btn-edit {
             background: var(--primary-color);
             color: #000;
+            flex: 1;
         }
 
         .btn-edit:hover {
@@ -304,6 +305,7 @@
             background: var(--light-bg);
             color: var(--gray-text);
             border: 1px solid #ddd;
+            flex: 1;
         }
 
         .btn-delete:hover {
@@ -340,6 +342,30 @@
             font-size: 17px;
         }
 
+        /* Info Box */
+        .info-box {
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid var(--primary-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .info-box i {
+            color: var(--primary-color);
+            font-size: 20px;
+            margin-top: 2px;
+        }
+
+        .info-box p {
+            margin: 0;
+            color: var(--gray-text);
+            font-size: 15px;
+        }
+
         /* Animations */
         @keyframes fadeInUp {
             from {
@@ -349,15 +375,6 @@
             to {
                 opacity: 1;
                 transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
             }
         }
 
@@ -401,39 +418,65 @@
     <!-- Projects Section -->
     <section class="projects-section">
         <div class="container">
-            {% if current_user.projets %}
+            <!-- Info box -->
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <p>Vous avez <strong>{{ projets|length }}</strong> projet(s) dans votre portfolio. Cliquez sur "Modifier" pour personnaliser chaque projet.</p>
+            </div>
+
+            {% if projets %}
             <div class="projects-grid">
-                {% for p in current_user.projets %}
+                {% for projet in projets %}
                 <div class="project-card">
                     <div class="project-image">
-                        {% if p.image_couverture %}
-                            <img src="/static/uploads/{{ p.image_couverture }}" alt="{{ p.nom }}">
+                        {% if projet.image_couverture %}
+                            {# CORRECTION: Utilisation de la route serve_public_media #}
+                            <img src="{{ url_for('portfolio.serve_public_media', folder='projects', filename=projet.image_couverture) }}" 
+                                 alt="{{ projet.nom }}"
+                                 onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/default-project.jpg') }}'">
                         {% else %}
                             <div class="no-image-placeholder">
                                 <i class="fab fa-github"></i>
-                                <span>Aucune image de couverture trouvée</span>
+                                <span>Aucune image de couverture</span>
                             </div>
                         {% endif %}
                     </div>
                     <div class="project-content">
-                        <h3><i class="fas fa-folder"></i> {{ p.nom }}</h3>
+                        <h3>
+                            <i class="fas fa-folder"></i> 
+                            {{ projet.nom }}
+                        </h3>
+                        
+                        {# Afficher un extrait de la description si elle existe #}
+                        {% if projet.description %}
+                        <p>{{ projet.description|truncate(100) }}</p>
+                        {% endif %}
                         
                         <div class="project-meta">
                             <div class="project-source">
-                                <a href="{{ p.github_url }}" target="_blank">
+                                {% if projet.github_url %}
+                                <a href="{{ projet.github_url }}" target="_blank">
                                     <i class="fab fa-github"></i>
-                                    Voir sur GitHub
+                                    GitHub
                                 </a>
+                                {% else %}
+                                <span><i class="fab fa-github"></i> Non lié</span>
+                                {% endif %}
                             </div>
+                            {% if projet.est_collaboration %}
+                            <span class="project-type" style="color: var(--primary-color); font-size: 13px;">
+                                <i class="fas fa-users"></i> Collaboration
+                            </span>
+                            {% endif %}
                         </div>
                         
                         <div class="project-actions">
-                            <a href="{{ url_for('admin.edit_project', id=p.id) }}" class="btn btn-edit btn-small">
+                            <a href="{{ url_for('admin.edit_project', id=projet.id) }}" class="btn btn-edit btn-small">
                                 <i class="fas fa-edit"></i>
                                 Modifier
                             </a>
-                            <form action="{{ url_for('admin.delete_project', id=p.id) }}" method="POST" style="display:inline;">
-                                <button type="submit" class="btn btn-delete btn-small" onclick="return confirm('Voulez-vous vraiment retirer ce projet du front-end ?')">
+                            <form action="{{ url_for('admin.delete_project', id=projet.id) }}" method="POST" style="display:inline; flex:1;">
+                                <button type="submit" class="btn btn-delete btn-small" onclick="return confirmDelete('{{ projet.nom }}')">
                                     <i class="fas fa-trash-alt"></i>
                                     Supprimer
                                 </button>
@@ -448,7 +491,7 @@
                 <i class="fas fa-code-branch"></i>
                 <h3>Aucun projet trouvé</h3>
                 <p>Vous n'avez pas encore importé de projets depuis GitHub. Utilisez la section d'importation pour ajouter vos projets et les afficher ici.</p>
-                <a href="#" class="btn btn-dark">
+                <a href="{{ url_for('admin.import_view') }}" class="btn btn-dark">
                     <i class="fab fa-github"></i>
                     Importer mes projets
                 </a>
@@ -505,6 +548,11 @@
                 });
             });
         });
+
+        // Fonction de confirmation de suppression
+        function confirmDelete(projectName) {
+            return confirm(`Voulez-vous vraiment supprimer le projet "${projectName}" ? Cette action est irréversible.`);
+        }
     </script>
 </body>
 </html>

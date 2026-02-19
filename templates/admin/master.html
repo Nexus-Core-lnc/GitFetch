@@ -7,12 +7,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* Styles existants - gardés identiques */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+        html { width: 100%; }
 
         :root {
             --jaune-primaire: #ffc107;
@@ -30,6 +30,7 @@
             --couleur-me-connaitre: #28a745;
             --couleur-github: #24292e;
             --couleur-github-clair: #6e5494;
+            --nav-mobile-height: 68px;
         }
 
         body {
@@ -37,9 +38,10 @@
             background-color: var(--gris-clair);
             color: #333;
             overflow-x: hidden;
+            width: 100%;
         }
 
-        /* BARRE LATERALE */
+        /* ===== BARRE LATERALE ===== */
         .barre-laterale {
             position: fixed;
             left: 0;
@@ -51,27 +53,18 @@
             z-index: 1000;
             transition: transform 0.3s ease;
             overflow-y: auto;
-            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.08);
+            box-shadow: 4px 0 15px rgba(0,0,0,0.08);
             border-right: 1px solid var(--couleur-bordure);
         }
 
-        .barre-laterale::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .barre-laterale::-webkit-scrollbar-track {
-            background: #f8f9fa;
-        }
-
-        .barre-laterale::-webkit-scrollbar-thumb {
-            background: var(--jaune-primaire);
-            border-radius: 3px;
-        }
+        .barre-laterale::-webkit-scrollbar { width: 6px; }
+        .barre-laterale::-webkit-scrollbar-track { background: #f8f9fa; }
+        .barre-laterale::-webkit-scrollbar-thumb { background: var(--jaune-primaire); border-radius: 3px; }
 
         .entete-barre-laterale {
             padding: 30px 25px;
-            background: linear-gradient(135deg, rgba(255, 193, 7, 0.08), rgba(255, 193, 7, 0.03));
-            border-bottom: 2px solid rgba(255, 193, 7, 0.2);
+            background: linear-gradient(135deg, rgba(255,193,7,0.08), rgba(255,193,7,0.03));
+            border-bottom: 2px solid rgba(255,193,7,0.2);
         }
 
         .logo-barre-laterale {
@@ -93,14 +86,14 @@
             height: auto;
             border-radius: 15px;
             border: 3px solid var(--jaune-primaire);
-            box-shadow: 0 8px 20px rgba(255, 193, 7, 0.3);
+            box-shadow: 0 8px 20px rgba(255,193,7,0.3);
             transition: all 0.3s ease;
             object-fit: cover;
         }
 
         .logo-barre-laterale:hover .image-logo {
             transform: scale(1.05);
-            box-shadow: 0 12px 30px rgba(255, 193, 7, 0.4);
+            box-shadow: 0 12px 30px rgba(255,193,7,0.4);
         }
 
         .texte-logo {
@@ -114,7 +107,7 @@
 
         .utilisateur-barre-laterale {
             padding: 20px 25px;
-            background: linear-gradient(135deg, rgba(255, 193, 7, 0.06), transparent);
+            background: linear-gradient(135deg, rgba(255,193,7,0.06), transparent);
             border-bottom: 1px solid var(--couleur-bordure);
         }
 
@@ -135,8 +128,9 @@
             font-size: 24px;
             color: var(--blanc);
             font-weight: 700;
-            box-shadow: 0 4px 10px rgba(255, 193, 7, 0.3);
+            box-shadow: 0 4px 10px rgba(255,193,7,0.3);
             overflow: hidden;
+            flex-shrink: 0;
         }
 
         .avatar-utilisateur img {
@@ -145,6 +139,8 @@
             object-fit: cover;
             border-radius: 50%;
         }
+
+        .details-utilisateur { flex: 1; min-width: 0; }
 
         .details-utilisateur h3 {
             font-size: 16px;
@@ -161,24 +157,14 @@
             gap: 6px;
         }
 
-        .role-utilisateur i {
-            color: var(--jaune-primaire);
-        }
+        .role-utilisateur i { color: var(--jaune-primaire); }
+        .role-utilisateur.admin { color: var(--couleur-admin); font-weight: 600; }
+        .role-utilisateur.admin i { color: var(--couleur-admin); }
 
-        .role-utilisateur.admin {
-            color: var(--couleur-admin);
-            font-weight: 600;
-        }
-
-        .role-utilisateur.admin i {
-            color: var(--couleur-admin);
-        }
-
-        /* Indicateur GitHub */
         .status-github {
             margin-top: 12px;
             padding: 8px 12px;
-            background: rgba(36, 41, 46, 0.05);
+            background: rgba(36,41,46,0.05);
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -186,27 +172,11 @@
             font-size: 12px;
         }
 
-        .status-github.connecte {
-            background: rgba(46, 164, 79, 0.1);
-            color: #2ea44f;
-        }
-
-        .status-github.non-connecte {
-            background: rgba(207, 34, 46, 0.1);
-            color: #cf222e;
-        }
-
-        .status-github i {
-            font-size: 14px;
-        }
-
-        .status-github.connecte i {
-            color: #2ea44f;
-        }
-
-        .status-github.non-connecte i {
-            color: #cf222e;
-        }
+        .status-github.connecte { background: rgba(46,164,79,0.1); color: #2ea44f; }
+        .status-github.non-connecte { background: rgba(207,34,46,0.1); color: #cf222e; }
+        .status-github i { font-size: 14px; }
+        .status-github.connecte i { color: #2ea44f; }
+        .status-github.non-connecte i { color: #cf222e; }
 
         .bouton-github {
             display: inline-flex;
@@ -227,12 +197,10 @@
         .bouton-github:hover {
             background: #1b1f23;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(36, 41, 46, 0.3);
+            box-shadow: 0 4px 12px rgba(36,41,46,0.3);
         }
 
-        .navigation-barre-laterale {
-            padding: 20px 0;
-        }
+        .navigation-barre-laterale { padding: 20px 0; }
 
         .titre-section-navigation {
             padding: 15px 25px 10px;
@@ -250,9 +218,7 @@
             gap: 8px;
         }
 
-        .titre-section-navigation i {
-            font-size: 14px;
-        }
+        .titre-section-navigation i { font-size: 14px; }
 
         .lien-navigation {
             display: flex;
@@ -281,46 +247,36 @@
             transition: height 0.3s ease;
         }
 
-        .lien-navigation.admin::before {
-            background: var(--couleur-admin);
-        }
-
-        .lien-navigation.portfolio::before {
-            background: var(--couleur-portfolio);
-        }
-
-        .lien-navigation.me-connaitre::before {
-            background: var(--couleur-me-connaitre);
-        }
+        .lien-navigation.admin::before { background: var(--couleur-admin); }
+        .lien-navigation.portfolio::before { background: var(--couleur-portfolio); }
+        .lien-navigation.me-connaitre::before { background: var(--couleur-me-connaitre); }
 
         .lien-navigation:hover,
         .lien-navigation.actif {
-            background: linear-gradient(135deg, rgba(255, 193, 7, 0.12), rgba(255, 193, 7, 0.06));
+            background: linear-gradient(135deg, rgba(255,193,7,0.12), rgba(255,193,7,0.06));
             color: var(--jaune-fonce);
         }
 
         .lien-navigation.admin:hover,
         .lien-navigation.admin.actif {
-            background: linear-gradient(135deg, rgba(156, 39, 176, 0.12), rgba(156, 39, 176, 0.06));
+            background: linear-gradient(135deg, rgba(156,39,176,0.12), rgba(156,39,176,0.06));
             color: var(--couleur-admin);
         }
 
         .lien-navigation.portfolio:hover,
         .lien-navigation.portfolio.actif {
-            background: linear-gradient(135deg, rgba(23, 162, 184, 0.12), rgba(23, 162, 184, 0.06));
+            background: linear-gradient(135deg, rgba(23,162,184,0.12), rgba(23,162,184,0.06));
             color: var(--couleur-portfolio);
         }
 
         .lien-navigation.me-connaitre:hover,
         .lien-navigation.me-connaitre.actif {
-            background: linear-gradient(135deg, rgba(40, 167, 69, 0.12), rgba(40, 167, 69, 0.06));
+            background: linear-gradient(135deg, rgba(40,167,69,0.12), rgba(40,167,69,0.06));
             color: var(--couleur-me-connaitre);
         }
 
         .lien-navigation:hover::before,
-        .lien-navigation.actif::before {
-            height: 60%;
-        }
+        .lien-navigation.actif::before { height: 60%; }
 
         .lien-navigation i {
             font-size: 20px;
@@ -329,21 +285,10 @@
             color: var(--jaune-primaire);
         }
 
-        .lien-navigation.admin i {
-            color: var(--couleur-admin);
-        }
-
-        .lien-navigation.portfolio i {
-            color: var(--couleur-portfolio);
-        }
-
-        .lien-navigation.me-connaitre i {
-            color: var(--couleur-me-connaitre);
-        }
-
-        .lien-navigation span {
-            font-size: 15px;
-        }
+        .lien-navigation.admin i { color: var(--couleur-admin); }
+        .lien-navigation.portfolio i { color: var(--couleur-portfolio); }
+        .lien-navigation.me-connaitre i { color: var(--couleur-me-connaitre); }
+        .lien-navigation span { font-size: 15px; }
 
         .badge-admin {
             background: var(--couleur-admin);
@@ -353,7 +298,7 @@
             border-radius: 12px;
             margin-left: auto;
             font-weight: 600;
-            display:none;
+            display: none;
         }
 
         .badge-portfolio {
@@ -364,7 +309,7 @@
             border-radius: 12px;
             margin-left: auto;
             font-weight: 600;
-            display : none;
+            display: none;
         }
 
         .badge-me-connaitre {
@@ -374,7 +319,8 @@
             padding: 3px 8px;
             border-radius: 12px;
             margin-left: auto;
-            font-weight: 600;display : none;
+            font-weight: 600;
+            display: none;
         }
 
         .badge-github {
@@ -399,9 +345,9 @@
             justify-content: center;
             gap: 10px;
             padding: 12px;
-            background: rgba(244, 67, 54, 0.08);
+            background: rgba(244,67,54,0.08);
             color: #f44336;
-            border: 1px solid rgba(244, 67, 54, 0.2);
+            border: 1px solid rgba(244,67,54,0.2);
             border-radius: 10px;
             text-decoration: none;
             font-weight: 600;
@@ -412,10 +358,10 @@
             background: #f44336;
             color: var(--blanc);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+            box-shadow: 0 4px 12px rgba(244,67,54,0.3);
         }
 
-        /* CONTENU PRINCIPAL */
+        /* ===== CONTENU PRINCIPAL ===== */
         .contenu-principal {
             margin-left: 280px;
             min-height: 100vh;
@@ -423,11 +369,11 @@
             flex-direction: column;
         }
 
-        /* EN-TETE SUPERIEUR */
+        /* ===== EN-TETE SUPERIEUR ===== */
         .en-tete-superieur {
             background: var(--blanc);
             padding: 20px 40px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             position: sticky;
             top: 0;
             z-index: 999;
@@ -462,9 +408,7 @@
             gap: 8px;
         }
 
-        .element-metadonnee i {
-            color: var(--jaune-primaire);
-        }
+        .element-metadonnee i { color: var(--jaune-primaire); }
 
         .droite-en-tete {
             display: flex;
@@ -487,12 +431,12 @@
             cursor: pointer;
             text-decoration: none;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+            box-shadow: 0 4px 15px rgba(255,193,7,0.3);
         }
 
         .bouton-primaire:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 193, 7, 0.4);
+            box-shadow: 0 6px 20px rgba(255,193,7,0.4);
         }
 
         .bouton-github-header {
@@ -512,10 +456,10 @@
         .bouton-github-header:hover {
             background: #1b1f23;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(36, 41, 46, 0.3);
+            box-shadow: 0 4px 12px rgba(36,41,46,0.3);
         }
 
-        /* BOUTONS DE PARTAGE SOCIAL */
+        /* ===== BOUTONS DE PARTAGE ===== */
         .boutons-partage {
             display: flex;
             align-items: center;
@@ -539,33 +483,16 @@
 
         .bouton-partage:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
         }
 
-        .bouton-partage.whatsapp {
-            background: linear-gradient(135deg, #25D366, #128C7E);
-        }
+        .bouton-partage.whatsapp { background: linear-gradient(135deg, #25D366, #128C7E); }
+        .bouton-partage.linkedin { background: linear-gradient(135deg, #0077B5, #005885); }
+        .bouton-partage.facebook { background: linear-gradient(135deg, #1877F2, #0C63D4); }
+        .bouton-partage.copier { background: linear-gradient(135deg, #6c757d, #495057); }
+        .bouton-partage.copier.copie-effectuee { background: linear-gradient(135deg, #28a745, #1e7e34); }
 
-        .bouton-partage.linkedin {
-            background: linear-gradient(135deg, #0077B5, #005885);
-        }
-
-        .bouton-partage.facebook {
-            background: linear-gradient(135deg, #1877F2, #0C63D4);
-        }
-
-        .bouton-partage.copier {
-            background: linear-gradient(135deg, #6c757d, #495057);
-        }
-
-        .bouton-partage.copier.copie-effectuee {
-            background: linear-gradient(135deg, #28a745, #1e7e34);
-        }
-
-        /* Infobulle */
-        .infobulle {
-            position: relative;
-        }
+        .infobulle { position: relative; }
 
         .infobulle::after {
             content: attr(data-infobulle);
@@ -573,7 +500,7 @@
             bottom: 100%;
             left: 50%;
             transform: translateX(-50%) translateY(-8px);
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0,0,0,0.9);
             color: white;
             padding: 6px 12px;
             border-radius: 6px;
@@ -590,10 +517,8 @@
             transform: translateX(-50%) translateY(-4px);
         }
 
-        /* MESSAGES FLASH */
-        .messages-flash {
-            padding: 20px 40px;
-        }
+        /* ===== MESSAGES FLASH ===== */
+        .messages-flash { padding: 20px 40px; }
 
         .alerte {
             padding: 16px 20px;
@@ -604,72 +529,31 @@
             gap: 15px;
             font-size: 14px;
             animation: glissementEntree 0.4s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
         @keyframes glissementEntree {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .alerte i {
-            font-size: 20px;
-        }
+        .alerte i { font-size: 20px; }
+        .alerte.succes { background: #d4edda; color: #155724; border-left: 4px solid #28a745; }
+        .alerte.succes i { color: #28a745; }
+        .alerte.erreur { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
+        .alerte.erreur i { color: #dc3545; }
+        .alerte.info { background: #fff3cd; color: #856404; border-left: 4px solid var(--jaune-primaire); }
+        .alerte.info i { color: var(--jaune-primaire); }
+        .alerte.github-warning { background: #ffe6e6; color: #cf222e; border-left: 4px solid #cf222e; }
+        .alerte.github-warning i { color: #cf222e; }
 
-        .alerte.succes {
-            background: #d4edda;
-            color: #155724;
-            border-left: 4px solid #28a745;
-        }
-
-        .alerte.succes i {
-            color: #28a745;
-        }
-
-        .alerte.erreur {
-            background: #f8d7da;
-            color: #721c24;
-            border-left: 4px solid #dc3545;
-        }
-
-        .alerte.erreur i {
-            color: #dc3545;
-        }
-
-        .alerte.info {
-            background: #fff3cd;
-            color: #856404;
-            border-left: 4px solid var(--jaune-primaire);
-        }
-
-        .alerte.info i {
-            color: var(--jaune-primaire);
-        }
-
-        .alerte.github-warning {
-            background: #ffe6e6;
-            color: #cf222e;
-            border-left: 4px solid #cf222e;
-        }
-
-        .alerte.github-warning i {
-            color: #cf222e;
-        }
-
-        /* ZONE DE CONTENU PRINCIPAL */
         main {
             flex: 1;
             padding: 30px 40px;
             background: var(--gris-clair);
         }
 
-        /* PAGE AUTHORIZE */
+        /* ===== PAGE AUTHORIZE ===== */
         .conteneur-authorize {
             max-width: 800px;
             margin: 50px auto;
@@ -691,21 +575,11 @@
             margin: 0 auto 30px;
             color: white;
             font-size: 60px;
-            box-shadow: 0 10px 30px rgba(36, 41, 46, 0.3);
+            box-shadow: 0 10px 30px rgba(36,41,46,0.3);
         }
 
-        .titre-authorize {
-            font-size: 32px;
-            color: var(--texte-sombre);
-            margin-bottom: 20px;
-            font-weight: 700;
-        }
-
-        .sous-titre-authorize {
-            font-size: 18px;
-            color: var(--texte-clair);
-            margin-bottom: 30px;
-        }
+        .titre-authorize { font-size: 32px; color: var(--texte-sombre); margin-bottom: 20px; font-weight: 700; }
+        .sous-titre-authorize { font-size: 18px; color: var(--texte-clair); margin-bottom: 30px; }
 
         .permissions-authorize {
             background: #f8f9fa;
@@ -723,14 +597,8 @@
             border-bottom: 1px solid #e9ecef;
         }
 
-        .permission-item:last-child {
-            border-bottom: none;
-        }
-
-        .permission-item i {
-            color: var(--jaune-primaire);
-            font-size: 20px;
-        }
+        .permission-item:last-child { border-bottom: none; }
+        .permission-item i { color: var(--jaune-primaire); font-size: 20px; }
 
         .bouton-authorize {
             display: inline-flex;
@@ -752,7 +620,7 @@
 
         .bouton-authorize:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(36, 41, 46, 0.4);
+            box-shadow: 0 10px 30px rgba(36,41,46,0.4);
         }
 
         .lien-plus-tard {
@@ -765,180 +633,388 @@
             transition: color 0.3s ease;
         }
 
-        .lien-plus-tard:hover {
-            color: var(--couleur-github);
-        }
+        .lien-plus-tard:hover { color: var(--couleur-github); }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .barre-laterale {
-                transform: translateX(-100%);
-            }
-
-            .contenu-principal {
-                margin-left: 0;
-                margin-bottom: 70px;
-            }
-
-            .en-tete-superieur {
-                padding: 15px 20px;
-            }
-
-            .contenu-en-tete {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .gauche-en-tete h2 {
-                font-size: 20px;
-            }
-
-            .metadonnees-en-tete {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-
-            .droite-en-tete {
-                width: 100%;
-                flex-direction: column;
-            }
-
-            .boutons-partage {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .messages-flash {
-                padding: 15px 20px;
-            }
-
-            main {
-                padding: 20px;
-            }
-
-            .bouton-primaire, .bouton-github-header {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .conteneur-authorize {
-                margin: 20px;
-                padding: 30px 20px;
-            }
-
-            .titre-authorize {
-                font-size: 24px;
-            }
-        }
-
-        /* NAVIGATION MOBILE */
+        /* ===== NAVIGATION MOBILE ===== */
         .navigation-mobile {
             display: none;
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
+            height: var(--nav-mobile-height);
             background: var(--blanc);
-            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
+            box-shadow: 0 -2px 20px rgba(0,0,0,0.12);
+            border-top: 1px solid var(--couleur-bordure);
+            z-index: 1100;
+        }
+
+        /* Conteneur scrollable horizontal */
+        .conteneur-navigation-mobile {
+            display: flex;
+            align-items: stretch;
+            height: 100%;
             overflow-x: auto;
             overflow-y: hidden;
             -webkit-overflow-scrolling: touch;
+            scroll-snap-type: x proximity;
+            /* Cache la scrollbar tout en gardant le scroll fonctionnel */
             scrollbar-width: none;
+            -ms-overflow-style: none;
         }
 
-        .navigation-mobile::-webkit-scrollbar {
+        .conteneur-navigation-mobile::-webkit-scrollbar {
             display: none;
         }
 
-        .conteneur-navigation-mobile {
-            display: flex;
-            padding: 8px 0;
-            min-width: min-content;
-        }
-
+        /* Chaque item */
         .element-navigation-mobile {
             flex: 0 0 auto;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            padding: 12px 20px;
-            color: #666;
+            gap: 4px;
+            padding: 8px 18px;
+            color: var(--texte-clair);
             text-decoration: none;
-            transition: all 0.3s ease;
+            transition: color 0.2s ease, background 0.2s ease;
             white-space: nowrap;
-            min-width: 80px;
+            min-width: 72px;
+            scroll-snap-align: start;
+            position: relative;
+            border-radius: 0;
         }
 
-        .element-navigation-mobile i {
-            font-size: 22px;
+        .element-navigation-mobile::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            background: var(--jaune-primaire);
+            border-radius: 0 0 4px 4px;
+            transition: width 0.3s ease;
         }
 
-        .element-navigation-mobile span {
-            font-size: 12px;
-            font-weight: 500;
+        .element-navigation-mobile.actif::after,
+        .element-navigation-mobile:active::after {
+            width: 60%;
         }
 
         .element-navigation-mobile.actif {
             color: var(--jaune-primaire);
         }
 
-        .element-navigation-mobile.admin {
+        .element-navigation-mobile.admin.actif,
+        .element-navigation-mobile.admin:active {
             color: var(--couleur-admin);
         }
 
-        .element-navigation-mobile.portfolio {
+        .element-navigation-mobile.admin.actif::after { background: var(--couleur-admin); }
+
+        .element-navigation-mobile.portfolio.actif,
+        .element-navigation-mobile.portfolio:active {
             color: var(--couleur-portfolio);
         }
 
-        .element-navigation-mobile.me-connaitre {
+        .element-navigation-mobile.portfolio.actif::after { background: var(--couleur-portfolio); }
+
+        .element-navigation-mobile.me-connaitre.actif,
+        .element-navigation-mobile.me-connaitre:active {
             color: var(--couleur-me-connaitre);
         }
 
+        .element-navigation-mobile.me-connaitre.actif::after { background: var(--couleur-me-connaitre); }
+
         .element-navigation-mobile:active {
-            transform: scale(0.95);
+            transform: scale(0.92);
+            background: rgba(0,0,0,0.04);
         }
 
-        .indicateur-scroll {
+        .element-navigation-mobile i { font-size: 20px; }
+        .element-navigation-mobile span { font-size: 11px; font-weight: 500; }
+
+        /* Badge "plus d'items" - discret indicateur de scroll */
+        .indicateur-scroll-mobile {
             position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--jaune-primaire);
-            font-size: 18px;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 32px;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.95));
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 6px;
+            z-index: 2;
+            transition: opacity 0.3s ease;
+        }
+
+        .indicateur-scroll-mobile i {
+            font-size: 12px;
+            color: var(--texte-clair);
             animation: pulsation 2s infinite;
         }
 
+        .indicateur-scroll-mobile.masque { opacity: 0; pointer-events: none; }
+
         @keyframes pulsation {
-            0%, 100% {
-                opacity: 1;
+            0%, 100% { opacity: 1; transform: translateX(0); }
+            50% { opacity: 0.4; transform: translateX(3px); }
+        }
+
+        /* ===== BULLE FLOTTANTE MOBILE ===== */
+        .bulle-flottante {
+            display: none; /* visible seulement sur mobile */
+            position: fixed;
+            bottom: calc(var(--nav-mobile-height) + 16px);
+            right: 16px;
+            z-index: 1200;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        /* Bouton principal de la bulle */
+        .bulle-bouton-principal {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--jaune-primaire), var(--jaune-fonce));
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 20px rgba(255,193,7,0.45);
+            transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
+            color: white;
+            font-size: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .bulle-bouton-principal:active {
+            transform: scale(0.92);
+        }
+
+        .bulle-bouton-principal.ouvert {
+            transform: rotate(45deg);
+            background: linear-gradient(135deg, #ef5350, #e53935);
+            box-shadow: 0 6px 20px rgba(239,83,80,0.4);
+        }
+
+        /* Conteneur des options */
+        .bulle-options {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+            /* État fermé */
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(10px) scale(0.92);
+            transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+            transform-origin: bottom right;
+        }
+
+        .bulle-options.visible {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateY(0) scale(1);
+        }
+
+        /* Chaque option */
+        .bulle-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            padding: 0;
+            text-decoration: none;
+        }
+
+        .bulle-option-label {
+            background: rgba(30,30,30,0.88);
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 20px;
+            white-space: nowrap;
+            backdrop-filter: blur(4px);
+            letter-spacing: 0.3px;
+        }
+
+        .bulle-option-icone {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .bulle-option:active .bulle-option-icone {
+            transform: scale(0.88);
+        }
+
+        .bulle-option-icone.partage {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .bulle-option-icone.traduction {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+        }
+
+        /* Délais d'animation pour effet cascade */
+        .bulle-options .bulle-option:nth-child(2) {
+            transition-delay: 0.04s;
+        }
+        .bulle-options .bulle-option:nth-child(1) {
+            transition-delay: 0.08s;
+        }
+
+        /* Overlay pour fermer la bulle en cliquant ailleurs */
+        .bulle-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1190;
+        }
+
+        .bulle-overlay.actif { display: block; }
+
+        /* Sous-menu partage */
+        .bulle-sous-menu-partage {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(8px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            position: absolute;
+            bottom: 0;
+            right: 52px;
+            width: max-content;
+        }
+
+        .bulle-sous-menu-partage.visible {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateX(0);
+        }
+
+        .sous-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            padding: 0;
+            text-decoration: none;
+        }
+
+        .sous-menu-label {
+            background: rgba(30,30,30,0.85);
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 16px;
+            white-space: nowrap;
+        }
+
+        .sous-menu-icone {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            color: white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            flex-shrink: 0;
+        }
+
+        .sous-menu-icone.whatsapp { background: linear-gradient(135deg, #25D366, #128C7E); }
+        .sous-menu-icone.linkedin { background: linear-gradient(135deg, #0077B5, #005885); }
+        .sous-menu-icone.facebook { background: linear-gradient(135deg, #1877F2, #0C63D4); }
+        .sous-menu-icone.copier   { background: linear-gradient(135deg, #6c757d, #495057); }
+        .sous-menu-icone.copier.copie { background: linear-gradient(135deg, #28a745, #1e7e34); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            /* Masque la sidebar desktop */
+            .barre-laterale {
+                transform: translateX(-100%);
+                pointer-events: none;
             }
-            50% {
-                opacity: 0.5;
+
+            /* Le contenu prend toute la largeur et laisse de la place pour la nav mobile */
+            .contenu-principal {
+                margin-left: 0;
+                padding-bottom: var(--nav-mobile-height);
             }
+
+            /* Cache complètement l'en-tête sur mobile */
+            .en-tete-superieur {
+                display: none;
+            }
+
+            /* Flash messages mobile */
+            .messages-flash { padding: 10px 14px; }
+            .alerte { font-size: 13px; padding: 11px 13px; gap: 10px; }
+
+            /* Main mobile */
+            main { padding: 0; }
+
+            /* Authorize page mobile */
+            .conteneur-authorize { margin: 16px; padding: 24px 16px; }
+            .titre-authorize { font-size: 22px; }
+            .sous-titre-authorize { font-size: 15px; }
+
+            /* Affiche la navigation mobile */
+            .navigation-mobile { display: block; }
+
+            /* Affiche la bulle flottante */
+            .bulle-flottante { display: flex; }
         }
 
         @media (max-width: 480px) {
             .element-navigation-mobile {
-                min-width: 70px;
-                padding: 10px 15px;
+                min-width: 64px;
+                padding: 8px 12px;
             }
 
-            .element-navigation-mobile i {
-                font-size: 20px;
+            .element-navigation-mobile i { font-size: 18px; }
+            .element-navigation-mobile span { font-size: 10px; }
+        }
+
+        /* Safe area pour iPhone avec encoche/dynamic island */
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            .navigation-mobile {
+                padding-bottom: env(safe-area-inset-bottom);
+                height: calc(var(--nav-mobile-height) + env(safe-area-inset-bottom));
             }
 
-            .element-navigation-mobile span {
-                font-size: 11px;
-            }
-
-            .bouton-partage {
-                width: 36px;
-                height: 36px;
-                font-size: 14px;
+            .contenu-principal {
+                padding-bottom: calc(var(--nav-mobile-height) + env(safe-area-inset-bottom));
             }
         }
     </style>
@@ -949,14 +1025,11 @@
     {% set github_utilisateur = session.get('github_user') %}
     {% set github_token_session = session.get('github_token') %}
 
-    {# Si l'utilisateur n'a PAS de jeton GitHub en base de données ET n'est pas sur la page d'authorization #}
     {% if not github_connecte and request.endpoint not in ['admin.authorize_page', 'github_bp.callback', 'admin.skipp_authorize'] and not session.get('skip_github') %}
-        <!-- REDIRECTION JAVASCRIPT VERS LA PAGE D'AUTHORISATION -->
         <script>
             window.location.href = "{{ url_for('admin.authorize_page') }}";
         </script>
         
-        <!-- AFFICHAGE DE LA PAGE D'AUTHORISATION DIRECTEMENT DANS LE MASTER SI NÉCESSAIRE -->
         <div class="contenu-principal" style="margin-left: 0;">
             <div class="conteneur-authorize">
                 <div class="logo-github-authorize">
@@ -994,7 +1067,7 @@
             </div>
         </div>
     {% else %}
-        <!-- BARRE LATERALE NORMALE -->
+        <!-- BARRE LATERALE -->
         <aside class="barre-laterale">
             <div class="entete-barre-laterale">
                 <a href="{{ url_for('admin.dashboard') }}" class="logo-barre-laterale">
@@ -1009,24 +1082,17 @@
                 <div class="info-utilisateur">
                     <div class="avatar-utilisateur">
                         {% if current_user.photo_profil and current_user.photo_profil != 'default-avatar.jpg' %}
-                            {# Détermine si c'est une nouvelle image (dans media/) ou ancienne (dans static/uploads/) #}
                             {% if current_user.photo_profil.startswith('avatar_') %}
-                                {# Nouvelle image dans media/profiles/ #}
                                 {% set url_avatar = url_for('portfolio.serve_public_media', folder='profiles', filename=current_user.photo_profil) %}
-                                <img src="{{ url_avatar }}" 
-                                    alt="{{ current_user.nom_utilisateur }}"
+                                <img src="{{ url_avatar }}" alt="{{ current_user.nom_utilisateur }}"
                                     onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/avatar.png') }}';">
                             {% else %}
-                                {# Ancienne image dans static/uploads/ (pour la compatibilité) #}
                                 {% set url_avatar = url_for('static', filename='uploads/' + current_user.photo_profil) %}
-                                <img src="{{ url_avatar }}" 
-                                    alt="{{ current_user.nom_utilisateur }}"
+                                <img src="{{ url_avatar }}" alt="{{ current_user.nom_utilisateur }}"
                                     onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/avatar.png') }}';">
                             {% endif %}
                         {% else %}
-                            {# Image par défaut #}
-                            <img src="{{ url_for('static', filename='img/avatar.png') }}" 
-                                alt="{{ current_user.nom_utilisateur }}">
+                            <img src="{{ url_for('static', filename='img/avatar.png') }}" alt="{{ current_user.nom_utilisateur }}">
                         {% endif %}
                     </div>
                     <div class="details-utilisateur">
@@ -1036,7 +1102,6 @@
                             <span>{{ current_user.role|title if current_user.role else 'Développeur' }}</span>
                         </div>
                         
-                        <!-- STATUT GITHUB DYNAMIQUE -->
                         {% if github_connecte %}
                             <div class="status-github connecte">
                                 <i class="fab fa-github"></i>
@@ -1078,27 +1143,21 @@
                         <span class="badge-github" style="background: #cf222e;">! Connecter</span>
                     {% endif %}
                 </a>
-                
-                <!-- NOUVEAU : Onglet Éditer Portfolio -->
                 <a href="{{ url_for('admin.edit_portfolio_content') }}" class="lien-navigation portfolio {% if request.endpoint == 'admin.edit_portfolio_content' %}actif{% endif %}">
                     <i class="fas fa-briefcase"></i>
                     <span>Éditer Portfolio</span>
                     <span class="badge-portfolio">PORTFOLIO</span>
                 </a>
-                
-                <!-- NOUVEAU : Onglet Éditer Me Connaître -->
                 <a href="{{ url_for('admin.about_edit') }}" class="lien-navigation me-connaitre {% if request.endpoint == 'admin.about_edit' %}actif{% endif %}">
                     <i class="fas fa-user-tie"></i>
                     <span>Éditer Me Connaître</span>
                     <span class="badge-me-connaitre">À PROPOS</span>
                 </a>
-                
                 <a href="{{ url_for('admin.edit_profile') }}" class="lien-navigation {% if request.endpoint == 'admin.edit_profile' %}actif{% endif %}">
                     <i class="fas fa-user-cog"></i>
                     <span>Mon Profil</span>
                 </a>
 
-                <!-- SECTION ADMIN - Uniquement Gestion des Statistiques -->
                 {% if current_user.role == 'admin' %}
                 <div class="titre-section-navigation admin">
                     <i class="fas fa-crown"></i>
@@ -1109,7 +1168,6 @@
                     <span>Gestion des Statistiques</span>
                     <span class="badge-admin">ADMIN</span>
                 </a>
-                <!-- Les autres liens admin (Utilisateurs, Paramètres) ont été retirés comme demandé -->
                 {% endif %}
             </nav>
 
@@ -1123,7 +1181,6 @@
 
         <!-- CONTENU PRINCIPAL -->
         <div class="contenu-principal">
-            <!-- EN-TETE SUPERIEUR -->
             <header class="en-tete-superieur">
                 <div class="contenu-en-tete">
                     <div class="gauche-en-tete">
@@ -1139,19 +1196,10 @@
                                 <span style="color: var(--couleur-admin); font-weight: 600;">Administrateur</span>
                             </div>
                             {% endif %}
-                            
-                            <!-- STATUT GITHUB DANS L'EN-TÊTE -->
                             <div class="element-metadonnee">
                                 {% if github_connecte %}
                                     <i class="fab fa-github" style="color: #2ea44f;"></i>
-                                    <span style="color: #2ea44f;">
-                                        GitHub: 
-                                        {% if github_utilisateur %}
-                                            {{ github_utilisateur.login }}
-                                        {% else %}
-                                            Connecté
-                                        {% endif %}
-                                    </span>
+                                    <span style="color: #2ea44f;">GitHub: {% if github_utilisateur %}{{ github_utilisateur.login }}{% else %}Connecté{% endif %}</span>
                                 {% else %}
                                     <i class="fab fa-github" style="color: #cf222e;"></i>
                                     <span style="color: #cf222e;">GitHub non connecté</span>
@@ -1160,15 +1208,14 @@
                         </div>
                     </div>
                     <div class="droite-en-tete">
-                        <!-- Boutons de partage social -->
                         <div class="boutons-partage">
-                            <button class="bouton-partage whatsapp infobulle" data-infobulle="Partager sur WhatsApp" onclick="partagerWhatsApp()">
+                            <button class="bouton-partage whatsapp infobulle" data-infobulle="WhatsApp" onclick="partagerWhatsApp()">
                                 <i class="fab fa-whatsapp"></i>
                             </button>
-                            <button class="bouton-partage linkedin infobulle" data-infobulle="Partager sur LinkedIn" onclick="partagerLinkedIn()">
+                            <button class="bouton-partage linkedin infobulle" data-infobulle="LinkedIn" onclick="partagerLinkedIn()">
                                 <i class="fab fa-linkedin-in"></i>
                             </button>
-                            <button class="bouton-partage facebook infobulle" data-infobulle="Partager sur Facebook" onclick="partagerFacebook()">
+                            <button class="bouton-partage facebook infobulle" data-infobulle="Facebook" onclick="partagerFacebook()">
                                 <i class="fab fa-facebook-f"></i>
                             </button>
                             <button class="bouton-partage copier infobulle" data-infobulle="Copier le lien" onclick="copierURL()" id="boutonCopier">
@@ -1191,7 +1238,6 @@
                 </div>
             </header>
 
-            <!-- MESSAGES FLASH -->
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     <section class="messages-flash">
@@ -1213,7 +1259,6 @@
                 {% endif %}
             {% endwith %}
 
-            <!-- ALERTE SPÉCIALE SI GITHUB NON CONNECTÉ -->
             {% if not github_connecte and request.endpoint not in ['admin.authorize_page', 'github_bp.callback', 'admin.skipp_authorize'] and not session.get('skip_github') %}
                 <section class="messages-flash">
                     <div class="alerte github-warning">
@@ -1224,166 +1269,330 @@
                 </section>
             {% endif %}
 
-            <!-- CONTENU PRINCIPAL -->
             <main>
                 {% block content %}
                 {% endblock %}
             </main>
         </div>
 
-        <!-- NAVIGATION MOBILE -->
-        <nav class="navigation-mobile">
-            <div class="conteneur-navigation-mobile">
-                <a href="{{ url_for('admin.dashboard') }}" class="element-navigation-mobile {% if request.endpoint == 'admin.dashboard' %}actif{% endif %}">
+        <!-- ===== BULLE FLOTTANTE MOBILE ===== -->
+        <div class="bulle-flottante" id="bulleFlottante" aria-label="Actions rapides">
+            <div class="bulle-overlay" id="bulleOverlay"></div>
+            <div class="bulle-options" id="bulleOptions">
+                <!-- Option Partage -->
+                <div class="bulle-option" style="position: relative;">
+                    <span class="bulle-option-label">Partager</span>
+                    <button class="bulle-option-icone partage" id="btnPartage" aria-label="Partager" type="button">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
+                    <!-- Sous-menu partage -->
+                    <div class="bulle-sous-menu-partage" id="sousMenuPartage">
+                        <button class="sous-menu-item" onclick="partagerWhatsApp()" type="button">
+                            <span class="sous-menu-label">WhatsApp</span>
+                            <span class="sous-menu-icone whatsapp"><i class="fab fa-whatsapp"></i></span>
+                        </button>
+                        <button class="sous-menu-item" onclick="partagerLinkedIn()" type="button">
+                            <span class="sous-menu-label">LinkedIn</span>
+                            <span class="sous-menu-icone linkedin"><i class="fab fa-linkedin-in"></i></span>
+                        </button>
+                        <button class="sous-menu-item" onclick="partagerFacebook()" type="button">
+                            <span class="sous-menu-label">Facebook</span>
+                            <span class="sous-menu-icone facebook"><i class="fab fa-facebook-f"></i></span>
+                        </button>
+                        <button class="sous-menu-item" id="btnCopierBulle" onclick="copierURLBulle()" type="button">
+                            <span class="sous-menu-label" id="labelCopierBulle">Copier le lien</span>
+                            <span class="sous-menu-icone copier" id="iconeCopierBulle"><i class="fas fa-link"></i></span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Option Traduction -->
+                <button class="bulle-option" id="btnTraduction" type="button" aria-label="Traduire la page">
+                    <span class="bulle-option-label">Traduire</span>
+                    <span class="bulle-option-icone traduction"><i class="fas fa-language"></i></span>
+                </button>
+            </div>
+            <!-- Bouton principal -->
+            <button class="bulle-bouton-principal" id="bulleBtnPrincipal" type="button" aria-label="Actions rapides" aria-expanded="false">
+                <i class="fas fa-plus" id="bulleIconePrincipale"></i>
+            </button>
+        </div>
+
+        <!-- ===== NAVIGATION MOBILE (bottom fixed + scroll interne) ===== -->
+        <nav class="navigation-mobile" id="navMobile" role="navigation" aria-label="Navigation mobile">
+            <div class="conteneur-navigation-mobile" id="conteneurNavMobile">
+                <a href="{{ url_for('admin.dashboard') }}"
+                   class="element-navigation-mobile {% if request.endpoint == 'admin.dashboard' %}actif{% endif %}"
+                   aria-label="Tableau de bord">
                     <i class="fas fa-th-large"></i>
                     <span>Tableau</span>
                 </a>
-                <a href="{{ url_for('admin.list_repos') }}" class="element-navigation-mobile {% if request.endpoint == 'admin.list_repos' %}actif{% endif %}">
+                <a href="{{ url_for('admin.list_repos') }}"
+                   class="element-navigation-mobile {% if request.endpoint == 'admin.list_repos' %}actif{% endif %}"
+                   aria-label="Mes Projets">
                     <i class="fas fa-folder-open"></i>
                     <span>Projets</span>
                 </a>
-                <a href="{{ url_for('admin.import_view') }}" class="element-navigation-mobile {% if request.endpoint == 'admin.import_view' %}actif{% endif %}">
+                <a href="{{ url_for('admin.import_view') }}"
+                   class="element-navigation-mobile {% if request.endpoint == 'admin.import_view' %}actif{% endif %}"
+                   aria-label="Importer GitHub">
                     <i class="fab fa-github"></i>
                     <span>Importer</span>
                 </a>
-                
-                <!-- NOUVEAU : Éditer Portfolio (mobile) -->
-                <a href="{{ url_for('admin.edit_portfolio_content') }}" class="element-navigation-mobile portfolio {% if request.endpoint == 'admin.edit_portfolio_content' %}actif{% endif %}">
+                <a href="{{ url_for('admin.edit_portfolio_content') }}"
+                   class="element-navigation-mobile portfolio {% if request.endpoint == 'admin.edit_portfolio_content' %}actif{% endif %}"
+                   aria-label="Éditer Portfolio">
                     <i class="fas fa-briefcase"></i>
                     <span>Portfolio</span>
                 </a>
-                
-                <!-- NOUVEAU : Éditer Me Connaître (mobile) -->
-                <a href="{{ url_for('admin.about_edit') }}" class="element-navigation-mobile me-connaitre {% if request.endpoint == 'admin.about_edit' %}actif{% endif %}">
+                <a href="{{ url_for('admin.about_edit') }}"
+                   class="element-navigation-mobile me-connaitre {% if request.endpoint == 'admin.about_edit' %}actif{% endif %}"
+                   aria-label="Me Connaître">
                     <i class="fas fa-user-tie"></i>
-                    <span>Me Connaître</span>
+                    <span>À propos</span>
                 </a>
-                
-                <!-- ADMIN - Uniquement Gestion des Statistiques (mobile) -->
+                <a href="{{ url_for('admin.edit_profile') }}"
+                   class="element-navigation-mobile {% if request.endpoint == 'admin.edit_profile' %}actif{% endif %}"
+                   aria-label="Mon Profil">
+                    <i class="fas fa-user-cog"></i>
+                    <span>Profil</span>
+                </a>
                 {% if current_user.role == 'admin' %}
-                <a href="#" class="element-navigation-mobile admin">
+                <a href="#" class="element-navigation-mobile admin" aria-label="Statistiques">
                     <i class="fas fa-chart-line"></i>
-                    <span>Statistiques</span>
+                    <span>Stats</span>
                 </a>
                 {% endif %}
-                
-                <!-- BOUTON CONNECTER GITHUB MOBILE -->
                 {% if not github_connecte %}
-                    <a href="{{ url_for('admin.authorize_page') }}" class="element-navigation-mobile" style="color: #cf222e;">
-                        <i class="fab fa-github"></i>
-                        <span>Connecter</span>
-                    </a>
-                {% endif %}
-                
-                <a href="{{ url_for('portfolio.home') }}" class="element-navigation-mobile" target="_blank">
-                    <i class="fas fa-external-link-alt"></i>
-                    <span>Portfolio</span>
+                <a href="{{ url_for('admin.authorize_page') }}" class="element-navigation-mobile" style="color: #cf222e;" aria-label="Connecter GitHub">
+                    <i class="fab fa-github"></i>
+                    <span>Connecter</span>
                 </a>
-                <a href="{{ url_for('auth.logout') }}" class="element-navigation-mobile">
+                {% endif %}
+                <a href="{{ url_for('portfolio.home') }}" class="element-navigation-mobile" target="_blank" aria-label="Voir Portfolio">
+                    <i class="fas fa-external-link-alt"></i>
+                    <span>Site</span>
+                </a>
+                <a href="{{ url_for('auth.logout') }}" class="element-navigation-mobile" id="lienDeconnexion" aria-label="Déconnexion">
                     <i class="fas fa-sign-out-alt"></i>
-                    <span>Déconnexion</span>
+                    <span>Sortir</span>
                 </a>
             </div>
-            <div class="indicateur-scroll">
+            <!-- Indicateur de scroll visible -->
+            <div class="indicateur-scroll-mobile" id="indicateurScroll">
                 <i class="fas fa-chevron-right"></i>
             </div>
         </nav>
     {% endif %}
 
     <script>
-        // Fonctions de partage social
+        // ===== PARTAGE SOCIAL =====
         function partagerWhatsApp() {
             const url = window.location.href;
             const texte = "Découvrez GitFetch - Gérez vos projets GitHub facilement !";
-            const urlWhatsApp = `https://wa.me/?text=${encodeURIComponent(texte + ' ' + url)}`;
-            window.open(urlWhatsApp, '_blank');
+            window.open(`https://wa.me/?text=${encodeURIComponent(texte + ' ' + url)}`, '_blank');
         }
 
         function partagerLinkedIn() {
-            const url = window.location.href;
-            const urlLinkedIn = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
-            window.open(urlLinkedIn, '_blank', 'width=600,height=600');
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`, '_blank', 'width=600,height=600');
         }
 
         function partagerFacebook() {
-            const url = window.location.href;
-            const urlFacebook = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
-            window.open(urlFacebook, '_blank', 'width=600,height=600');
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank', 'width=600,height=600');
         }
 
         function copierURL() {
-            const url = window.location.href;
             const boutonCopier = document.getElementById('boutonCopier');
-            
-            navigator.clipboard.writeText(url).then(() => {
-                // Change l'icône et la couleur
+            if (!boutonCopier) return;
+            navigator.clipboard.writeText(window.location.href).then(() => {
                 boutonCopier.classList.add('copie-effectuee');
                 boutonCopier.innerHTML = '<i class="fas fa-check"></i>';
                 boutonCopier.setAttribute('data-infobulle', 'Lien copié !');
-                
-                // Réinitialise après 2 secondes
                 setTimeout(() => {
                     boutonCopier.classList.remove('copie-effectuee');
                     boutonCopier.innerHTML = '<i class="fas fa-link"></i>';
                     boutonCopier.setAttribute('data-infobulle', 'Copier le lien');
                 }, 2000);
-            }).catch(err => {
-                console.error('Erreur lors de la copie:', err);
-                alert('Impossible de copier le lien');
-            });
+            }).catch(() => alert('Impossible de copier le lien'));
         }
 
-        // Mettre à jour le lien actif
+        // Copier depuis la bulle mobile
+        function copierURLBulle() {
+            const icone = document.getElementById('iconeCopierBulle');
+            const label = document.getElementById('labelCopierBulle');
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                if (icone) { icone.classList.add('copie'); icone.innerHTML = '<i class="fas fa-check"></i>'; }
+                if (label) label.textContent = 'Copié !';
+                setTimeout(() => {
+                    if (icone) { icone.classList.remove('copie'); icone.innerHTML = '<i class="fas fa-link"></i>'; }
+                    if (label) label.textContent = 'Copier le lien';
+                }, 2000);
+            }).catch(() => alert('Impossible de copier le lien'));
+        }
+
+        // ===== BULLE FLOTTANTE =====
+        (function() {
+            const btnPrincipal   = document.getElementById('bulleBtnPrincipal');
+            const bulleOptions   = document.getElementById('bulleOptions');
+            const overlay        = document.getElementById('bulleOverlay');
+            const btnPartage     = document.getElementById('btnPartage');
+            const sousMenuPartage = document.getElementById('sousMenuPartage');
+            const btnTraduction  = document.getElementById('btnTraduction');
+
+            if (!btnPrincipal) return;
+
+            let bulleOuverte = false;
+            let partageOuvert = false;
+
+            function ouvrirBulle() {
+                bulleOuverte = true;
+                bulleOptions.classList.add('visible');
+                overlay.classList.add('actif');
+                btnPrincipal.classList.add('ouvert');
+                btnPrincipal.setAttribute('aria-expanded', 'true');
+            }
+
+            function fermerBulle() {
+                bulleOuverte = false;
+                bulleOptions.classList.remove('visible');
+                overlay.classList.remove('actif');
+                btnPrincipal.classList.remove('ouvert');
+                btnPrincipal.setAttribute('aria-expanded', 'false');
+                fermerPartage();
+            }
+
+            function fermerPartage() {
+                partageOuvert = false;
+                if (sousMenuPartage) sousMenuPartage.classList.remove('visible');
+            }
+
+            // Toggle bulle principale
+            btnPrincipal.addEventListener('click', function(e) {
+                e.stopPropagation();
+                bulleOuverte ? fermerBulle() : ouvrirBulle();
+            });
+
+            // Overlay ferme tout
+            overlay.addEventListener('click', fermerBulle);
+
+            // Bouton partage → toggle sous-menu
+            if (btnPartage) {
+                btnPartage.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    partageOuvert = !partageOuvert;
+                    sousMenuPartage.classList.toggle('visible', partageOuvert);
+                });
+            }
+
+            // Fermer sous-menu partage quand on clique sur un item dedans
+            if (sousMenuPartage) {
+                sousMenuPartage.querySelectorAll('.sous-menu-item').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        setTimeout(fermerBulle, 300);
+                    });
+                });
+            }
+
+            // Bouton traduction → API de traduction native du navigateur
+            if (btnTraduction) {
+                btnTraduction.addEventListener('click', function(e) {
+                    e.stopPropagation();
+
+                    // Méthode 1 : API Translation (Chrome Android)
+                    if (window.navigator && window.navigator.language) {
+                        const langActuelle = document.documentElement.lang || 'fr';
+                        const langCible = langActuelle === 'fr' ? 'en' : 'fr';
+
+                        // Tenter l'API de traduction native si disponible
+                        if ('translation' in self && 'canDetect' in self.translation) {
+                            // API expérimentale Chrome
+                            self.translation.translate(document.body, { targetLanguage: langCible })
+                                .catch(() => declencherTraductionFallback());
+                        } else {
+                            declencherTraductionFallback();
+                        }
+                    } else {
+                        declencherTraductionFallback();
+                    }
+
+                    fermerBulle();
+                });
+            }
+
+            function declencherTraductionFallback() {
+                // Méthode 2 : Ouvrir Google Translate sur la page actuelle
+                const urlActuelle = encodeURIComponent(window.location.href);
+                const langSource = document.documentElement.lang || 'fr';
+                const langCible = langSource === 'fr' ? 'en' : 'fr';
+
+                // Méthode 3 : Simuler Ctrl+Shift+T (raccourci Chrome translate) — pas possible via JS
+                // On tente d'abord l'API native Web Share / navigator.translate
+                // Puis on propose Google Translate comme fallback fiable
+                const urlGoogleTranslate = `https://translate.google.com/translate?sl=${langSource}&tl=${langCible}&u=${urlActuelle}`;
+                window.open(urlGoogleTranslate, '_blank');
+            }
+
+        })();
+
+        // ===== NAVIGATION MOBILE - SCROLL & INDICATEUR =====
+        (function() {
+            const conteneur = document.getElementById('conteneurNavMobile');
+            const indicateur = document.getElementById('indicateurScroll');
+
+            if (!conteneur || !indicateur) return;
+
+            function majIndicateur() {
+                const maxScroll = conteneur.scrollWidth - conteneur.clientWidth;
+                if (maxScroll <= 0 || conteneur.scrollLeft >= maxScroll - 4) {
+                    indicateur.classList.add('masque');
+                } else {
+                    indicateur.classList.remove('masque');
+                }
+            }
+
+            majIndicateur();
+            conteneur.addEventListener('scroll', majIndicateur, { passive: true });
+            window.addEventListener('resize', majIndicateur);
+
+            // Scroll vers l'élément actif
+            const elemActif = conteneur.querySelector('.element-navigation-mobile.actif');
+            if (elemActif) {
+                requestAnimationFrame(() => {
+                    const scrollCible = elemActif.offsetLeft - (conteneur.clientWidth / 2) + (elemActif.offsetWidth / 2);
+                    conteneur.scrollTo({ left: Math.max(0, scrollCible), behavior: 'smooth' });
+                });
+            }
+        })();
+
+        // ===== CONFIRMATION DÉCONNEXION =====
+        ['lienDeconnexion'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('click', e => {
+                if (!confirm('Voulez-vous vraiment vous déconnecter ?')) e.preventDefault();
+            });
+        });
+
+        document.querySelectorAll('a.bouton-deconnexion').forEach(lien => {
+            lien.addEventListener('click', e => {
+                if (!confirm('Voulez-vous vraiment vous déconnecter ?')) e.preventDefault();
+            });
+        });
+
+        // ===== LIEN ACTIF - FALLBACK JS =====
         const cheminActuel = window.location.pathname;
-        
-        // Navigation desktop
+
         document.querySelectorAll('.lien-navigation').forEach(lien => {
             const href = lien.getAttribute('href');
-            if (href && href !== '#' && href === cheminActuel) {
-                lien.classList.add('actif');
-            }
+            if (href && href !== '#' && href === cheminActuel) lien.classList.add('actif');
         });
 
-        // Navigation mobile
-        document.querySelectorAll('.element-navigation-mobile').forEach(element => {
-            const href = element.getAttribute('href');
-            if (href && href !== '#' && href === cheminActuel) {
-                element.classList.add('actif');
-            }
+        document.querySelectorAll('.element-navigation-mobile').forEach(el => {
+            const href = el.getAttribute('href');
+            if (href && href !== '#' && href === cheminActuel) el.classList.add('actif');
         });
 
-        // Gérer le scroll horizontal sur mobile
-        const navigationMobile = document.querySelector('.navigation-mobile');
-        const conteneurNavigationMobile = document.querySelector('.conteneur-navigation-mobile');
-        
-        if (navigationMobile && conteneurNavigationMobile) {
-            // Masquer l'indicateur si tout tient
-            if (conteneurNavigationMobile.scrollWidth <= navigationMobile.clientWidth) {
-                const indicateur = document.querySelector('.indicateur-scroll');
-                if (indicateur) indicateur.style.display = 'none';
-            }
-        }
-
-        // Animation de feedback au clic mobile
-        document.querySelectorAll('.element-navigation-mobile').forEach(element => {
-            element.addEventListener('click', function(e) {
-                if (this.getAttribute('href') === '#') {
-                    e.preventDefault();
-                }
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = 'scale(1)';
-                }, 150);
-            });
-        });
-
-        // Confirmation de déconnexion
-        document.querySelectorAll('a[href*="deconnexion"]').forEach(lien => {
-            lien.addEventListener('click', function(e) {
-                if (!confirm('Voulez-vous vraiment vous déconnecter ?')) {
-                    e.preventDefault();
-                }
-            });
+        // Empêcher navigation sur href="#"
+        document.querySelectorAll('[href="#"]').forEach(el => {
+            el.addEventListener('click', e => e.preventDefault());
         });
     </script>
 </body>

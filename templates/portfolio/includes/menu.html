@@ -1,4 +1,3 @@
-
 <nav class="main-nav">
     <div class="container">
       <div class="nav-content">
@@ -6,17 +5,10 @@
           <a href="{{ url_for('portfolio.home') }}" class="logo">
           <div class="profile-pic">
               {% if user and user.photo_profil and user.photo_profil != 'default-avatar.jpg' %}
-                  {% if user.photo_profil.startswith('avatar_') %}
-                      {# Nouvelle image dans media/profiles/ via la route de distribution #}
-                      <img src="{{ url_for('admin.serve_portfolio_media', folder='profiles', filename=user.photo_profil) }}" 
-                           alt="Photo de {{ user.nom_utilisateur }}"
-                           onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/avatar.png') }}'">
-                  {% else %}
-                      {# Ancienne image dans static/uploads/ #}
-                      <img src="{{ url_for('static', filename='uploads/' + user.photo_profil) }}" 
-                           alt="Photo de {{ user.nom_utilisateur }}"
-                           onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/avatar.png') }}'">
-                  {% endif %}
+                  {# Utilisation de la route portfolio.serve_public_media pour tous les cas #}
+                  <img src="{{ url_for('portfolio.serve_public_media', folder='profiles', filename=user.photo_profil) }}" 
+                       alt="Photo de {{ user.nom_utilisateur }}"
+                       onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/avatar.png') }}'">
               {% else %}
                   <img src="{{ url_for('static', filename='img/avatar.png') }}" alt="Photo de profil">
               {% endif %}
@@ -41,21 +33,12 @@
           </li>
           <li class="auth-buttons">
               {% if user and user.cv %}
-                  {% if user.cv.startswith('cv_') %}
-                      {# Nouveau CV dans media/docs/ #}
-                      <a href="{{ url_for('admin.serve_portfolio_media', folder='docs', filename=user.cv) }}" 
-                         class="btn btn-outline"
-                         download="CV_{{ user.nom_utilisateur }}.pdf">
-                         <i class="fas fa-download"></i> Télécharger CV
-                      </a>
-                  {% else %}
-                      {# Ancien CV dans static/uploads/ #}
-                      <a href="{{ url_for('static', filename='uploads/docs/' + user.cv) }}" 
-                         class="btn btn-outline"
-                         download="CV_{{ user.nom_utilisateur }}.pdf">
-                         <i class="fas fa-download"></i> Télécharger CV
-                      </a>
-                  {% endif %}
+                  {# Utilisation de la route portfolio.serve_public_media pour le CV #}
+                  <a href="{{ url_for('portfolio.serve_public_media', folder='docs', filename=user.cv) }}" 
+                     class="btn btn-outline"
+                     download="CV_{{ user.nom_utilisateur }}.pdf">
+                     <i class="fas fa-download"></i> Télécharger CV
+                  </a>
               {% else %}
                   <a href="#" class="btn btn-outline disabled" onclick="alert('CV non disponible'); return false;">
                     <i class="fas fa-download"></i> Télécharger CV
@@ -73,24 +56,17 @@
       </div>
     </div>
 </nav>
+  
   <!-- Menu mobile -->
   <div class="mobile-menu">
     <div class="mobile-profile">
       <div class="mobile-profile-pic">
         {% if user and user.photo_profil and user.photo_profil != 'default-avatar.jpg' %}
-            {% if user.photo_profil.startswith('avatar_') %}
-                {# Nouvelle image dans media/profiles/ #}
-                <img src="/media/profiles/{{ user.photo_profil }}" 
-                     alt="Photo de {{ user.nom_utilisateur }}"
-                     onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/avatar.png') }}'">
-            {% else %}
-                {# Ancienne image dans static/uploads/ #}
-                <img src="{{ url_for('static', filename='uploads/' + user.photo_profil) }}" 
-                     alt="Photo de {{ user.nom_utilisateur }}"
-                     onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/avatar.png') }}'">
-            {% endif %}
+            {# Utilisation de la route portfolio.serve_public_media pour tous les cas #}
+            <img src="{{ url_for('portfolio.serve_public_media', folder='profiles', filename=user.photo_profil) }}" 
+                 alt="Photo de {{ user.nom_utilisateur }}"
+                 onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/avatar.png') }}'">
         {% else %}
-            {# Image par défaut si aucune photo en base #}
             <img src="{{ url_for('static', filename='img/avatar.png') }}" alt="Photo de profil">
         {% endif %}
       </div>
@@ -112,21 +88,12 @@
       </li>
       <li>
         {% if user and user.cv %}
-            {% if user.cv.startswith('cv_') %}
-                {# Nouveau CV dans media/docs/ #}
-                <a href="/media/docs/{{ user.cv }}" 
-                   class="btn btn-outline"
-                   download="CV_{{ user.nom_utilisateur }}.pdf">
-                   <i class="fas fa-download"></i> Télécharger CV
-                </a>
-            {% else %}
-                {# Ancien CV dans static/uploads/ #}
-                <a href="{{ url_for('static', filename='uploads/docs/' + user.cv) }}" 
-                   class="btn btn-outline"
-                   download="CV_{{ user.nom_utilisateur }}.pdf">
-                   <i class="fas fa-download"></i> Télécharger CV
-                </a>
-            {% endif %}
+            {# Utilisation de la route portfolio.serve_public_media pour le CV #}
+            <a href="{{ url_for('portfolio.serve_public_media', folder='docs', filename=user.cv) }}" 
+               class="btn btn-outline"
+               download="CV_{{ user.nom_utilisateur }}.pdf">
+               <i class="fas fa-download"></i> Télécharger CV
+            </a>
         {% else %}
             <a href="#" class="btn btn-outline disabled" onclick="alert('CV non disponible'); return false;">
               <i class="fas fa-download"></i> Télécharger CV
@@ -159,6 +126,7 @@
       {% endif %}
     </div>
   </div>
+  
   <style>
     /* Variables CSS du second menu */
     :root {
@@ -338,6 +306,14 @@
     .btn-outline:hover {
       background: rgba(255, 193, 7, 0.1);
       color: var(--primary-color);
+    }
+
+    .btn.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+      border-color: #ccc;
+      color: #999;
     }
 
     /* Menu mobile */
@@ -605,8 +581,6 @@
       });
     });
 
-    // Animation de la navbar au scroll
-
     // Ajouter la classe active au lien de navigation en fonction de la section visible
     const sections = document.querySelectorAll("section");
     const navLinks = document.querySelectorAll(
@@ -634,7 +608,7 @@
       });
     });
 
-    // Animation des boutons (comme dans le deuxième menu)
+    // Animation des boutons
     document.addEventListener("DOMContentLoaded", function () {
       const buttons = document.querySelectorAll(".btn");
       buttons.forEach((button) => {
@@ -648,4 +622,3 @@
       });
     });
   </script>
-

@@ -30,7 +30,7 @@
                         <!-- Cover avec overlay permanent pour upload -->
                         <div class="cover-container">
                             <div class="cover-image" id="cover-preview"
-                                 style="background-image: url('{% if current_user.photo_couverture and current_user.photo_couverture != "default-cover.jpg" %}{{ url_for('admin.serve_admin_media', type='cover', filename=current_user.photo_couverture) }}{% else %}{{ url_for('static', filename='img/default-cover.jpg') }}{% endif %}');">
+                                 style="background-image: url('{% if current_user.photo_couverture and current_user.photo_couverture != "default-cover.jpg" %}{{ url_for('admin.serve_media', type='cover', filename=current_user.photo_couverture) }}{% else %}{{ url_for('static', filename='img/default-cover.jpg') }}{% endif %}');">
                                 <label for="cover-upload" class="cover-upload-overlay">
                                     <i class="fas fa-camera"></i>
                                     <span>Modifier</span>
@@ -43,7 +43,7 @@
                             <div class="avatar-section">
                                 <div class="avatar-container">
                                     <div class="avatar-image" id="avatar-preview"
-                                         style="background-image: url('{% if current_user.photo_profil and current_user.photo_profil != "default-avatar.jpg" %}{{ url_for('admin.serve_admin_media', type='avatar', filename=current_user.photo_profil) }}{% else %}{{ url_for('static', filename='img/avatar.png') }}{% endif %}');">
+                                         style="background-image: url('{% if current_user.photo_profil and current_user.photo_profil != "default-avatar.jpg" %}{{ url_for('admin.serve_media', type='avatar', filename=current_user.photo_profil) }}{% else %}{{ url_for('static', filename='img/avatar.png') }}{% endif %}');">
                                     </div>
                                     <label for="avatar-upload" class="avatar-upload-btn">
                                         <i class="fas fa-camera"></i>
@@ -211,7 +211,7 @@
                                                 <div class="file-details">
                                                     <span class="file-name">{{ current_user.cv }}</span>
                                                     <span class="file-status">
-                                                        <a href="{{ url_for('admin.serve_admin_media', type='cv', filename=current_user.cv) }}" target="_blank" class="download-link">
+                                                        <a href="{{ url_for('admin.serve_media', type='cv', filename=current_user.cv) }}" target="_blank" class="download-link">
                                                             <i class="fas fa-download"></i> Télécharger
                                                         </a>
                                                     </span>

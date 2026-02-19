@@ -341,7 +341,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 30px;
             padding: 80px 0;
             background: #f9f9f9;
             margin: 0 auto;
@@ -677,9 +676,14 @@
             {% if projets %}
                 {% set projet_phare = projets[0] %}  <!-- Premier projet (le plus récent car order_by id desc) -->
                 <div class="featured-content">
-                    <div class="featured-image" {% if projet_phare.image_couverture %}style="background-image: url('{{ projet_phare.image_couverture }}')"{% else %}style="background-image: url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')"{% endif %}>
+                    <div class="featured-image" 
+                         {% if projet_phare.image_couverture %}
+                            style="background-image: url('{{ url_for('portfolio.serve_public_media', folder='projects', filename=projet_phare.image_couverture) }}')"
+                         {% else %}
+                            style="background-image: url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')"
+                         {% endif %}>
                         {% if projet_phare.logo_projet %}
-                            <img src="{{ projet_phare.logo_projet }}" alt="Logo {{ projet_phare.nom }}" class="featured-logo">
+                            <img src="{{ url_for('portfolio.serve_public_media', folder='projects', filename=projet_phare.logo_projet) }}" alt="Logo {{ projet_phare.nom }}" class="featured-logo">
                         {% else %}
                             <div class="featured-logo-default">
                                 <i class="fab fa-github"></i>
@@ -729,7 +733,7 @@
                         </div>
                         
                         <div class="featured-tags">
-                            {% if projet_phare.technologies_annexes %}
+                            {% if projet_phare.technologies_annexes and projet_phare.technologies_annexes|length > 0 %}
                                 {% for tech in projet_phare.technologies_annexes[:8] %}
                                     <span class="tag-full">{{ tech|upper }}</span>
                                 {% endfor %}
@@ -783,26 +787,32 @@
                 <p>Une sélection représentative de mon travail à travers différentes technologies et domaines</p>
             </div>
             
-            {% if projets %}
+            {% if projets and projets|length > 0 %}
                 <div class="projects-grid-full" id="projects-grid">
                     {% for projet in projets %}
                         <div class="project-card-full" data-category="
-                            {%- if projet.technologies_annexes -%}
+                            {%- if projet.technologies_annexes and projet.technologies_annexes|length > 0 -%}
                                 {%- for tech in projet.technologies_annexes -%}
-                                    {%- if 'REACT' in tech or 'VUE' in tech or 'NEXT' in tech or 'NODE' in tech or 'DJANGO' in tech or 'FLASK' in tech -%}web {% endif -%}
-                                    {%- if 'REACT NATIVE' in tech or 'SWIFT' in tech or 'KOTLIN' in tech or 'FLUTTER' in tech or 'BLE' in tech -%}mobile {% endif -%}
-                                    {%- if 'DOCKER' in tech or 'KUBERNETES' in tech or 'AWS' in tech or 'TERRAFORM' in tech or 'ANSIBLE' in tech -%}cloud {% endif -%}
-                                    {%- if 'JWT' in tech or 'OAUTH' in tech or 'VAULT' in tech or 'SECURITY' in tech -%}security {% endif -%}
-                                    {%- if 'TENSORFLOW' in tech or 'PYTHON' in tech or 'IA' in tech or 'MACHINE LEARNING' in tech -%}ai {% endif -%}
+                                    {%- set tech_upper = tech|upper -%}
+                                    {%- if 'REACT' in tech_upper or 'VUE' in tech_upper or 'NEXT' in tech_upper or 'NODE' in tech_upper or 'DJANGO' in tech_upper or 'FLASK' in tech_upper -%}web {% endif -%}
+                                    {%- if 'REACT NATIVE' in tech_upper or 'SWIFT' in tech_upper or 'KOTLIN' in tech_upper or 'FLUTTER' in tech_upper or 'BLE' in tech_upper -%}mobile {% endif -%}
+                                    {%- if 'DOCKER' in tech_upper or 'KUBERNETES' in tech_upper or 'AWS' in tech_upper or 'TERRAFORM' in tech_upper or 'ANSIBLE' in tech_upper -%}cloud {% endif -%}
+                                    {%- if 'JWT' in tech_upper or 'OAUTH' in tech_upper or 'VAULT' in tech_upper or 'SECURITY' in tech_upper -%}security {% endif -%}
+                                    {%- if 'TENSORFLOW' in tech_upper or 'PYTHON' in tech_upper or 'IA' in tech_upper or 'MACHINE LEARNING' in tech_upper -%}ai {% endif -%}
                                 {%- endfor -%}
                             {%- else -%}web
                             {%- endif -%}">
                         
                             <!-- Image de couverture -->
-                            <div class="project-image-full" {% if projet.image_couverture %}style="background-image: url('{{ projet.image_couverture }}')"{% else %}style="background-image: url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')"{% endif %}>
+                            <div class="project-image-full" 
+                                 {% if projet.image_couverture %}
+                                    style="background-image: url('{{ url_for('portfolio.serve_public_media', folder='projects', filename=projet.image_couverture) }}')"
+                                 {% else %}
+                                    style="background-image: url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')"
+                                 {% endif %}>
                                 <!-- Logo du projet ou icône GitHub par défaut -->
                                 {% if projet.logo_projet %}
-                                    <img src="{{ projet.logo_projet }}" alt="Logo {{ projet.nom }}" class="project-logo">
+                                    <img src="{{ url_for('portfolio.serve_public_media', folder='projects', filename=projet.logo_projet) }}" alt="Logo {{ projet.nom }}" class="project-logo">
                                 {% else %}
                                     <div class="project-logo-default">
                                         <i class="fab fa-github"></i>
@@ -814,7 +824,7 @@
                                 <div class="project-header">
                                     <!-- Logo dans l'en-tête ou icône GitHub par défaut -->
                                     {% if projet.logo_projet %}
-                                        <img src="{{ projet.logo_projet }}" alt="Logo" class="project-header-logo">
+                                        <img src="{{ url_for('portfolio.serve_public_media', folder='projects', filename=projet.logo_projet) }}" alt="Logo" class="project-header-logo">
                                     {% else %}
                                         <div class="project-header-logo-default">
                                             <i class="fab fa-github"></i>
@@ -857,7 +867,7 @@
                                 
                                 <!-- Technologies (technologies_annexes) -->
                                 <div class="project-tags-full">
-                                    {% if projet.technologies_annexes %}
+                                    {% if projet.technologies_annexes and projet.technologies_annexes|length > 0 %}
                                         {% for tech in projet.technologies_annexes[:6] %}
                                             <span class="tag-full">{{ tech|upper }}</span>
                                         {% endfor %}
@@ -923,10 +933,6 @@
                             <i class="fab fa-github"></i>
                             Importer de GitHub
                         </a>
-                        <a href="#" class="btn btn-secondary">
-                            <i class="fas fa-plus"></i>
-                            Nouveau projet
-                        </a>
                     </div>
                 </div>
             {% endif %}
@@ -938,7 +944,7 @@
         <div class="container">
             <h2>UN PROJET <span class="light">SIMILAIRE</span> EN TÊTE ?</h2>
             <p>Discutons de vos besoins techniques et construisons ensemble la solution parfaite pour votre entreprise.</p>
-            <a href="#" class="btn btn-dark">
+            <a href="{{ url_for('portfolio.contact') }}" class="btn btn-dark">
                 <i class="fas fa-rocket"></i>
                 DÉMARRER UN PROJET
             </a>

@@ -14,6 +14,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
+        /* Votre CSS existant - aucun changement nécessaire */
         * {
             margin: 0;
             padding: 0;
@@ -768,115 +769,126 @@
                 <div class="left-sidebar">
                     <!-- Projet Preview -->
                     <div class="projet-preview">
-                    <div class="preview-header">
-                        <div class="preview-icon">
-                            <i class="fas fa-code"></i>
+                        <div class="preview-header">
+                            <div class="preview-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <h3>Aperçu du projet</h3>
                         </div>
-                        <h3>Aperçu du projet</h3>
-                    </div>
 
-                    <div class="preview-image">
-                        {% if projet.image_couverture %}
-                            <img src="{{ url_for('static', filename='uploads/projects/' + projet.image_couverture) }}" alt="{{ projet.nom }}">
-                        {% else %}
-                            <div class="no-image">
-                                <i class="fab fa-github"></i>
-                                <p>Aucune image de couverture</p>
-                            </div>
-                        {% endif %}
-                    </div>
+                        <div class="preview-image">
+                            {% if projet.image_couverture %}
+                                {# CORRECTION: Utilisation du bon chemin pour les médias #}
+                                <img src="{{ url_for('portfolio.serve_public_media', folder='projects', filename=projet.image_couverture) }}" alt="{{ projet.nom }}">
+                            {% else %}
+                                <div class="no-image">
+                                    <i class="fab fa-github"></i>
+                                    <p>Aucune image de couverture</p>
+                                </div>
+                            {% endif %}
+                        </div>
 
-                    <div class="preview-details">
-                        <h4><i class="fas fa-info-circle"></i> Informations actuelles</h4>
-                        <div class="preview-info">
-                            <div class="info-row">
-                                <span class="info-label"><i class="fas fa-tag"></i> Nom :</span>
-                                <span class="info-value">{{ projet.nom }}</span>
+                        <div class="preview-details">
+                            <h4><i class="fas fa-info-circle"></i> Informations actuelles</h4>
+                            <div class="preview-info">
+                                <div class="info-row">
+                                    <span class="info-label"><i class="fas fa-tag"></i> Nom :</span>
+                                    <span class="info-value">{{ projet.nom }}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label"><i class="fas fa-users"></i> Type :</span>
+                                    <span class="info-value">
+                                        {% if projet.est_collaboration %}
+                                            <span style="color: var(--primary-color);">Collaboration</span>
+                                        {% else %}
+                                            <span>Personnel</span>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                {% if projet.structure_nom %}
+                                <div class="info-row">
+                                    <span class="info-label"><i class="fas fa-building"></i> Structure :</span>
+                                    <span class="info-value">{{ projet.structure_nom }}</span>
+                                </div>
+                                {% endif %}
+                                <div class="info-row">
+                                    <span class="info-label"><i class="fab fa-github"></i> GitHub :</span>
+                                    <span class="info-value">
+                                        <a href="{{ projet.github_url }}" target="_blank" style="color: var(--primary-color);">Voir</a>
+                                    </span>
+                                </div>
+                                {% if projet.demo_url %}
+                                <div class="info-row">
+                                    <span class="info-label"><i class="fas fa-external-link-alt"></i> Démo :</span>
+                                    <span class="info-value">
+                                        <a href="{{ projet.demo_url }}" target="_blank" style="color: var(--primary-color);">Visiter</a>
+                                    </span>
+                                </div>
+                                {% endif %}
                             </div>
-                            <div class="info-row">
-                                <span class="info-label"><i class="fas fa-users"></i> Type :</span>
-                                <span class="info-value">
-                                    {% if projet.est_collaboration %}
-                                        <span style="color: var(--primary-color);">Collaboration</span>
+
+                            <!-- Aperçu des technologies annexes -->
+                            {% if projet.technologies_annexes and projet.technologies_annexes|length > 0 %}
+                            <div class="tech-tags-preview">
+                                <h4 style="margin-bottom: 10px; font-size: 16px;">
+                                    <i class="fas fa-code"></i> Technologies annexes
+                                </h4>
+                                <div class="tech-tags-container">
+                                    {# CORRECTION: Gestion correcte de la liste de technologies #}
+                                    {% if projet.technologies_annexes is string %}
+                                        {% set techs = projet.technologies_annexes.split(',') %}
                                     {% else %}
-                                        <span>Personnel</span>
+                                        {% set techs = projet.technologies_annexes %}
                                     {% endif %}
-                                </span>
-                            </div>
-                            {% if projet.structure_nom %}
-                            <div class="info-row">
-                                <span class="info-label"><i class="fas fa-building"></i> Structure :</span>
-                                <span class="info-value">{{ projet.structure_nom }}</span>
-                            </div>
-                            {% endif %}
-                            <div class="info-row">
-                                <span class="info-label"><i class="fab fa-github"></i> GitHub :</span>
-                                <span class="info-value">
-                                    <a href="{{ projet.github_url }}" target="_blank" style="color: var(--primary-color);">Voir</a>
-                                </span>
-                            </div>
-                            {% if projet.demo_url %}
-                            <div class="info-row">
-                                <span class="info-label"><i class="fas fa-external-link-alt"></i> Démo :</span>
-                                <span class="info-value">
-                                    <a href="{{ projet.demo_url }}" target="_blank" style="color: var(--primary-color);">Visiter</a>
-                                </span>
+                                    
+                                    {% for tech in techs %}
+                                        <span class="tech-tag">
+                                            <i class="fas fa-code"></i>
+                                            {{ tech.strip() if tech is string else tech }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
                             </div>
                             {% endif %}
                         </div>
+                    </div>
 
-                        <!-- Aperçu des technologies annexes -->
-                        {% if projet.technologies_annexes and projet.technologies_annexes|length > 0 %}
-                        <div class="tech-tags-preview">
-                            <h4 style="margin-bottom: 10px; font-size: 16px;">
-                                <i class="fas fa-code"></i> Technologies annexes
-                            </h4>
-                            <div class="tech-tags-container">
-                                {% for tech in projet.technologies_annexes %}
-                                <span class="tech-tag">
-                                    <i class="fas fa-code"></i>
-                                    {{ tech }}
-                                </span>
-                                {% endfor %}
+                    <!-- User Info Sidebar -->
+                    <div class="user-info-sidebar">
+                        <div class="user-info-header">
+                            {# CORRECTION: Chemin correct pour l'avatar #}
+                            <img src="{% if current_user.photo_profil and current_user.photo_profil != 'default-avatar.jpg' %}{{ url_for('portfolio.serve_public_media', folder='profiles', filename=current_user.photo_profil) }}{% else %}{{ url_for('static', filename='img/default-avatar.jpg') }}{% endif %}" 
+                                 alt="{{ current_user.nom_utilisateur }}" 
+                                 class="user-avatar-img"
+                                 onerror="this.src='https://ui-avatars.com/api/?name={{ current_user.nom_utilisateur }}&background=ffc107&color=000&size=80'">
+                            <div class="user-details">
+                                <h3>{{ current_user.nom_utilisateur }}</h3>
+                                <p><i class="fas fa-user-code"></i> Propriétaire du projet</p>
                             </div>
                         </div>
-                        {% endif %}
-                    </div>
-                </div>
 
-                <!-- User Info Sidebar -->
-                <div class="user-info-sidebar">
-                    <div class="user-info-header">
-                        <img src="{{ url_for('static', filename='uploads/profiles/' + (current_user.photo_profil or 'default-avatar.jpg')) }}" 
-                             alt="{{ current_user.nom_utilisateur }}" 
-                             class="user-avatar-img"
-                             onerror="this.src='https://ui-avatars.com/api/?name={{ current_user.nom_utilisateur }}&background=ffc107&color=000&size=80'">
-                        <div class="user-details">
-                            <h3>{{ current_user.nom_utilisateur }}</h3>
-                            <p><i class="fas fa-user-code"></i> Propriétaire du projet</p>
-                        </div>
-                    </div>
-
-                    <div class="user-stats">
-                        <div class="stat-item">
-                            <div class="stat-value">{{ current_user.projets|length if current_user.projets else 0 }}</div>
-                            <div class="stat-label">Projets total</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value">{{ projet.id }}</div>
-                            <div class="stat-label">ID Projet</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value">{{ projet.date_creation.strftime('%d/%m/%Y') if projet.date_creation else 'N/A' }}</div>
-                            <div class="stat-label">Créé le</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value">{{ projet.date_mise_a_jour.strftime('%d/%m/%Y') if projet.date_mise_a_jour else 'N/A' }}</div>
-                            <div class="stat-label">Mis à jour</div>
+                        <div class="user-stats">
+                            {# CORRECTION: Vérification que current_user.projets existe #}
+                            <div class="stat-item">
+                                <div class="stat-value">{{ current_user.projets|length if current_user.projets else 0 }}</div>
+                                <div class="stat-label">Projets total</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">{{ projet.id }}</div>
+                                <div class="stat-label">ID Projet</div>
+                            </div>
+                            <div class="stat-item">
+                                {# CORRECTION: Gestion des dates None #}
+                                <div class="stat-value">{{ projet.date_creation.strftime('%d/%m/%Y') if projet.date_creation else 'N/A' }}</div>
+                                <div class="stat-label">Créé le</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">{{ projet.date_mise_a_jour.strftime('%d/%m/%Y') if projet.date_mise_a_jour else 'N/A' }}</div>
+                                <div class="stat-label">Mis à jour</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
                 <!-- Edit Form -->
                 <div class="edit-form-container">
@@ -898,7 +910,7 @@
                             <textarea id="description" name="description" placeholder="Décrivez votre projet en quelques phrases...">{{ projet.description or '' }}</textarea>
                         </div>
 
-                        <!-- === TECHNOLOGIES ANNEXES (NOUVEAU) === -->
+                        <!-- === TECHNOLOGIES ANNEXES === -->
                         <div class="form-group">
                             <label for="technologies_annexes">
                                 <i class="fas fa-code"></i> Technologies annexes
@@ -959,7 +971,8 @@
                             
                             {% if projet.image_couverture %}
                             <div class="current-image">
-                                <img src="{{ url_for('static', filename='uploads/projects/' + projet.image_couverture) }}" alt="Image actuelle">
+                                {# CORRECTION: Chemin correct pour l'image #}
+                                <img src="{{ url_for('portfolio.serve_public_media', folder='projects', filename=projet.image_couverture) }}" alt="Image actuelle">
                                 <div class="image-info">
                                     <p>Image actuelle : <strong>{{ projet.image_couverture }}</strong></p>
                                     <p style="font-size: 12px; color: #999;">
@@ -981,6 +994,17 @@
                                 </p>
                                 <img id="preview" style="max-width: 100%; max-height: 200px; border-radius: 8px; border: 2px solid var(--primary-color);">
                             </div>
+                            
+                            {# AJOUT: Option pour supprimer l'image #}
+                            {% if projet.image_couverture %}
+                            <div style="margin-top: 10px;">
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                    <input type="checkbox" name="delete_image" value="1">
+                                    <i class="fas fa-trash-alt" style="color: var(--danger-color);"></i>
+                                    Supprimer l'image actuelle
+                                </label>
+                            </div>
+                            {% endif %}
                         </div>
 
                         <!-- URL GitHub (lecture seule) -->
