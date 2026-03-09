@@ -1,0 +1,751 @@
+{% extends "portfolio/master.html" %}
+
+{% block title %}À propos - GitFetch{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>À propos - GitFetch</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/portfolio.css') }}">
+    <style>
+        /* Styles spécifiques à la page À propos */
+        :root {
+            --primary: #ffc107;
+            --primary-dark: #f9a825;
+            --dark-bg: #0a192f;
+            --darker-bg: #112240;
+            --light-text: #ccd6f6;
+            --text-light: #666;
+            --white: #ffffff;
+            --bg-light: #f9f9f9;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Poppins", sans-serif;
+            color: #333;
+            line-height: 1.6;
+            background: var(--white);
+            padding-top: 90px;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: "Montserrat", sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Boutons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 35px;
+            background: var(--primary);
+            color: #000;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-family: "Poppins", sans-serif;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 193, 7, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 193, 7, 0.1);
+        }
+
+        .btn-dark {
+            background: var(--dark-bg);
+            color: white;
+        }
+
+        .btn-dark:hover {
+            background: var(--primary);
+            color: #000;
+        }
+
+        /* Section Header */
+        .section-header {
+            text-align: left;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: 42px;
+            margin-bottom: 20px;
+            color: var(--dark-bg);
+        }
+
+        .section-header .highlight {
+            color: var(--primary);
+            position: relative;
+        }
+
+        .section-header .highlight::after {
+            content: '';
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 193, 7, 0.2);
+            z-index: -1;
+        }
+
+        .section-header p {
+            font-size: 18px;
+            color: var(--text-light);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 120px 0;
+            background: var(--white);
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: 52px;
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 30px;
+            color: var(--dark-bg);
+        }
+
+        .hero-text h1 .highlight {
+            color: var(--primary);
+        }
+
+        .hero-text p {
+            font-size: 18px;
+            margin-bottom: 40px;
+            color: var(--text-light);
+        }
+
+        .hero-image {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .hero-image:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .hero-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Alternating Sections */
+        .alternating-section {
+            padding: 120px 0;
+        }
+
+        .alternating-section:nth-child(even) {
+            background: var(--bg-light);
+        }
+
+        .alternating-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .image-container {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .image-container:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .image-left {
+            order: 1;
+        }
+
+        .image-right {
+            order: 2;
+        }
+
+        .content-left {
+            order: 1;
+        }
+
+        .content-right {
+            order: 2;
+        }
+
+        /* Valeurs Grid */
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .value-card {
+            background: var(--white);
+            padding: 40px 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .value-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .value-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 193, 7, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 32px;
+            color: var(--primary);
+        }
+
+        .value-card h4 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--dark-bg);
+        }
+
+        .value-card p {
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Formation Items */
+        .formation-parcours {
+            padding: 120px 0;
+            background: var(--bg-light);
+        }
+
+        .formation-item {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .formation-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .formation-year {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+        }
+
+        .formation-year::before {
+            content: '';
+            width: 40px;
+            height: 4px;
+            background: var(--primary);
+            margin-right: 15px;
+        }
+
+        .formation-content h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: var(--dark-bg);
+        }
+
+        .formation-content p {
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        /* Skills Grid */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .skill-item {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .skill-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .skill-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 193, 7, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        .skill-item span {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark-bg);
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .skill-item p {
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        /* Certifications Grid */
+        .cert-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .cert-card {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 5px solid var(--primary);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .cert-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .cert-card h4 {
+            color: var(--dark-bg);
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .cert-card .issuer {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .cert-card p {
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* CTA Section */
+        .cta {
+            background: var(--primary);
+            text-align: center;
+            padding: 100px 0;
+        }
+
+        .cta h2 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #000;
+        }
+
+        .cta .light {
+            color: var(--dark-bg);
+        }
+
+        .cta p {
+            font-size: 18px;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            color: #333;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .animated {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .hero-content,
+            .alternating-content {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-text h1 {
+                font-size: 42px;
+            }
+
+            .values-grid,
+            .skills-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .image-left,
+            .image-right,
+            .content-left,
+            .content-right {
+                order: initial;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 80px 0;
+            }
+
+            .hero-text h1 {
+                font-size: 36px;
+            }
+
+            .values-grid,
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .formation-item {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .formation-year::before {
+                display: none;
+            }
+
+            .cta h2 {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HERO SECTION -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-text content-left">
+                <h1>{{ about_config.hero_titre|default("PLUS QU'UN <span class='highlight'>DÉVELOPPEUR</span>", true)|safe }}</h1>
+                <p>{{ about_config.hero_texte|default("Une passion pour l'innovation, une rigueur d'ingénieur et une vision stratégique. Découvrez le parcours et les valeurs qui façonnent mon approche technologique.", true) }}</p>
+                <div class="hero-buttons">
+                    {% if about_config and about_config.hero_bouton_1_texte %}
+                    <a href="{{ about_config.hero_bouton_1_lien|default('#formation', true) }}" class="btn">
+                        <i class="fas fa-graduation-cap"></i>
+                        {{ about_config.hero_bouton_1_texte }}
+                    </a>
+                    {% endif %}
+                    {% if about_config and about_config.hero_bouton_2_texte %}
+                    <a href="{{ about_config.hero_bouton_2_lien|default('#contact', true) }}" class="btn btn-secondary">
+                        <i class="fas fa-handshake"></i>
+                        {{ about_config.hero_bouton_2_texte }}
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="hero-image image-right">
+                <img src="{% if about_config and about_config.hero_image %}{{ url_for('portfolio.serve_public_media', folder='about', filename=about_config.hero_image) }}{% else %}https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=1000&auto=format&fit=crop{% endif %}" 
+                     alt="Espace de travail"
+                     onerror="this.src='https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=1000&auto=format&fit=crop'">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PHILOSOPHIE SECTION -->
+<section class="alternating-section">
+    <div class="container">
+        <div class="alternating-content">
+            <div class="about-text content-left">
+                <div class="section-header">
+                    <h2>{{ about_config.philosophie_titre|default("MA <span class='highlight'>PHILOSOPHIE</span>", true)|safe }}</h2>
+                    {% if about_config and about_config.philosophie_sous_titre %}
+                    <h3 style="font-size: 28px; margin-bottom: 30px; color: var(--dark-bg);">{{ about_config.philosophie_sous_titre }}</h3>
+                    {% endif %}
+                </div>
+                
+                {% if about_config and about_config.philosophie_description_1 %}
+                <p style="margin-bottom: 20px;">{{ about_config.philosophie_description_1 }}</p>
+                {% endif %}
+                
+                {% if about_config and about_config.philosophie_description_2 %}
+                <p>{{ about_config.philosophie_description_2 }}</p>
+                {% endif %}
+                
+                <!-- VALEURS -->
+                {% if about_config and about_config.values_json and about_config.values_json|length > 0 %}
+                <div class="values-grid">
+                    {% for valeur in about_config.values_json %}
+                    <div class="value-card">
+                        <div class="value-icon">
+                            <i class="{{ valeur.icon if valeur.icon else 'fas fa-lightbulb' }}"></i>
+                        </div>
+                        <h4>{{ valeur.titre }}</h4>
+                        <p>{{ valeur.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            
+            {% if about_config and about_config.philosophie_image %}
+            <div class="image-container image-right">
+                <img src="{{ url_for('portfolio.serve_public_media', folder='about', filename=about_config.philosophie_image) }}" 
+                     alt="Philosophie"
+                     onerror="this.src='https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1000&auto=format&fit=crop'">
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- PARCOURS SECTION -->
+<section class="formation-parcours" id="formation">
+    <div class="container">
+        <div class="alternating-content">
+            {% if about_config and about_config.parcours_image %}
+            <div class="image-container image-left">
+                <img src="{{ url_for('portfolio.serve_public_media', folder='about', filename=about_config.parcours_image) }}" 
+                     alt="Formation et parcours"
+                     onerror="this.src='https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=1000&auto=format&fit=crop'">
+            </div>
+            {% endif %}
+            
+            <div class="content-right">
+                <div class="section-header">
+                    <h2>FORMATION & <span class="highlight">PARCOURS</span></h2>
+                    <p>Mon évolution technique et mon expertise construite pas à pas.</p>
+                </div>
+                
+                {% if about_config and about_config.parcours_json and about_config.parcours_json|length > 0 %}
+                    {% for item in about_config.parcours_json %}
+                    <div class="formation-item">
+                        <div class="formation-year">{{ item.periode }}</div>
+                        <div class="formation-content">
+                            <h3>{{ item.titre }}</h3>
+                            <p>{{ item.description }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- COMPÉTENCES SECTION -->
+<section class="alternating-section">
+    <div class="container">
+        <div class="alternating-content">
+            <div class="content-left">
+                <div class="section-header">
+                    <h2>{{ about_config.competences_titre|default("COMPÉTENCES <span class='highlight'>CLÉS</span>", true)|safe }}</h2>
+                    {% if about_config and about_config.competences_sous_titre %}
+                    <p>{{ about_config.competences_sous_titre }}</p>
+                    {% endif %}
+                </div>
+                
+                {% if about_config and about_config.competences_json and about_config.competences_json|length > 0 %}
+                <div class="skills-grid">
+                    {% for competence in about_config.competences_json %}
+                    <div class="skill-item">
+                        <div class="skill-icon">
+                            <i class="{{ competence.icon if competence.icon else 'fas fa-code' }}"></i>
+                        </div>
+                        <span>{{ competence.titre }}</span>
+                        <p>{{ competence.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            
+            {% if about_config and about_config.competences_image %}
+            <div class="image-container image-right">
+                <img src="{{ url_for('portfolio.serve_public_media', folder='about', filename=about_config.competences_image) }}" 
+                     alt="Compétences techniques"
+                     onerror="this.src='https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000&auto=format&fit=crop'">
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- CERTIFICATIONS SECTION -->
+<section class="certifications alternating-section">
+    <div class="container">
+        <div class="alternating-content">
+            {% if about_config and about_config.certifications_image %}
+            <div class="image-container image-left">
+                <img src="{{ url_for('portfolio.serve_public_media', folder='about', filename=about_config.certifications_image) }}" 
+                     alt="Certifications"
+                     onerror="this.src='https://images.unsplash.com/photo-1546410531-bb4caa6b424d?q=80&w=1000&auto=format&fit=crop'">
+            </div>
+            {% endif %}
+            
+            <div class="content-right">
+                <div class="section-header">
+                    <h2>{{ about_config.certifications_titre|default("CERTIFICATIONS <span class='highlight'>RECONNUES</span>", true)|safe }}</h2>
+                    {% if about_config and about_config.certifications_sous_titre %}
+                    <p>{{ about_config.certifications_sous_titre }}</p>
+                    {% endif %}
+                </div>
+                
+                {% if about_config and about_config.certifications_json and about_config.certifications_json|length > 0 %}
+                <div class="cert-grid">
+                    {% for cert in about_config.certifications_json %}
+                    <div class="cert-card">
+                        <h4>{{ cert.titre }}</h4>
+                        <span class="issuer">{{ cert.organisme }}</span>
+                        <p>{{ cert.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA SECTION -->
+<section class="cta" id="contact">
+    <div class="container">
+        <h2>PARLONS DE <span class="light">VOS PROJETS</span></h2>
+        <p>Chaque grande collaboration commence par une conversation. Partagez vos idées et construisons ensemble l'avenir numérique.</p>
+        <a href="{{ url_for('portfolio.contact') }}" class="btn btn-dark">
+            <i class="fas fa-comments"></i>
+            COMMENCER LA DISCUSSION
+        </a>
+    </div>
+</section>
+
+<script>
+    // Animation des éléments au scroll
+    document.addEventListener('DOMContentLoaded', function() {
+        const animatedElements = document.querySelectorAll('.formation-item, .value-card, .cert-card, .image-container');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animated');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+        
+        animatedElements.forEach(el => {
+            observer.observe(el);
+        });
+        
+        // Animation des cartes de valeurs avec délai
+        document.querySelectorAll('.value-card').forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.2}s`;
+        });
+        
+        // Animation des items de formation avec délai
+        document.querySelectorAll('.formation-item').forEach((item, index) => {
+            item.style.animationDelay = `${index * 0.15}s`;
+        });
+    });
+</script>
+</body>
+</html>
+{% endblock %}

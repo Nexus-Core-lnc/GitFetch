@@ -1,0 +1,624 @@
+<nav class="main-nav">
+    <div class="container">
+      <div class="nav-content">
+        <div class="logo-container">
+          <a href="{{ url_for('portfolio.home') }}" class="logo">
+          <div class="profile-pic">
+              {% if user and user.photo_profil and user.photo_profil != 'default-avatar.jpg' %}
+                  {# Utilisation de la route portfolio.serve_public_media pour tous les cas #}
+                  <img src="{{ url_for('portfolio.serve_public_media', folder='profiles', filename=user.photo_profil) }}" 
+                       alt="Photo de {{ user.nom_utilisateur }}"
+                       onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/avatar.png') }}'">
+              {% else %}
+                  <img src="{{ url_for('static', filename='img/avatar.png') }}" alt="Photo de profil">
+              {% endif %}
+          </div>
+            <div class="logo-text">
+              <span class="logo-name">{{ user.nom_utilisateur|upper if user else 'TECH_PORTFOLIO' }}</span>
+              <span class="logo-title">{{ user.poste or 'Expert IT' }}</span>
+            </div>
+          </a>
+        </div>
+
+        <ul class="nav-menu">
+          <li>
+            <a href="{{ url_for('portfolio.me_connaitre') }}" class="nav-link">
+                <i class="fas fa-user"></i> Me connaître
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('portfolio.projets_liste') }}" class="nav-link">
+                <i class="fas fa-code"></i> Mes projets
+            </a>
+          </li>
+          <li class="auth-buttons">
+              {% if user and user.cv %}
+                  {# Utilisation de la route portfolio.serve_public_media pour le CV #}
+                  <a href="{{ url_for('portfolio.serve_public_media', folder='docs', filename=user.cv) }}" 
+                     class="btn btn-outline"
+                     download="CV_{{ user.nom_utilisateur }}.pdf">
+                     <i class="fas fa-download"></i> Télécharger CV
+                  </a>
+              {% else %}
+                  <a href="#" class="btn btn-outline disabled" onclick="alert('CV non disponible'); return false;">
+                    <i class="fas fa-download"></i> Télécharger CV
+                  </a>
+              {% endif %}
+            <a href="{{ url_for('portfolio.contact') }}" class="btn">
+                <i class="fas fa-envelope"></i> Contact direct
+            </a>
+          </li>
+        </ul>
+
+        <div class="mobile-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+    </div>
+</nav>
+  
+  <!-- Menu mobile -->
+  <div class="mobile-menu">
+    <div class="mobile-profile">
+      <div class="mobile-profile-pic">
+        {% if user and user.photo_profil and user.photo_profil != 'default-avatar.jpg' %}
+            {# Utilisation de la route portfolio.serve_public_media pour tous les cas #}
+            <img src="{{ url_for('portfolio.serve_public_media', folder='profiles', filename=user.photo_profil) }}" 
+                 alt="Photo de {{ user.nom_utilisateur }}"
+                 onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/avatar.png') }}'">
+        {% else %}
+            <img src="{{ url_for('static', filename='img/avatar.png') }}" alt="Photo de profil">
+        {% endif %}
+      </div>
+      <div class="mobile-profile-info">
+        <h3>{{ user.nom_utilisateur if user else 'TECH_PORTFOLIO' }}</h3>
+        <p>{{ user.poste or 'Expert IT' }}</p>
+      </div>
+    </div>
+    <ul class="mobile-nav-links">
+      <li>
+        <a href="{{ url_for('portfolio.me_connaitre') }}" class="nav-link"
+          ><i class="fas fa-user"></i> Me connaître</a
+        >
+      </li>
+      <li>
+        <a href="{{ url_for('portfolio.projets_liste') }}" class="nav-link">
+            <i class="fas fa-code"></i> Mes projets
+        </a>
+      </li>
+      <li>
+        {% if user and user.cv %}
+            {# Utilisation de la route portfolio.serve_public_media pour le CV #}
+            <a href="{{ url_for('portfolio.serve_public_media', folder='docs', filename=user.cv) }}" 
+               class="btn btn-outline"
+               download="CV_{{ user.nom_utilisateur }}.pdf">
+               <i class="fas fa-download"></i> Télécharger CV
+            </a>
+        {% else %}
+            <a href="#" class="btn btn-outline disabled" onclick="alert('CV non disponible'); return false;">
+              <i class="fas fa-download"></i> Télécharger CV
+            </a>
+        {% endif %}
+      </li>
+      <li>
+        <a href="{{ url_for('portfolio.contact') }}" class="btn mobile-contact-btn"
+          ><i class="fas fa-envelope"></i> Contact direct</a
+        >
+      </li>
+    </ul>
+    <div class="mobile-social">
+      {% if user and user.github %}
+      <a href="https://github.com/{{ user.github }}" target="_blank"><i class="fab fa-github"></i></a>
+      {% else %}
+      <a href="#"><i class="fab fa-github"></i></a>
+      {% endif %}
+      
+      {% if user and user.linkedin %}
+      <a href="https://linkedin.com/in/{{ user.linkedin }}" target="_blank"><i class="fab fa-linkedin"></i></a>
+      {% else %}
+      <a href="#"><i class="fab fa-linkedin"></i></a>
+      {% endif %}
+      
+      {% if user and user.twitter %}
+      <a href="https://twitter.com/{{ user.twitter }}" target="_blank"><i class="fab fa-twitter"></i></a>
+      {% else %}
+      <a href="#"><i class="fab fa-twitter"></i></a>
+      {% endif %}
+    </div>
+  </div>
+  
+  <style>
+    /* Variables CSS du second menu */
+    :root {
+      --primary-color: #ffc107;
+      --primary-dark: #f9a825;
+      --dark-bg: #0a192f;
+      --darker-bg: #112240;
+      --light-text: #ccd6f6;
+      --gray-text: #666;
+      --white: #ffffff;
+      --light-bg: #f9f9f9;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Navigation */
+    .main-nav {
+      background: var(--white);
+      backdrop-filter: blur(20px);
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      padding: 20px 0;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      border-bottom: none;
+      border-radius: 0 0 10px 10px;
+      background-color: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+    }
+
+    .container {
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .nav-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Logo avec photo de profil */
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo-container .logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .profile-pic {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 3px solid var(--primary-color);
+      transition: all 0.3s;
+    }
+
+    .profile-pic:hover {
+      transform: scale(1.1);
+      border-color: var(--primary-dark);
+    }
+
+    .profile-pic img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo-name {
+      font-family: "Montserrat", sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      color: var(--dark-bg);
+      line-height: 1;
+    }
+
+    .logo-title {
+      font-size: 12px;
+      color: var(--primary-color);
+      font-weight: 500;
+      letter-spacing: 1px;
+    }
+
+    /* Menu principal */
+    .nav-menu {
+      display: flex;
+      list-style: none;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .nav-link {
+      color: var(--dark-bg);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.3s;
+      padding: 10px 0;
+      position: relative;
+    }
+
+    .nav-link:hover {
+      color: var(--primary-color);
+    }
+
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary-color);
+      transition: width 0.3s;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    /* Boutons d'authentification */
+    .auth-buttons {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      margin-left: 20px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      background: var(--primary-color);
+      color: #000;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s;
+      border: none;
+      cursor: pointer;
+      font-family: "Poppins", sans-serif;
+      font-size: 16px;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(255, 193, 7, 0.3);
+      background: var(--primary-dark);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 193, 7, 0.1);
+      color: var(--primary-color);
+    }
+
+    .btn.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+      border-color: #ccc;
+      color: #999;
+    }
+
+    /* Menu mobile */
+    .mobile-toggle {
+      display: none;
+      font-size: 24px;
+      color: var(--dark-bg);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .mobile-toggle:hover {
+      color: var(--primary-color);
+    }
+
+    .mobile-menu {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 300px;
+      height: 100vh;
+      background: var(--white);
+      z-index: 1001;
+      padding: 40px 30px;
+      transition: right 0.4s ease-in-out;
+      box-shadow: -5px 0 30px rgba(0, 0, 0, 0.1);
+      border-left: 1px solid rgba(255, 193, 7, 0.2);
+    }
+
+    .mobile-menu.active {
+      right: 0;
+    }
+
+    .mobile-profile {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .mobile-profile-pic {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 3px solid var(--primary-color);
+    }
+
+    .mobile-profile-pic img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .mobile-profile-info h3 {
+      color: var(--dark-bg);
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .mobile-profile-info p {
+      color: var(--primary-color);
+      font-size: 14px;
+    }
+
+    .mobile-nav-links {
+      list-style: none;
+      margin-bottom: 40px;
+    }
+
+    .mobile-nav-links li {
+      margin-bottom: 15px;
+    }
+
+    .mobile-nav-links a {
+      color: var(--dark-bg);
+      text-decoration: none;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 15px;
+      border-radius: 8px;
+      transition: all 0.3s;
+    }
+
+    .mobile-nav-links a:hover {
+      background: rgba(255, 193, 7, 0.1);
+      color: var(--primary-color);
+    }
+
+    .mobile-auth-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .mobile-auth-buttons .btn {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .mobile-social {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .mobile-social a {
+      color: var(--dark-bg);
+      font-size: 20px;
+      transition: all 0.3s;
+    }
+
+    .mobile-social a:hover {
+      color: var(--primary-color);
+      transform: translateY(-3px);
+    }
+
+    /* Overlay pour menu mobile */
+    .mobile-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      display: none;
+    }
+
+    .mobile-overlay.active {
+      display: block;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .nav-menu {
+        gap: 20px;
+      }
+
+      .nav-link {
+        font-size: 14px;
+      }
+
+      .auth-buttons {
+        gap: 10px;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-menu {
+        display: none;
+      }
+
+      .mobile-toggle {
+        display: block;
+      }
+
+      .main-nav {
+        padding: 15px 0;
+      }
+    }
+
+    /* Animation pour le menu */
+    @keyframes slideInDown {
+      from {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .main-nav {
+      animation: slideInDown 0.5s ease-out;
+    }
+
+    /* Ajustement du padding pour le contenu sous la navbar */
+    body {
+      padding-top: 90px;
+      font-family: "Poppins", sans-serif;
+    }
+
+    /* Animation */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+
+  <script>
+    // Gestion du menu mobile
+    const mobileToggle = document.querySelector(".mobile-toggle");
+    const mobileMenu = document.querySelector(".mobile-menu");
+    const mobileOverlay = document.createElement("div");
+    const body = document.body;
+
+    // Créer l'overlay
+    mobileOverlay.className = "mobile-overlay";
+    body.appendChild(mobileOverlay);
+
+    // Toggle menu mobile
+    mobileToggle.addEventListener("click", function () {
+      mobileMenu.classList.toggle("active");
+      mobileOverlay.classList.toggle("active");
+      body.style.overflow = mobileMenu.classList.contains("active")
+        ? "hidden"
+        : "";
+    });
+
+    // Fermer le menu en cliquant sur l'overlay
+    mobileOverlay.addEventListener("click", function () {
+      mobileMenu.classList.remove("active");
+      this.classList.remove("active");
+      body.style.overflow = "";
+    });
+
+    // Fermer le menu en cliquant sur un lien
+    document.querySelectorAll(".mobile-nav-links a").forEach((link) => {
+      link.addEventListener("click", function () {
+        mobileMenu.classList.remove("active");
+        mobileOverlay.classList.remove("active");
+        body.style.overflow = "";
+      });
+    });
+
+    // Smooth scroll pour les liens de navigation
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+      anchor.addEventListener("click", function (e) {
+        e.preventDefault();
+
+        const targetId = this.getAttribute("href");
+        if (targetId === "#") return;
+
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+          // Calculer la position en tenant compte de la navbar fixe
+          const navbarHeight = document.querySelector(".main-nav").offsetHeight;
+          const targetPosition = targetElement.offsetTop - navbarHeight;
+
+          window.scrollTo({
+            top: targetPosition,
+            behavior: "smooth",
+          });
+        }
+      });
+    });
+
+    // Ajouter la classe active au lien de navigation en fonction de la section visible
+    const sections = document.querySelectorAll("section");
+    const navLinks = document.querySelectorAll(
+      ".nav-link, .mobile-nav-links a",
+    );
+
+    window.addEventListener("scroll", function () {
+      let current = "";
+
+      sections.forEach((section) => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        const navbarHeight = document.querySelector(".main-nav").offsetHeight;
+
+        if (scrollY >= sectionTop - navbarHeight - 100) {
+          current = section.getAttribute("id");
+        }
+      });
+
+      navLinks.forEach((link) => {
+        link.classList.remove("active");
+        if (link.getAttribute("href") === `#${current}`) {
+          link.classList.add("active");
+        }
+      });
+    });
+
+    // Animation des boutons
+    document.addEventListener("DOMContentLoaded", function () {
+      const buttons = document.querySelectorAll(".btn");
+      buttons.forEach((button) => {
+        button.addEventListener("mouseenter", function () {
+          this.style.transform = "translateY(-3px)";
+        });
+
+        button.addEventListener("mouseleave", function () {
+          this.style.transform = "translateY(0)";
+        });
+      });
+    });
+  </script>

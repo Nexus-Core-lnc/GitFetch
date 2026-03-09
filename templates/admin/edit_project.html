@@ -1,0 +1,1163 @@
+{% extends "admin/master.html" %}
+
+{% block title %}Modifier Projet - GitFetch{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier Projet - GitFetch</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Votre CSS existant - aucun changement nécessaire */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #ffc107;
+            --primary-dark: #f9a825;
+            --dark-bg: #0a192f;
+            --darker-bg: #112240;
+            --light-text: #ccd6f6;
+            --gray-text: #666;
+            --white: #ffffff;
+            --light-bg: #f9f9f9;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.15);
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+        }
+
+        body {
+            font-family: "Poppins", sans-serif;
+            color: #333;
+            line-height: 1.6;
+            background-color: var(--white);
+        }
+
+        h1, h2, h3, h4 {
+            font-family: "Montserrat", sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 28px;
+            background: var(--primary-color);
+            color: #000;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-family: "Poppins", sans-serif;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 193, 7, 0.3);
+            background: var(--primary-dark);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 193, 7, 0.1);
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .btn-dark {
+            background: var(--dark-bg);
+            color: var(--white);
+            border: none;
+        }
+
+        .btn-dark:hover {
+            background: var(--darker-bg);
+            box-shadow: 0 10px 20px rgba(10, 25, 47, 0.3);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+            border: none;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            box-shadow: 0 10px 20px rgba(220, 53, 69, 0.3);
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+            padding: 2.5rem 1rem 2rem;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: "";
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 193, 7, 0.03);
+            border-radius: 50%;
+            top: -200px;
+            right: -100px;
+        }
+
+        .page-header::after {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 193, 7, 0.02);
+            border-radius: 50%;
+            bottom: -150px;
+            left: -100px;
+        }
+
+        .page-header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .page-header-text h1 {
+            font-size: 2rem;
+            margin-bottom: 0.25rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out forwards;
+        }
+
+        .page-header-text h1 .highlight {
+            color: var(--primary-color);
+            position: relative;
+            display: inline-block;
+        }
+
+        .page-header-text h1 .highlight::after {
+            content: "";
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background-color: rgba(255, 193, 7, 0.2);
+            z-index: -1;
+        }
+
+        .page-header-text p {
+            color: var(--light-text);
+            font-size: 0.9rem;
+            max-width: 700px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.3s forwards;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-5px);
+        }
+
+        /* Edit Form Section */
+        .edit-section {
+            padding: 2rem 1rem 3rem;
+            background: var(--white);
+        }
+
+        .edit-container {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            align-items: start;
+        }
+
+        /* Left Sidebar - Preview + User Info */
+        .left-sidebar {
+            position: sticky;
+            top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Projet Preview */
+        .projet-preview {
+            background: var(--light-bg);
+            border-radius: 15px;
+            padding: 1.25rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+        }
+
+        .projet-preview:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .preview-header {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.875rem;
+            border-bottom: 2px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .preview-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: #000;
+        }
+
+        .preview-header h3 {
+            font-size: 1.25rem;
+            color: var(--dark-bg);
+        }
+
+        .preview-image {
+            width: 100%;
+            height: 160px;
+            background: var(--white);
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            border: 2px dashed #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preview-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .no-image {
+            text-align: center;
+            color: var(--gray-text);
+        }
+
+        .no-image i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.5;
+        }
+
+        .preview-details {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .preview-details h4 {
+            color: var(--dark-bg);
+            margin-bottom: 0.875rem;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .preview-details h4 i {
+            color: var(--primary-color);
+        }
+
+        .preview-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.625rem;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--dark-bg);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .info-value {
+            color: var(--gray-text);
+            max-width: 60%;
+            text-align: right;
+        }
+
+        .tech-tags-preview {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .tech-tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .tech-tag {
+            background: rgba(255, 193, 7, 0.15);
+            color: #333;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tech-tag i {
+            color: var(--primary-color);
+            font-size: 11px;
+        }
+
+        /* Edit Form */
+        .edit-form-container {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .form-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-header h2 {
+            font-size: 1.5rem;
+            color: var(--dark-bg);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-header p {
+            color: var(--gray-text);
+            font-size: 0.875rem;
+        }
+
+        .edit-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--dark-bg);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .form-group label i {
+            color: var(--primary-color);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            padding: 0.75rem;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-family: "Poppins", sans-serif;
+            font-size: 0.9375rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        .form-group small {
+            color: #666;
+            font-size: 0.8125rem;
+            margin-top: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .form-group small i {
+            color: var(--primary-color);
+        }
+
+        .image-upload {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--primary-color);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            background: rgba(255, 193, 7, 0.05);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            background: rgba(255, 193, 7, 0.1);
+            border-color: var(--primary-dark);
+        }
+
+        .upload-area i {
+            font-size: 40px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .upload-area p {
+            color: var(--gray-text);
+            margin-bottom: 5px;
+        }
+
+        .upload-area span {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .current-image {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: var(--light-bg);
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .current-image img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid var(--primary-color);
+        }
+
+        .image-info {
+            flex: 1;
+        }
+
+        .image-info p {
+            color: var(--gray-text);
+            font-size: 14px;
+        }
+
+        .image-info strong {
+            color: var(--dark-bg);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 30px;
+            border-top: 2px solid #eee;
+        }
+
+        .form-actions .btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+        /* User Info Sidebar */
+        .user-info-sidebar {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+            padding: 1.25rem;
+            border-radius: 15px;
+            color: var(--white);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-info-sidebar::before {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 193, 7, 0.03);
+            border-radius: 50%;
+            bottom: -150px;
+            right: -100px;
+        }
+
+        .user-info-header {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.875rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .user-avatar-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .user-details h3 {
+            font-size: 1.125rem;
+            margin-bottom: 0.25rem;
+            color: white;
+        }
+
+        .user-details p {
+            color: var(--light-text);
+            font-size: 0.8125rem;
+            opacity: 0.8;
+        }
+
+        .user-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-top: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .stat-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--light-text);
+            opacity: 0.8;
+        }
+
+        /* Live preview des technologies */
+        .tech-tags-live-preview {
+            margin-top: 10px;
+            padding: 15px;
+            background: var(--light-bg);
+            border-radius: 8px;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .edit-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .left-sidebar {
+                position: static;
+            }
+
+            .page-header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .page-header-text h1 {
+                font-size: 1.75rem;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 2rem 1rem 1.5rem;
+            }
+
+            .page-header-text h1 {
+                font-size: 1.5rem;
+            }
+
+            .preview-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .user-info-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .current-image {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .current-image img {
+                width: 100px;
+                height: 100px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-header {
+                padding: 1.5rem 1rem 1rem;
+            }
+
+            .page-header-text h1 {
+                font-size: 1.375rem;
+            }
+
+            .preview-details .info-row {
+                flex-direction: column;
+                gap: 0.375rem;
+            }
+
+            .info-value {
+                max-width: 100%;
+                text-align: left;
+            }
+
+            .edit-form-container,
+            .projet-preview,
+            .user-info-sidebar {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="page-header-content">
+                <div class="page-header-text">
+                    <h1>Modifier <span class="highlight">{{ projet.nom }}</span></h1>
+                    <p>Personnalisez les détails de votre projet et mettez à jour les informations affichées sur votre portfolio.</p>
+                </div>
+                <a href="{{ url_for('admin.list_repos') }}" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    Retour aux projets
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Edit Form Section -->
+    <section class="edit-section">
+        <div class="container">
+            <div class="edit-container">
+                <!-- Left Sidebar: Preview + User Info -->
+                <div class="left-sidebar">
+                    <!-- Projet Preview -->
+                    <div class="projet-preview">
+                        <div class="preview-header">
+                            <div class="preview-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <h3>Aperçu du projet</h3>
+                        </div>
+
+                        <div class="preview-image">
+                            {% if projet.image_couverture %}
+                                {# CORRECTION: Utilisation du bon chemin pour les médias #}
+                                <img src="{{ url_for('portfolio.serve_public_media', folder='projects', filename=projet.image_couverture) }}" alt="{{ projet.nom }}">
+                            {% else %}
+                                <div class="no-image">
+                                    <i class="fab fa-github"></i>
+                                    <p>Aucune image de couverture</p>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="preview-details">
+                            <h4><i class="fas fa-info-circle"></i> Informations actuelles</h4>
+                            <div class="preview-info">
+                                <div class="info-row">
+                                    <span class="info-label"><i class="fas fa-tag"></i> Nom :</span>
+                                    <span class="info-value">{{ projet.nom }}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label"><i class="fas fa-users"></i> Type :</span>
+                                    <span class="info-value">
+                                        {% if projet.est_collaboration %}
+                                            <span style="color: var(--primary-color);">Collaboration</span>
+                                        {% else %}
+                                            <span>Personnel</span>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                {% if projet.structure_nom %}
+                                <div class="info-row">
+                                    <span class="info-label"><i class="fas fa-building"></i> Structure :</span>
+                                    <span class="info-value">{{ projet.structure_nom }}</span>
+                                </div>
+                                {% endif %}
+                                <div class="info-row">
+                                    <span class="info-label"><i class="fab fa-github"></i> GitHub :</span>
+                                    <span class="info-value">
+                                        <a href="{{ projet.github_url }}" target="_blank" style="color: var(--primary-color);">Voir</a>
+                                    </span>
+                                </div>
+                                {% if projet.demo_url %}
+                                <div class="info-row">
+                                    <span class="info-label"><i class="fas fa-external-link-alt"></i> Démo :</span>
+                                    <span class="info-value">
+                                        <a href="{{ projet.demo_url }}" target="_blank" style="color: var(--primary-color);">Visiter</a>
+                                    </span>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Aperçu des technologies annexes -->
+                            {% if projet.technologies_annexes and projet.technologies_annexes|length > 0 %}
+                            <div class="tech-tags-preview">
+                                <h4 style="margin-bottom: 10px; font-size: 16px;">
+                                    <i class="fas fa-code"></i> Technologies annexes
+                                </h4>
+                                <div class="tech-tags-container">
+                                    {# CORRECTION: Gestion correcte de la liste de technologies #}
+                                    {% if projet.technologies_annexes is string %}
+                                        {% set techs = projet.technologies_annexes.split(',') %}
+                                    {% else %}
+                                        {% set techs = projet.technologies_annexes %}
+                                    {% endif %}
+                                    
+                                    {% for tech in techs %}
+                                        <span class="tech-tag">
+                                            <i class="fas fa-code"></i>
+                                            {{ tech.strip() if tech is string else tech }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- User Info Sidebar -->
+                    <div class="user-info-sidebar">
+                        <div class="user-info-header">
+                            {# CORRECTION: Chemin correct pour l'avatar #}
+                            <img src="{% if current_user.photo_profil and current_user.photo_profil != 'default-avatar.jpg' %}{{ url_for('portfolio.serve_public_media', folder='profiles', filename=current_user.photo_profil) }}{% else %}{{ url_for('static', filename='img/default-avatar.jpg') }}{% endif %}" 
+                                 alt="{{ current_user.nom_utilisateur }}" 
+                                 class="user-avatar-img"
+                                 onerror="this.src='https://ui-avatars.com/api/?name={{ current_user.nom_utilisateur }}&background=ffc107&color=000&size=80'">
+                            <div class="user-details">
+                                <h3>{{ current_user.nom_utilisateur }}</h3>
+                                <p><i class="fas fa-user-code"></i> Propriétaire du projet</p>
+                            </div>
+                        </div>
+
+                        <div class="user-stats">
+                            {# CORRECTION: Vérification que current_user.projets existe #}
+                            <div class="stat-item">
+                                <div class="stat-value">{{ current_user.projets|length if current_user.projets else 0 }}</div>
+                                <div class="stat-label">Projets total</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">{{ projet.id }}</div>
+                                <div class="stat-label">ID Projet</div>
+                            </div>
+                            <div class="stat-item">
+                                {# CORRECTION: Gestion des dates None #}
+                                <div class="stat-value">{{ projet.date_creation.strftime('%d/%m/%Y') if projet.date_creation else 'N/A' }}</div>
+                                <div class="stat-label">Créé le</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">{{ projet.date_mise_a_jour.strftime('%d/%m/%Y') if projet.date_mise_a_jour else 'N/A' }}</div>
+                                <div class="stat-label">Mis à jour</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Edit Form -->
+                <div class="edit-form-container">
+                    <div class="form-header">
+                        <h2><i class="fas fa-edit"></i> Modifier le projet</h2>
+                        <p>Mettez à jour les informations de votre projet ci-dessous</p>
+                    </div>
+
+                    <form action="{{ url_for('admin.edit_project', id=projet.id) }}" method="POST" enctype="multipart/form-data" class="edit-form">
+                        <!-- Nom du projet -->
+                        <div class="form-group">
+                            <label for="nom"><i class="fas fa-tag"></i> Nom du projet *</label>
+                            <input type="text" id="nom" name="nom" value="{{ projet.nom }}" required placeholder="Ex: Mon Projet Awesome">
+                        </div>
+
+                        <!-- Description -->
+                        <div class="form-group">
+                            <label for="description"><i class="fas fa-align-left"></i> Description</label>
+                            <textarea id="description" name="description" placeholder="Décrivez votre projet en quelques phrases...">{{ projet.description or '' }}</textarea>
+                        </div>
+
+                        <!-- === TECHNOLOGIES ANNEXES === -->
+                        <div class="form-group">
+                            <label for="technologies_annexes">
+                                <i class="fas fa-code"></i> Technologies annexes
+                                <span style="font-size: 13px; color: #666; font-weight: normal; margin-left: 10px;">
+                                    (séparées par des virgules)
+                                </span>
+                            </label>
+                            <input type="text" 
+                                   id="technologies_annexes" 
+                                   name="technologies_annexes" 
+                                   value="{{ technologies_texte }}" 
+                                   placeholder="Ex: Python, JavaScript, Flask, PostgreSQL, Docker, AWS"
+                                   style="padding: 12px; font-size: 15px;">
+                            <small>
+                                <i class="fas fa-info-circle"></i> 
+                                Ces technologies apparaîtront sous forme de tags sur la page de votre projet
+                            </small>
+                        </div>
+
+                        <!-- Conteneur pour l'aperçu en direct des technologies -->
+                        <div id="tech-live-preview" class="tech-tags-live-preview" style="display: none;">
+                            <label style="font-size: 13px; color: #666; display: block; margin-bottom: 8px;">
+                                <i class="fas fa-eye"></i> Aperçu en direct :
+                            </label>
+                            <div id="live-tags-container" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+                        </div>
+
+                        <!-- URL de démonstration -->
+                        <div class="form-group">
+                            <label for="demo_url"><i class="fas fa-external-link-alt"></i> URL de démonstration</label>
+                            <input type="url" id="demo_url" name="demo_url" value="{{ projet.demo_url or '' }}" placeholder="https://mon-projet.com">
+                        </div>
+
+                        <!-- Structure / Organisation -->
+                        <div class="form-group">
+                            <label for="structure_nom"><i class="fas fa-building"></i> Structure / Organisation</label>
+                            <input type="text" id="structure_nom" name="structure_nom" value="{{ projet.structure_nom or '' }}" placeholder="Nom de l'entreprise ou organisation">
+                        </div>
+
+                        <!-- Type de projet -->
+                        <div class="form-group">
+                            <label for="est_collaboration">
+                                <i class="fas fa-users"></i> Type de projet
+                            </label>
+                            <select id="est_collaboration" name="est_collaboration" style="padding: 12px;">
+                                <option value="0" {% if not projet.est_collaboration %}selected{% endif %}>
+                                    Projet personnel
+                                </option>
+                                <option value="1" {% if projet.est_collaboration %}selected{% endif %}>
+                                    Collaboration / Structure
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Image de couverture -->
+                        <div class="form-group image-upload">
+                            <label><i class="fas fa-image"></i> Image de couverture</label>
+                            
+                            {% if projet.image_couverture %}
+                            <div class="current-image">
+                                {# CORRECTION: Chemin correct pour l'image #}
+                                <img src="{{ url_for('portfolio.serve_public_media', folder='projects', filename=projet.image_couverture) }}" alt="Image actuelle">
+                                <div class="image-info">
+                                    <p>Image actuelle : <strong>{{ projet.image_couverture }}</strong></p>
+                                    <p style="font-size: 12px; color: #999;">
+                                        <i class="fas fa-info-circle"></i> Laissez vide pour conserver cette image
+                                    </p>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <div class="upload-area" onclick="document.getElementById('image_file').click()">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Cliquez pour télécharger une nouvelle image</p>
+                                <span>JPG, PNG ou GIF (max 5MB)</span>
+                                <input type="file" id="image_file" name="image_file" accept="image/*" style="display: none;" onchange="previewImage(this)">
+                            </div>
+                            <div id="image-preview" style="display: none; margin-top: 15px;">
+                                <p style="margin-bottom: 10px; font-size: 14px; color: var(--success-color);">
+                                    <i class="fas fa-check-circle"></i> Nouvelle image sélectionnée :
+                                </p>
+                                <img id="preview" style="max-width: 100%; max-height: 200px; border-radius: 8px; border: 2px solid var(--primary-color);">
+                            </div>
+                            
+                            {# AJOUT: Option pour supprimer l'image #}
+                            {% if projet.image_couverture %}
+                            <div style="margin-top: 10px;">
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                    <input type="checkbox" name="delete_image" value="1">
+                                    <i class="fas fa-trash-alt" style="color: var(--danger-color);"></i>
+                                    Supprimer l'image actuelle
+                                </label>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- URL GitHub (lecture seule) -->
+                        <div class="form-group">
+                            <label for="github_url"><i class="fab fa-github"></i> URL GitHub</label>
+                            <input type="url" id="github_url" name="github_url" value="{{ projet.github_url }}" readonly style="background-color: #f5f5f5; cursor: not-allowed;">
+                            <small>
+                                <i class="fas fa-link"></i> L'URL GitHub est définie lors de l'importation
+                            </small>
+                        </div>
+
+                        <!-- Actions du formulaire -->
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-success" id="submit-btn">
+                                <i class="fas fa-save"></i>
+                                Enregistrer les modifications
+                            </button>
+                            <a href="{{ url_for('admin.list_repos') }}" class="btn btn-outline">
+                                <i class="fas fa-times"></i>
+                                Annuler
+                            </a>
+                            <button type="button" class="btn btn-danger" onclick="confirmDelete({{ projet.id }})">
+                                <i class="fas fa-trash-alt"></i>
+                                Supprimer
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Formulaire caché pour la suppression -->
+                    <form id="delete-form-{{ projet.id }}" action="{{ url_for('admin.delete_project', id=projet.id) }}" method="POST" style="display: none;"></form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Fonction pour prévisualiser l'image
+        function previewImage(input) {
+            const preview = document.getElementById('preview');
+            const previewContainer = document.getElementById('image-preview');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+                
+                // Mettre à jour le texte de l'upload area
+                const uploadArea = document.querySelector('.upload-area');
+                uploadArea.innerHTML = `
+                    <i class="fas fa-check-circle" style="color: #28a745;"></i>
+                    <p style="color: #28a745;">Image sélectionnée : ${input.files[0].name}</p>
+                    <span style="color: #28a745;">Cliquez pour changer d'image</span>
+                `;
+            }
+        }
+
+        // Fonction pour confirmer la suppression
+        function confirmDelete(projectId) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce projet ? Cette action est irréversible.')) {
+                document.getElementById(`delete-form-${projectId}`).submit();
+            }
+        }
+
+        // Aperçu en temps réel des technologies annexes
+        document.addEventListener('DOMContentLoaded', function() {
+            const techInput = document.getElementById('technologies_annexes');
+            
+            if (techInput) {
+                const livePreview = document.getElementById('tech-live-preview');
+                const tagsContainer = document.getElementById('live-tags-container');
+                
+                function updateTechPreview() {
+                    const techString = techInput.value;
+                    const techs = techString.split(',')
+                        .map(t => t.trim())
+                        .filter(t => t.length > 0);
+                    
+                    if (techs.length > 0) {
+                        // Vider le conteneur
+                        tagsContainer.innerHTML = '';
+                        
+                        // Ajouter chaque tag
+                        techs.forEach(tech => {
+                            const tag = document.createElement('span');
+                            tag.className = 'tech-tag';
+                            tag.innerHTML = `<i class="fas fa-code"></i> ${tech}`;
+                            tagsContainer.appendChild(tag);
+                        });
+                        
+                        // Afficher le conteneur
+                        livePreview.style.display = 'block';
+                    } else {
+                        // Cacher le conteneur
+                        livePreview.style.display = 'none';
+                    }
+                }
+                
+                // Mettre à jour à chaque frappe
+                techInput.addEventListener('input', updateTechPreview);
+                
+                // Initialiser l'aperçu
+                updateTechPreview();
+            }
+        });
+
+        // Animation pour les éléments
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.projet-preview, .edit-form-container, .user-info-sidebar');
+            elements.forEach((element, index) => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        });
+
+        // Animation du bouton de soumission
+        document.querySelector('.edit-form').addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement en cours...';
+            submitBtn.disabled = true;
+            
+            // Réinitialiser après 5 secondes (sécurité)
+            setTimeout(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 5000);
+        });
+
+        // Validation du formulaire côté client
+        document.querySelector('.edit-form').addEventListener('submit', function(e) {
+            const nom = document.getElementById('nom').value.trim();
+            
+            if (!nom) {
+                e.preventDefault();
+                alert('Le nom du projet est obligatoire.');
+                return false;
+            }
+            
+            return true;
+        });
+    </script>
+</body>
+</html>
+{% endblock content %}

@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitFetch - Header</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #ffc107;
+            --primary-dark: #f9a825;
+            --dark-bg: #0a192f;
+            --darker-bg: #112240;
+            --light-text: #ccd6f6;
+            --gray-text: #666;
+            --white: #ffffff;
+            --light-bg: #f9f9f9;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            font-family: "Poppins", sans-serif;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, var(--light-bg) 0%, #ffffff 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1, h2, h3, h4, .logo_menu_ {
+            font-family: "Montserrat", sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            width: 100%;
+            border-bottom: 3px solid var(--primary-color);
+            border-radius : 0 0 15px 15px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo_menu_ {
+            color: var(--dark-bg);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 180px;
+            transition: transform 0.3s ease;
+        }
+
+        .logo_menu_:hover {
+            transform: scale(1.05);
+        }
+
+        .logo_menu_ img {
+            width: 100%;
+            height: auto;
+        }
+
+        /* Desktop Navigation */
+        .desktop-nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .desktop-nav a {
+            text-decoration: none;
+            color: var(--dark-bg);
+            font-weight: 500;
+            transition: color 0.3s;
+            font-size: 16px;
+            position: relative;
+            padding-bottom: 5px;
+        }
+
+        .desktop-nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .desktop-nav a:hover {
+            color: var(--primary-dark);
+        }
+
+        .desktop-nav a:hover::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn_menu {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 28px;
+            background: var(--primary-color);
+            color: #000;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-family: "Poppins", sans-serif;
+            font-size: 16px;
+        }
+
+        .btn_menu:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 193, 7, 0.3);
+            background: var(--primary-dark);
+        }
+
+        .btn_menu-outline {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn_menu-outline:hover {
+            background: rgba(255, 193, 7, 0.1);
+        }
+
+        /* Badge connecté */
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--light-bg);
+            padding: 6px 12px;
+            border-radius: 40px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .user-badge:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.2);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--dark-bg);
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Menu Toggle Button (Mobile) */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 21px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 100%;
+            height: 3px;
+            background: var(--dark-bg);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle.active span:nth-child(1) {
+            transform: translateY(9px) rotate(45deg);
+            background: var(--primary-color);
+        }
+
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active span:nth-child(3) {
+            transform: translateY(-9px) rotate(-45deg);
+            background: var(--primary-color);
+        }
+
+        /* Mobile Navigation */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 80px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 80px);
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-bg) 100%);
+            padding: 40px 20px;
+            z-index: 999;
+            transform: translateX(-100%);
+            transition: transform 0.4s ease-in-out;
+            overflow-y: auto;
+        }
+
+        .mobile-nav.active {
+            transform: translateX(0);
+        }
+
+        .mobile-nav ul {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .mobile-nav li {
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.3s ease;
+        }
+
+        .mobile-nav.active li {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .mobile-nav.active li:nth-child(1) { transition-delay: 0.1s; }
+        .mobile-nav.active li:nth-child(2) { transition-delay: 0.2s; }
+        .mobile-nav.active li:nth-child(3) { transition-delay: 0.3s; }
+        .mobile-nav.active li:nth-child(4) { transition-delay: 0.4s; }
+
+        .mobile-nav a {
+            text-decoration: none;
+            color: var(--dark-bg);
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 20px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .mobile-nav a i {
+            width: 24px;
+            color: var(--primary-color);
+            font-size: 20px;
+        }
+
+        .mobile-nav a:hover {
+            background: var(--primary-color);
+            color: #000;
+            transform: translateX(10px);
+        }
+
+        .mobile-nav a:hover i {
+            color: #000;
+        }
+
+        .mobile-nav .mobile-auth {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .mobile-nav .mobile-auth .btn_menu {
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .mobile-nav .user-badge-mobile {
+            background: var(--darker-bg);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            color: var(--white);
+        }
+
+        .mobile-nav .user-badge-mobile .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .mobile-nav .user-badge-mobile .user-avatar-large {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .mobile-nav .user-badge-mobile .user-details h4 {
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+
+        .mobile-nav .user-badge-mobile .user-details p {
+            font-size: 14px;
+            color: var(--light-text);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .desktop-nav {
+                display: none;
+            }
+
+            .auth-buttons {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .mobile-nav {
+                display: block;
+            }
+
+            .header-content {
+                padding: 10px 0;
+            }
+
+            .logo_menu_ {
+                width: 150px;
+            }
+        }
+
+        @media (min-width: 993px) {
+            .mobile-nav {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo_menu_ {
+                width: 120px;
+            }
+
+            .mobile-nav a {
+                font-size: 18px;
+                padding: 10px 15px;
+            }
+        }
+
+        /* Main content area for demo */
+        .hero-section {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 60px 20px;
+            background: radial-gradient(circle at 10% 30%, rgba(255, 193, 7, 0.05) 0%, transparent 50%);
+        }
+
+        .hero-content h1 {
+            font-size: 48px;
+            color: var(--dark-bg);
+            margin-bottom: 20px;
+            font-weight: 800;
+        }
+
+        .hero-content p {
+            font-size: 18px;
+            color: var(--gray-text);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="{{ url_for('main.index') }}" class="logo_menu_">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="GitFetch logo_menu_" />
+                </a>
+                
+                <!-- Desktop Navigation -->
+                <nav class="desktop-nav">
+                    <ul>
+                        <li><a href="{{ url_for('main.index') }}#features">Fonctionnalités</a></li>
+                        <li><a href="{{ url_for('main.index') }}#templates">Modèles</a></li>
+                        <li><a href="{{ url_for('main.index') }}#how-it-works">Comment ça marche</a></li>
+                        <li><a href="{{ url_for('main.index') }}#pricing">Tarifs</a></li>
+                    </ul>
+                </nav>
+
+                <!-- Desktop Auth Buttons -->
+                <div class="auth-buttons">
+                    {% if current_user.is_authenticated %}
+                        <!-- Utilisateur connecté -->
+                        <div class="user-badge">
+                            <div class="user-avatar">
+                                {% if current_user.photo_profil %}
+                                    <img src="{{ url_for('portfolio.serve_public_media', folder='profiles', filename=current_user.photo_profil) }}" alt="{{ current_user.nom_utilisateur }}">
+                                {% else %}
+                                    {{ current_user.nom_utilisateur[:1]|upper }}
+                                {% endif %}
+                            </div>
+                            <span class="user-name">{{ current_user.nom_utilisateur }}</span>
+                        </div>
+                        <a href="{{ url_for('admin.dashboard') }}" class="btn_menu">
+                            <i class="fas fa-tachometer-alt"></i>
+                            Dashboard
+                        </a>
+                    {% else %}
+                        <!-- Utilisateur non connecté -->
+                        <a href="{{ url_for('auth.login') }}" class="btn_menu btn_menu-outline">Connexion</a>
+                        <a href="{{ url_for('auth.register') }}" class="btn_menu">Commencer gratuitement</a>
+                    {% endif %}
+                </div>
+
+                <!-- Mobile Menu Toggle -->
+                <div class="menu-toggle" id="menuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobileNav">
+        <ul>
+            <li><a href="{{ url_for('main.index') }}#features"><i class="fas fa-rocket"></i> Fonctionnalités</a></li>
+            <li><a href="{{ url_for('main.index') }}#templates"><i class="fas fa-paint-brush"></i> Modèles</a></li>
+            <li><a href="{{ url_for('main.index') }}#how-it-works"><i class="fas fa-question-circle"></i> Comment ça marche</a></li>
+            <li><a href="{{ url_for('main.index') }}#pricing"><i class="fas fa-tag"></i> Tarifs</a></li>
+        </ul>
+
+        <!-- Mobile Auth Section -->
+        <div class="mobile-auth">
+            {% if current_user.is_authenticated %}
+                <!-- Utilisateur connecté version mobile -->
+                <div class="user-badge-mobile">
+                    <div class="user-info">
+                        <div class="user-avatar-large">
+                            {% if current_user.photo_profil %}
+                                <img src="{{ url_for('portfolio.serve_public_media', folder='profiles', filename=current_user.photo_profil) }}" alt="{{ current_user.nom_utilisateur }}">
+                            {% else %}
+                                {{ current_user.nom_utilisateur[:1]|upper }}
+                            {% endif %}
+                        </div>
+                        <div class="user-details">
+                            <h4>{{ current_user.nom_utilisateur }}</h4>
+                            <p>{{ current_user.email }}</p>
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ url_for('admin.dashboard') }}" class="btn_menu">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+                <a href="{{ url_for('auth.logout') }}" class="btn_menu btn_menu-outline">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Déconnexion
+                </a>
+            {% else %}
+                <!-- Utilisateur non connecté version mobile -->
+                <a href="{{ url_for('auth.login') }}" class="btn_menu btn_menu-outline">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Connexion
+                </a>
+                <a href="{{ url_for('auth.register') }}" class="btn_menu">
+                    <i class="fas fa-user-plus"></i>
+                    Commencer gratuitement
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const menuToggle = document.getElementById('menuToggle');
+            const mobileNav = document.getElementById('mobileNav');
+
+            // Toggle mobile menu
+            if (menuToggle && mobileNav) {
+                menuToggle.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    mobileNav.classList.toggle('active');
+                    document.body.style.overflow = mobileNav.classList.contains('active') ? 'hidden' : 'auto';
+                });
+
+                // Close menu when clicking on a link
+                mobileNav.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        menuToggle.classList.remove('active');
+                        mobileNav.classList.remove('active');
+                        document.body.style.overflow = 'auto';
+                    });
+                });
+            }
+
+            // Smooth scrolling pour le menu
+            document.querySelectorAll('nav a[href^="#"], .mobile-nav a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    // Extraire l'ancre de l'URL complète
+                    const hash = targetId.split('#')[1];
+                    const targetElement = document.getElementById(hash);
+                    
+                    if (targetElement) {
+                        // Fermer le menu mobile si ouvert
+                        if (mobileNav && mobileNav.classList.contains('active')) {
+                            menuToggle.classList.remove('active');
+                            mobileNav.classList.remove('active');
+                            document.body.style.overflow = 'auto';
+                        }
+
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                        
+                        // Mettre à jour l'URL sans recharger la page
+                        history.pushState(null, null, '#' + hash);
+                    }
+                });
+            });
+
+            // Vérifier s'il y a une ancre dans l'URL au chargement
+            if (window.location.hash) {
+                const targetId = window.location.hash.substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    setTimeout(() => {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }, 100);
+                }
+            }
+
+            // Close mobile menu on resize if screen becomes large
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 992 && mobileNav.classList.contains('active')) {
+                    menuToggle.classList.remove('active');
+                    mobileNav.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
