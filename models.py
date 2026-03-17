@@ -11,7 +11,6 @@ class Utilisateur(db.Model, UserMixin):
     nom_utilisateur = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     
-    # Correction : nullable=True pour permettre la connexion OAuth
     mot_de_passe_hache = db.Column(db.String(255), nullable=True)
     
     role = db.Column(db.String(20), default='user')
@@ -26,7 +25,7 @@ class Utilisateur(db.Model, UserMixin):
     
     # Informations personnelles
     biographie = db.Column(db.Text, nullable=True)
-    poste = db.Column(db.String(100), nullable=True)  # Ex: "Développeur Full Stack"
+    poste = db.Column(db.String(100), nullable=True)
     localisation = db.Column(db.String(100), nullable=True)
     site_web = db.Column(db.String(255), nullable=True)
     
@@ -41,7 +40,7 @@ class Utilisateur(db.Model, UserMixin):
     telephone_mobile = db.Column(db.String(20), nullable=True)
     
     # Préférences
-    theme_prefere = db.Column(db.String(20), default='light')  # 'light' ou 'dark'
+    theme_prefere = db.Column(db.String(20), default='light') 
     
     # Statut
     est_confirme = db.Column(db.Boolean, default=False)
@@ -69,7 +68,7 @@ class Projet(db.Model):
     structure_nom = db.Column(db.String(100))
     date_creation = db.Column(db.DateTime, default=datetime.utcnow)
     date_mise_a_jour = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    technologies_annexes = db.Column(db.JSON, default=list)  # Liste de chaînes
+    technologies_annexes = db.Column(db.JSON, default=list)
     
     def __repr__(self):
         return f'<Projet {self.nom}>'
@@ -83,14 +82,13 @@ class PortfolioConfig(db.Model):
     # SECTION HERO
     hero_titre = db.Column(db.String(200), default="CONSTRUIRE LE FUTUR DU CODE")
     
-    # SECTION ABOUT (Spécialiste IT...)
+    # SECTION ABOUT 
     about_titre = db.Column(db.String(200), default="Spécialiste IT multi-domaines")
     about_soustitre = db.Column(db.String(200), default="Précision. Performance. Innovation.")
     about_description = db.Column(db.Text)
     about_lien_texte = db.Column(db.String(100), default="EN SAVOIR PLUS SUR MON PARCOURS")
     
-    # SKILLS ITEMS (Architecture, Sécurité...)
-    # On stocke ça en JSON : [{"nom": "ARCHITECTURE", "icon": "fas fa-sitemap"}, ...]
+    # SKILLS ITEMS
     about_skills_json = db.Column(db.JSON, default=list)
     
     # STACK TECHNIQUE (React, Python...)
@@ -111,7 +109,7 @@ class AboutPage(db.Model):
     # HERO SECTION
     hero_titre = db.Column(db.String(255), default="PLUS QU'UN DÉVELOPPEUR")
     hero_texte = db.Column(db.Text, default="Une passion pour l'innovation...")
-    hero_image = db.Column(db.String(500), nullable=True)  # Nom du fichier
+    hero_image = db.Column(db.String(500), nullable=True)
     hero_bouton_1_texte = db.Column(db.String(100), default="Mon parcours")
     hero_bouton_1_lien = db.Column(db.String(255), default="#formation")
     hero_bouton_2_texte = db.Column(db.String(100), default="Échanger ensemble")
