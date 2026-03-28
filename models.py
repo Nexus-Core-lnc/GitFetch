@@ -16,6 +16,9 @@ class Utilisateur(db.Model, UserMixin):
     role = db.Column(db.String(20), default='user')
     jeton_github = db.Column(db.String(255), nullable=True)
     
+    # ✅ AJOUTER CETTE LIGNE ICI
+    jeton_identification = db.Column(db.String(255), nullable=True)  # Jeton unique pour l'identification
+    
     # Photos de profil et couverture
     photo_profil = db.Column(db.String(255), nullable=True, default='default-avatar.jpg')
     photo_couverture = db.Column(db.String(255), nullable=True, default='default-cover.jpg')

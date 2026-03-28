@@ -1,0 +1,1222 @@
+[
+    {
+        "label": "op",
+        "importPath": "alembic",
+        "description": "alembic",
+        "isExtraImport": true,
+        "detail": "alembic",
+        "documentation": {}
+    },
+    {
+        "label": "context",
+        "importPath": "alembic",
+        "description": "alembic",
+        "isExtraImport": true,
+        "detail": "alembic",
+        "documentation": {}
+    },
+    {
+        "label": "sqlalchemy",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "inspect",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "text",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "logging",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "logging",
+        "description": "logging",
+        "detail": "logging",
+        "documentation": {}
+    },
+    {
+        "label": "fileConfig",
+        "importPath": "logging.config",
+        "description": "logging.config",
+        "isExtraImport": true,
+        "detail": "logging.config",
+        "documentation": {}
+    },
+    {
+        "label": "current_app",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "Flask",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "Blueprint",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "render_template",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "request",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "url_for",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "flash",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "redirect",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "current_app",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "send_from_directory",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "abort",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "session",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "Mail",
+        "importPath": "flask_mail",
+        "description": "flask_mail",
+        "isExtraImport": true,
+        "detail": "flask_mail",
+        "documentation": {}
+    },
+    {
+        "label": "Message",
+        "importPath": "flask_mail",
+        "description": "flask_mail",
+        "isExtraImport": true,
+        "detail": "flask_mail",
+        "documentation": {}
+    },
+    {
+        "label": "LoginManager",
+        "importPath": "flask_login",
+        "description": "flask_login",
+        "isExtraImport": true,
+        "detail": "flask_login",
+        "documentation": {}
+    },
+    {
+        "label": "UserMixin",
+        "importPath": "flask_login",
+        "description": "flask_login",
+        "isExtraImport": true,
+        "detail": "flask_login",
+        "documentation": {}
+    },
+    {
+        "label": "login_user",
+        "importPath": "flask_login",
+        "description": "flask_login",
+        "isExtraImport": true,
+        "detail": "flask_login",
+        "documentation": {}
+    },
+    {
+        "label": "logout_user",
+        "importPath": "flask_login",
+        "description": "flask_login",
+        "isExtraImport": true,
+        "detail": "flask_login",
+        "documentation": {}
+    },
+    {
+        "label": "login_required",
+        "importPath": "flask_login",
+        "description": "flask_login",
+        "isExtraImport": true,
+        "detail": "flask_login",
+        "documentation": {}
+    },
+    {
+        "label": "current_user",
+        "importPath": "flask_login",
+        "description": "flask_login",
+        "isExtraImport": true,
+        "detail": "flask_login",
+        "documentation": {}
+    },
+    {
+        "label": "Migrate",
+        "importPath": "flask_migrate",
+        "description": "flask_migrate",
+        "isExtraImport": true,
+        "detail": "flask_migrate",
+        "documentation": {}
+    },
+    {
+        "label": "OAuth",
+        "importPath": "authlib.integrations.flask_client",
+        "description": "authlib.integrations.flask_client",
+        "isExtraImport": true,
+        "detail": "authlib.integrations.flask_client",
+        "documentation": {}
+    },
+    {
+        "label": "load_dotenv",
+        "importPath": "dotenv",
+        "description": "dotenv",
+        "isExtraImport": true,
+        "detail": "dotenv",
+        "documentation": {}
+    },
+    {
+        "label": "load_dotenv",
+        "importPath": "dotenv",
+        "description": "dotenv",
+        "isExtraImport": true,
+        "detail": "dotenv",
+        "documentation": {}
+    },
+    {
+        "label": "db",
+        "importPath": "models",
+        "description": "models",
+        "isExtraImport": true,
+        "detail": "models",
+        "documentation": {}
+    },
+    {
+        "label": "Utilisateur",
+        "importPath": "models",
+        "description": "models",
+        "isExtraImport": true,
+        "detail": "models",
+        "documentation": {}
+    },
+    {
+        "label": "db",
+        "importPath": "models",
+        "description": "models",
+        "isExtraImport": true,
+        "detail": "models",
+        "documentation": {}
+    },
+    {
+        "label": "Utilisateur",
+        "importPath": "models",
+        "description": "models",
+        "isExtraImport": true,
+        "detail": "models",
+        "documentation": {}
+    },
+    {
+        "label": "Projet",
+        "importPath": "models",
+        "description": "models",
+        "isExtraImport": true,
+        "detail": "models",
+        "documentation": {}
+    },
+    {
+        "label": "PortfolioConfig",
+        "importPath": "models",
+        "description": "models",
+        "isExtraImport": true,
+        "detail": "models",
+        "documentation": {}
+    },
+    {
+        "label": "AboutPage",
+        "importPath": "models",
+        "description": "models",
+        "isExtraImport": true,
+        "detail": "models",
+        "documentation": {}
+    },
+    {
+        "label": "auth_bp",
+        "importPath": "routes",
+        "description": "routes",
+        "isExtraImport": true,
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "main_bp",
+        "importPath": "routes",
+        "description": "routes",
+        "isExtraImport": true,
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "admin_bp",
+        "importPath": "routes",
+        "description": "routes",
+        "isExtraImport": true,
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "portfolio_bp",
+        "importPath": "routes",
+        "description": "routes",
+        "isExtraImport": true,
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "github_bp",
+        "importPath": "routes",
+        "description": "routes",
+        "isExtraImport": true,
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "SQLAlchemy",
+        "importPath": "flask_sqlalchemy",
+        "description": "flask_sqlalchemy",
+        "isExtraImport": true,
+        "detail": "flask_sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "requests",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "requests",
+        "description": "requests",
+        "detail": "requests",
+        "documentation": {}
+    },
+    {
+        "label": "secrets",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "secrets",
+        "description": "secrets",
+        "detail": "secrets",
+        "documentation": {}
+    },
+    {
+        "label": "uuid",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "uuid",
+        "description": "uuid",
+        "detail": "uuid",
+        "documentation": {}
+    },
+    {
+        "label": "URLSafeTimedSerializer",
+        "importPath": "itsdangerous",
+        "description": "itsdangerous",
+        "isExtraImport": true,
+        "detail": "itsdangerous",
+        "documentation": {}
+    },
+    {
+        "label": "generate_password_hash",
+        "importPath": "werkzeug.security",
+        "description": "werkzeug.security",
+        "isExtraImport": true,
+        "detail": "werkzeug.security",
+        "documentation": {}
+    },
+    {
+        "label": "check_password_hash",
+        "importPath": "werkzeug.security",
+        "description": "werkzeug.security",
+        "isExtraImport": true,
+        "detail": "werkzeug.security",
+        "documentation": {}
+    },
+    {
+        "label": "secure_filename",
+        "importPath": "werkzeug.utils",
+        "description": "werkzeug.utils",
+        "isExtraImport": true,
+        "detail": "werkzeug.utils",
+        "documentation": {}
+    },
+    {
+        "label": "urlencode",
+        "importPath": "urllib.parse",
+        "description": "urllib.parse",
+        "isExtraImport": true,
+        "detail": "urllib.parse",
+        "documentation": {}
+    },
+    {
+        "label": "time",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "time",
+        "description": "time",
+        "detail": "time",
+        "documentation": {}
+    },
+    {
+        "label": "upgrade",
+        "kind": 2,
+        "importPath": "migrations.versions.2d83030d2659_ajout_colonne_jeton_identification",
+        "description": "migrations.versions.2d83030d2659_ajout_colonne_jeton_identification",
+        "peekOfCode": "def upgrade():\n    # ### commands auto generated by Alembic - please adjust! ###\n    op.create_table('about_pages',\n    sa.Column('id', sa.Integer(), nullable=False),\n    sa.Column('utilisateur_id', sa.Integer(), nullable=False),\n    sa.Column('hero_titre', sa.String(length=255), nullable=True),\n    sa.Column('hero_texte', sa.Text(), nullable=True),\n    sa.Column('hero_image', sa.String(length=500), nullable=True),\n    sa.Column('hero_bouton_1_texte', sa.String(length=100), nullable=True),\n    sa.Column('hero_bouton_1_lien', sa.String(length=255), nullable=True),",
+        "detail": "migrations.versions.2d83030d2659_ajout_colonne_jeton_identification",
+        "documentation": {}
+    },
+    {
+        "label": "downgrade",
+        "kind": 2,
+        "importPath": "migrations.versions.2d83030d2659_ajout_colonne_jeton_identification",
+        "description": "migrations.versions.2d83030d2659_ajout_colonne_jeton_identification",
+        "peekOfCode": "def downgrade():\n    # ### commands auto generated by Alembic - please adjust! ###\n    op.drop_table('projets')\n    op.drop_table('portfolio_config')\n    op.drop_table('utilisateurs')\n    with op.batch_alter_table('about_pages', schema=None) as batch_op:\n        batch_op.drop_index(batch_op.f('ix_about_pages_utilisateur_id'))\n    op.drop_table('about_pages')\n    # ### end Alembic commands ###",
+        "detail": "migrations.versions.2d83030d2659_ajout_colonne_jeton_identification",
+        "documentation": {}
+    },
+    {
+        "label": "revision",
+        "kind": 5,
+        "importPath": "migrations.versions.2d83030d2659_ajout_colonne_jeton_identification",
+        "description": "migrations.versions.2d83030d2659_ajout_colonne_jeton_identification",
+        "peekOfCode": "revision = '2d83030d2659'\ndown_revision = None\nbranch_labels = None\ndepends_on = None\ndef upgrade():\n    # ### commands auto generated by Alembic - please adjust! ###\n    op.create_table('about_pages',\n    sa.Column('id', sa.Integer(), nullable=False),\n    sa.Column('utilisateur_id', sa.Integer(), nullable=False),\n    sa.Column('hero_titre', sa.String(length=255), nullable=True),",
+        "detail": "migrations.versions.2d83030d2659_ajout_colonne_jeton_identification",
+        "documentation": {}
+    },
+    {
+        "label": "down_revision",
+        "kind": 5,
+        "importPath": "migrations.versions.2d83030d2659_ajout_colonne_jeton_identification",
+        "description": "migrations.versions.2d83030d2659_ajout_colonne_jeton_identification",
+        "peekOfCode": "down_revision = None\nbranch_labels = None\ndepends_on = None\ndef upgrade():\n    # ### commands auto generated by Alembic - please adjust! ###\n    op.create_table('about_pages',\n    sa.Column('id', sa.Integer(), nullable=False),\n    sa.Column('utilisateur_id', sa.Integer(), nullable=False),\n    sa.Column('hero_titre', sa.String(length=255), nullable=True),\n    sa.Column('hero_texte', sa.Text(), nullable=True),",
+        "detail": "migrations.versions.2d83030d2659_ajout_colonne_jeton_identification",
+        "documentation": {}
+    },
+    {
+        "label": "branch_labels",
+        "kind": 5,
+        "importPath": "migrations.versions.2d83030d2659_ajout_colonne_jeton_identification",
+        "description": "migrations.versions.2d83030d2659_ajout_colonne_jeton_identification",
+        "peekOfCode": "branch_labels = None\ndepends_on = None\ndef upgrade():\n    # ### commands auto generated by Alembic - please adjust! ###\n    op.create_table('about_pages',\n    sa.Column('id', sa.Integer(), nullable=False),\n    sa.Column('utilisateur_id', sa.Integer(), nullable=False),\n    sa.Column('hero_titre', sa.String(length=255), nullable=True),\n    sa.Column('hero_texte', sa.Text(), nullable=True),\n    sa.Column('hero_image', sa.String(length=500), nullable=True),",
+        "detail": "migrations.versions.2d83030d2659_ajout_colonne_jeton_identification",
+        "documentation": {}
+    },
+    {
+        "label": "depends_on",
+        "kind": 5,
+        "importPath": "migrations.versions.2d83030d2659_ajout_colonne_jeton_identification",
+        "description": "migrations.versions.2d83030d2659_ajout_colonne_jeton_identification",
+        "peekOfCode": "depends_on = None\ndef upgrade():\n    # ### commands auto generated by Alembic - please adjust! ###\n    op.create_table('about_pages',\n    sa.Column('id', sa.Integer(), nullable=False),\n    sa.Column('utilisateur_id', sa.Integer(), nullable=False),\n    sa.Column('hero_titre', sa.String(length=255), nullable=True),\n    sa.Column('hero_texte', sa.Text(), nullable=True),\n    sa.Column('hero_image', sa.String(length=500), nullable=True),\n    sa.Column('hero_bouton_1_texte', sa.String(length=100), nullable=True),",
+        "detail": "migrations.versions.2d83030d2659_ajout_colonne_jeton_identification",
+        "documentation": {}
+    },
+    {
+        "label": "get_engine",
+        "kind": 2,
+        "importPath": "migrations.env",
+        "description": "migrations.env",
+        "peekOfCode": "def get_engine():\n    try:\n        # this works with Flask-SQLAlchemy<3 and Alchemical\n        return current_app.extensions['migrate'].db.get_engine()\n    except (TypeError, AttributeError):\n        # this works with Flask-SQLAlchemy>=3\n        return current_app.extensions['migrate'].db.engine\ndef get_engine_url():\n    try:\n        return get_engine().url.render_as_string(hide_password=False).replace(",
+        "detail": "migrations.env",
+        "documentation": {}
+    },
+    {
+        "label": "get_engine_url",
+        "kind": 2,
+        "importPath": "migrations.env",
+        "description": "migrations.env",
+        "peekOfCode": "def get_engine_url():\n    try:\n        return get_engine().url.render_as_string(hide_password=False).replace(\n            '%', '%%')\n    except AttributeError:\n        return str(get_engine().url).replace('%', '%%')\n# add your model's MetaData object here\n# for 'autogenerate' support\n# from myapp import mymodel\n# target_metadata = mymodel.Base.metadata",
+        "detail": "migrations.env",
+        "documentation": {}
+    },
+    {
+        "label": "get_metadata",
+        "kind": 2,
+        "importPath": "migrations.env",
+        "description": "migrations.env",
+        "peekOfCode": "def get_metadata():\n    if hasattr(target_db, 'metadatas'):\n        return target_db.metadatas[None]\n    return target_db.metadata\ndef run_migrations_offline():\n    \"\"\"Run migrations in 'offline' mode.\n    This configures the context with just a URL\n    and not an Engine, though an Engine is acceptable\n    here as well.  By skipping the Engine creation\n    we don't even need a DBAPI to be available.",
+        "detail": "migrations.env",
+        "documentation": {}
+    },
+    {
+        "label": "run_migrations_offline",
+        "kind": 2,
+        "importPath": "migrations.env",
+        "description": "migrations.env",
+        "peekOfCode": "def run_migrations_offline():\n    \"\"\"Run migrations in 'offline' mode.\n    This configures the context with just a URL\n    and not an Engine, though an Engine is acceptable\n    here as well.  By skipping the Engine creation\n    we don't even need a DBAPI to be available.\n    Calls to context.execute() here emit the given string to the\n    script output.\n    \"\"\"\n    url = config.get_main_option(\"sqlalchemy.url\")",
+        "detail": "migrations.env",
+        "documentation": {}
+    },
+    {
+        "label": "run_migrations_online",
+        "kind": 2,
+        "importPath": "migrations.env",
+        "description": "migrations.env",
+        "peekOfCode": "def run_migrations_online():\n    \"\"\"Run migrations in 'online' mode.\n    In this scenario we need to create an Engine\n    and associate a connection with the context.\n    \"\"\"\n    # this callback is used to prevent an auto-migration from being generated\n    # when there are no changes to the schema\n    # reference: http://alembic.zzzcomputing.com/en/latest/cookbook.html\n    def process_revision_directives(context, revision, directives):\n        if getattr(config.cmd_opts, 'autogenerate', False):",
+        "detail": "migrations.env",
+        "documentation": {}
+    },
+    {
+        "label": "config",
+        "kind": 5,
+        "importPath": "migrations.env",
+        "description": "migrations.env",
+        "peekOfCode": "config = context.config\n# Interpret the config file for Python logging.\n# This line sets up loggers basically.\nfileConfig(config.config_file_name)\nlogger = logging.getLogger('alembic.env')\ndef get_engine():\n    try:\n        # this works with Flask-SQLAlchemy<3 and Alchemical\n        return current_app.extensions['migrate'].db.get_engine()\n    except (TypeError, AttributeError):",
+        "detail": "migrations.env",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "migrations.env",
+        "description": "migrations.env",
+        "peekOfCode": "logger = logging.getLogger('alembic.env')\ndef get_engine():\n    try:\n        # this works with Flask-SQLAlchemy<3 and Alchemical\n        return current_app.extensions['migrate'].db.get_engine()\n    except (TypeError, AttributeError):\n        # this works with Flask-SQLAlchemy>=3\n        return current_app.extensions['migrate'].db.engine\ndef get_engine_url():\n    try:",
+        "detail": "migrations.env",
+        "documentation": {}
+    },
+    {
+        "label": "target_db",
+        "kind": 5,
+        "importPath": "migrations.env",
+        "description": "migrations.env",
+        "peekOfCode": "target_db = current_app.extensions['migrate'].db\n# other values from the config, defined by the needs of env.py,\n# can be acquired:\n# my_important_option = config.get_main_option(\"my_important_option\")\n# ... etc.\ndef get_metadata():\n    if hasattr(target_db, 'metadatas'):\n        return target_db.metadatas[None]\n    return target_db.metadata\ndef run_migrations_offline():",
+        "detail": "migrations.env",
+        "documentation": {}
+    },
+    {
+        "label": "create_application",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def create_application():\n    application = Flask(__name__)\n    # ============================================\n    # CONFIGURATION DE LA BASE DE DONNÉES POSTGRESQL\n    # ============================================\n    # Utilisation directe de DATABASE_URL depuis .env\n    application.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///gitfetch.db')\n    application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False\n    # Afficher la base de données utilisée (sans le mot de passe pour la sécurité)\n    db_uri = application.config['SQLALCHEMY_DATABASE_URI']",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "application",
+        "kind": 5,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "application = create_application()\n# Alias pour Flask CLI (certaines commandes attendent 'app')\napp = application\nif __name__ == \"__main__\":\n    port = int(os.getenv(\"PORT\", 5000))\n    debug = os.getenv(\"FLASK_DEBUG\", \"True\") == \"True\"\n    host = os.getenv(\"HOST\", \"0.0.0.0\")\n    print(f\"╔══════════════════════════════════════════════════════════╗\")\n    print(f\"║   🚀 GitFetch - Serveur de Développement                 ║\")\n    print(f\"║   📍 Accès : http://{host}:{port}                         ║\")",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "app",
+        "kind": 5,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "app = application\nif __name__ == \"__main__\":\n    port = int(os.getenv(\"PORT\", 5000))\n    debug = os.getenv(\"FLASK_DEBUG\", \"True\") == \"True\"\n    host = os.getenv(\"HOST\", \"0.0.0.0\")\n    print(f\"╔══════════════════════════════════════════════════════════╗\")\n    print(f\"║   🚀 GitFetch - Serveur de Développement                 ║\")\n    print(f\"║   📍 Accès : http://{host}:{port}                         ║\")\n    print(f\"║   📦 Base de données: {'PostgreSQL' if 'postgresql' in str(application.config['SQLALCHEMY_DATABASE_URI']) else 'SQLite'} ║\")\n    print(f\"╚══════════════════════════════════════════════════════════╝\")",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "Utilisateur",
+        "kind": 6,
+        "importPath": "models",
+        "description": "models",
+        "peekOfCode": "class Utilisateur(db.Model, UserMixin):\n    __tablename__ = 'utilisateurs'\n    id = db.Column(db.Integer, primary_key=True)\n    nom_utilisateur = db.Column(db.String(80), unique=True, nullable=False)\n    email = db.Column(db.String(120), unique=True, nullable=False)\n    mot_de_passe_hache = db.Column(db.String(255), nullable=True)\n    role = db.Column(db.String(20), default='user')\n    jeton_github = db.Column(db.String(255), nullable=True)\n    # ✅ AJOUTER CETTE LIGNE ICI\n    jeton_identification = db.Column(db.String(255), nullable=True)  # Jeton unique pour l'identification",
+        "detail": "models",
+        "documentation": {}
+    },
+    {
+        "label": "Projet",
+        "kind": 6,
+        "importPath": "models",
+        "description": "models",
+        "peekOfCode": "class Projet(db.Model):\n    __tablename__ = 'projets'\n    id = db.Column(db.Integer, primary_key=True)\n    nom = db.Column(db.String(100), nullable=False)\n    description = db.Column(db.Text)\n    github_url = db.Column(db.String(255))\n    demo_url = db.Column(db.String(255))\n    image_couverture = db.Column(db.String(255))\n    logo_projet = db.Column(db.String(255))\n    repo_id_github = db.Column(db.String(100), unique=True)",
+        "detail": "models",
+        "documentation": {}
+    },
+    {
+        "label": "PortfolioConfig",
+        "kind": 6,
+        "importPath": "models",
+        "description": "models",
+        "peekOfCode": "class PortfolioConfig(db.Model):\n    __tablename__ = 'portfolio_config'\n    id = db.Column(db.Integer, primary_key=True)\n    utilisateur_id = db.Column(db.Integer, db.ForeignKey('utilisateurs.id'), nullable=False)\n    # SECTION HERO\n    hero_titre = db.Column(db.String(200), default=\"CONSTRUIRE LE FUTUR DU CODE\")\n    # SECTION ABOUT \n    about_titre = db.Column(db.String(200), default=\"Spécialiste IT multi-domaines\")\n    about_soustitre = db.Column(db.String(200), default=\"Précision. Performance. Innovation.\")\n    about_description = db.Column(db.Text)",
+        "detail": "models",
+        "documentation": {}
+    },
+    {
+        "label": "AboutPage",
+        "kind": 6,
+        "importPath": "models",
+        "description": "models",
+        "peekOfCode": "class AboutPage(db.Model):\n    __tablename__ = 'about_pages'\n    id = db.Column(db.Integer, primary_key=True)\n    utilisateur_id = db.Column(db.Integer, nullable=False, index=True)\n    # HERO SECTION\n    hero_titre = db.Column(db.String(255), default=\"PLUS QU'UN DÉVELOPPEUR\")\n    hero_texte = db.Column(db.Text, default=\"Une passion pour l'innovation...\")\n    hero_image = db.Column(db.String(500), nullable=True)\n    hero_bouton_1_texte = db.Column(db.String(100), default=\"Mon parcours\")\n    hero_bouton_1_lien = db.Column(db.String(255), default=\"#formation\")",
+        "detail": "models",
+        "documentation": {}
+    },
+    {
+        "label": "db",
+        "kind": 5,
+        "importPath": "models",
+        "description": "models",
+        "peekOfCode": "db = SQLAlchemy()\nclass Utilisateur(db.Model, UserMixin):\n    __tablename__ = 'utilisateurs'\n    id = db.Column(db.Integer, primary_key=True)\n    nom_utilisateur = db.Column(db.String(80), unique=True, nullable=False)\n    email = db.Column(db.String(120), unique=True, nullable=False)\n    mot_de_passe_hache = db.Column(db.String(255), nullable=True)\n    role = db.Column(db.String(20), default='user')\n    jeton_github = db.Column(db.String(255), nullable=True)\n    # ✅ AJOUTER CETTE LIGNE ICI",
+        "detail": "models",
+        "documentation": {}
+    },
+    {
+        "label": "download_and_save_avatar",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def download_and_save_avatar(url, user_id, type_file='avatar'):\n    \"\"\"Télécharge un avatar depuis une URL et le sauvegarde localement\"\"\"\n    try:\n        logger.info(f\"Téléchargement de l'avatar depuis: {url}\")\n        response = requests.get(url, timeout=10, stream=True)\n        if response.status_code == 200:\n            # Déterminer l'extension et le dossier\n            content_type = response.headers.get('content-type', '').lower()\n            ext = '.jpg'\n            if 'png' in content_type:",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "generer_jeton",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def generer_jeton(email, salt):\n    \"\"\"Génère un jeton sécurisé pour les emails\"\"\"\n    serialiseur = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])\n    return serialiseur.dumps(email, salt=salt)\ndef verifier_jeton(token, salt, expiration=3600):\n    \"\"\"Vérifie un jeton email\"\"\"\n    serialiseur = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])\n    try:\n        return serialiseur.loads(token, salt=salt, max_age=expiration)\n    except:",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "verifier_jeton",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def verifier_jeton(token, salt, expiration=3600):\n    \"\"\"Vérifie un jeton email\"\"\"\n    serialiseur = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])\n    try:\n        return serialiseur.loads(token, salt=salt, max_age=expiration)\n    except:\n        return None\ndef envoyer_email(destinataire, sujet, template, **kwargs):\n    \"\"\"Envoie un email\"\"\"\n    msg = Message(",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "envoyer_email",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def envoyer_email(destinataire, sujet, template, **kwargs):\n    \"\"\"Envoie un email\"\"\"\n    msg = Message(\n        sujet,\n        recipients=[destinataire],\n        sender=current_app.config.get('MAIL_DEFAULT_SENDER')\n    )\n    msg.html = render_template(f'auth/{template}', **kwargs)\n    mail = current_app.extensions.get('mail')\n    if mail:",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "get_media_path",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def get_media_path(subdir=''):\n    \"\"\"Retourne le chemin absolu vers le dossier media et le crée s'il n'existe pas\"\"\"\n    project_root = current_app.root_path\n    media_path = os.path.join(project_root, 'media')\n    if subdir:\n        media_path = os.path.join(media_path, subdir)\n    if not os.path.exists(media_path):\n        os.makedirs(media_path, exist_ok=True)\n    return media_path\ndef get_upload_path(subdir=''):",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "get_upload_path",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def get_upload_path(subdir=''):\n    \"\"\"Retourne le chemin absolu vers le dossier uploads (dans media) et le crée s'il n'existe pas\"\"\"\n    upload_path = get_media_path('uploads')\n    if subdir:\n        upload_path = os.path.join(upload_path, subdir)\n    if not os.path.exists(upload_path):\n        os.makedirs(upload_path, exist_ok=True)\n    return upload_path\ndef get_static_path():\n    \"\"\"Retourne le chemin absolu vers le dossier static\"\"\"",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "get_static_path",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def get_static_path():\n    \"\"\"Retourne le chemin absolu vers le dossier static\"\"\"\n    return os.path.join(current_app.root_path, 'static')\ndef save_media_file(file, type_file, user_id):\n    \"\"\"Sauvegarde un fichier dans le dossier media approprié\"\"\"\n    subdirs = {\n        'avatar': 'profiles',\n        'cover': 'covers',\n        'cv': 'docs',\n        'proj': 'projects',",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "save_media_file",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def save_media_file(file, type_file, user_id):\n    \"\"\"Sauvegarde un fichier dans le dossier media approprié\"\"\"\n    subdirs = {\n        'avatar': 'profiles',\n        'cover': 'covers',\n        'cv': 'docs',\n        'proj': 'projects',\n        'about': 'about'\n    }\n    subdir = subdirs.get(type_file, '')",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "delete_media_file",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def delete_media_file(filename, type_file):\n    \"\"\"Supprime un fichier du dossier media\"\"\"\n    subdirs = {\n        'avatar': 'profiles',\n        'cover': 'covers',\n        'cv': 'docs',\n        'proj': 'projects',\n        'about': 'about'\n    }\n    subdir = subdirs.get(type_file, '')",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "get_common_context",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def get_common_context():\n    \"\"\"Fonction utilitaire pour récupérer les données communes à toutes les pages du portfolio\"\"\"\n    user = Utilisateur.query.first()\n    return {'user': user}\ndef ensure_token_column_exists():\n    \"\"\"Vérifie et crée la colonne jeton_identification si elle n'existe pas\"\"\"\n    try:\n        inspector = inspect(db.engine)\n        if not inspector.has_table('utilisateurs'):\n            print(\"⚠️ Table utilisateurs n'existe pas encore\")",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "ensure_token_column_exists",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def ensure_token_column_exists():\n    \"\"\"Vérifie et crée la colonne jeton_identification si elle n'existe pas\"\"\"\n    try:\n        inspector = inspect(db.engine)\n        if not inspector.has_table('utilisateurs'):\n            print(\"⚠️ Table utilisateurs n'existe pas encore\")\n            return False\n        columns = [col['name'] for col in inspector.get_columns('utilisateurs')]\n        if 'jeton_identification' not in columns:\n            print(\"⚠️ Colonne jeton_identification manquante, tentative de création...\")",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "fetch_github_repos",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def fetch_github_repos(token, max_retries=3):\n    \"\"\"Récupère les dépôts GitHub avec gestion des erreurs de connexion\"\"\"\n    if not token:\n        return [], \"Token GitHub non configuré\"\n    headers = {\n        'Authorization': f'token {token}',\n        'Accept': 'application/vnd.github.v3+json'\n    }\n    url = 'https://api.github.com/user/repos?sort=updated&per_page=50&affiliation=owner,collaborator'\n    for attempt in range(max_retries):",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "get_google_provider_cfg",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def get_google_provider_cfg():\n    \"\"\"Récupère la configuration Google OAuth\"\"\"\n    try:\n        return requests.get(GOOGLE_DISCOVERY_URL).json()\n    except:\n        return None\n# ============================================\n# BLUEPRINT AUTH (Authentification)\n# ============================================\n@auth_bp.route(\"/register\", methods=['GET', 'POST'])",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "register",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def register():\n    if request.method == 'POST':\n        email = request.form.get('email')\n        password = request.form.get('password')\n        if Utilisateur.query.filter_by(email=email).first():\n            flash(\"Cette adresse email est déjà enregistrée.\", \"danger\")\n            return redirect(url_for('auth.login'))\n        nouvel_utilisateur = Utilisateur(\n            email=email,\n            nom_utilisateur=email.split('@')[0],",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "confirmer_email",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def confirmer_email(token):\n    email = verifier_jeton(token, 'email-confirm-salt')\n    if not email:\n        flash(\"Le lien est invalide ou a expiré.\", \"danger\")\n        return redirect(url_for('auth.register'))\n    utilisateur = Utilisateur.query.filter_by(email=email).first_or_404()\n    if not utilisateur.est_confirme:\n        utilisateur.est_confirme = True\n        db.session.commit()\n        flash(\"Email validé ! Vous pouvez vous connecter.\", \"success\")",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "login",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def login():\n    if request.method == 'POST':\n        email = request.form.get('email')\n        password = request.form.get('password')\n        remember = True if request.form.get('remember') else False\n        user = Utilisateur.query.filter_by(email=email).first()\n        if not user or not check_password_hash(user.mot_de_passe_hache, password):\n            flash('Email ou mot de passe incorrect.', 'danger')\n            return redirect(url_for('auth.login'))\n        if not user.est_confirme:",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "logout",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def logout():\n    try:\n        # Ne pas supprimer les données utilisateur\n        if hasattr(current_user, 'jeton_identification'):\n            # On garde le token pour la prochaine connexion\n            pass\n        db.session.commit()\n    except:\n        db.session.rollback()\n        pass",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "forgot_password",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def forgot_password():\n    if request.method == 'POST':\n        email = request.form.get('email')\n        user = Utilisateur.query.filter_by(email=email).first()\n        if user:\n            token = generer_jeton(email, 'recover-password-salt')\n            recover_url = url_for('auth.reset_password', token=token, _external=True)\n            envoyer_email(email, \"Réinitialisation de mot de passe\", 'email_reset.html', recover_url=recover_url)\n        flash(\"Si cet email existe, un lien a été envoyé.\", \"info\")\n        return redirect(url_for('auth.login'))",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "reset_password",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def reset_password(token):\n    email = verifier_jeton(token, 'recover-password-salt', expiration=1800)\n    if not email:\n        flash(\"Le lien est invalide ou a expiré.\", \"danger\")\n        return redirect(url_for('auth.forgot_password'))\n    if request.method == 'POST':\n        new_password = request.form.get('newPassword')\n        user = Utilisateur.query.filter_by(email=email).first_or_404()\n        user.mot_de_passe_hache = generate_password_hash(new_password)\n        db.session.commit()",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "debug_token",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def debug_token():\n    \"\"\"Route pour déboguer et voir le jeton actuel\"\"\"\n    return {\n        'user_id': current_user.id,\n        'email': current_user.email,\n        'jeton_identification': getattr(current_user, 'jeton_identification', 'Champ non existant'),\n        'jeton_github': current_user.jeton_github,\n        'session_token': session.get('jeton_identification'),\n        'photo_profil': current_user.photo_profil,\n        'photo_couverture': current_user.photo_couverture",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "social_login",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def social_login(name):\n    \"\"\"Route pour l'authentification sociale (Google, GitHub)\"\"\"\n    if name == 'github':\n        if not GITHUB_CLIENT_ID or not GITHUB_CLIENT_SECRET:\n            flash(\"Erreur de configuration GitHub. Contactez l'administrateur.\", \"danger\")\n            return redirect(url_for('auth.login'))\n        state = secrets.token_urlsafe(16)\n        session['oauth_state'] = state\n        redirect_uri = url_for('auth.auth_callback', name='github', _external=True)\n        params = {",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "auth_callback",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def auth_callback(name):\n    \"\"\"Callback pour l'authentification sociale - AVEC TÉLÉCHARGEMENT LOCAL DES AVATARS\"\"\"\n    if name == 'github':\n        state = request.args.get('state')\n        code = request.args.get('code')\n        error = request.args.get('error')\n        stored_state = session.get('oauth_state')\n        session.pop('oauth_state', None)\n        if error:\n            flash(f\"Erreur GitHub: {error}\", \"danger\")",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "index",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def index():\n    return render_template('index.html')\n# ============================================\n# BLUEPRINT ADMIN (Dashboard et administration)\n# ============================================\n@admin_bp.route('/dashboard')\n@login_required\ndef dashboard():\n    repos = []\n    error_message = None",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "dashboard",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def dashboard():\n    repos = []\n    error_message = None\n    if current_user.jeton_github:\n        repos, error_message = fetch_github_repos(current_user.jeton_github)\n        if error_message:\n            flash(error_message, \"warning\" if \"Token\" in error_message else \"danger\")\n    else:\n        flash(\"Token GitHub non configuré. Connectez votre compte GitHub pour importer des dépôts.\", \"info\")\n    return render_template('admin/dashboard.html', repos=repos)",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "import_view",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def import_view():\n    if not current_user.jeton_github:\n        flash(\"Veuillez connecter votre compte GitHub dans votre profil.\", \"warning\")\n        return redirect(url_for('admin.edit_profile'))\n    repos_dict = {}\n    error_message = None\n    repos, error_message = fetch_github_repos(current_user.jeton_github)\n    if error_message:\n        flash(error_message, \"danger\")\n        return render_template('admin/import_repos.html', repos=[])",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "list_repos",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def list_repos():\n    projets = Projet.query.filter_by(utilisateur_id=current_user.id).order_by(Projet.id.desc()).all()\n    return render_template('admin/list_repos.html', projets=projets)\n@admin_bp.route('/import-repo/<int:github_id>', methods=['POST'])\n@login_required\ndef import_repo(github_id):\n    repo_name = request.form.get('repo_name')\n    repo_desc = request.form.get('repo_desc')\n    repo_url = request.form.get('repo_url')\n    existant = Projet.query.filter_by(repo_id_github=str(github_id), utilisateur_id=current_user.id).first()",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "import_repo",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def import_repo(github_id):\n    repo_name = request.form.get('repo_name')\n    repo_desc = request.form.get('repo_desc')\n    repo_url = request.form.get('repo_url')\n    existant = Projet.query.filter_by(repo_id_github=str(github_id), utilisateur_id=current_user.id).first()\n    if existant:\n        flash(f\"Le projet '{repo_name}' est déjà dans votre base de données.\", \"info\")\n        return redirect(url_for('admin.dashboard'))\n    try:\n        nouveau_projet = Projet(",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "edit_project",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def edit_project(id):\n    projet = Projet.query.filter_by(id=id, utilisateur_id=current_user.id).first_or_404()\n    if request.method == 'POST':\n        try:\n            projet.nom = request.form.get('nom', projet.nom)\n            projet.description = request.form.get('description', projet.description)\n            projet.demo_url = request.form.get('demo_url', projet.demo_url)\n            projet.structure_nom = request.form.get('structure_nom', projet.structure_nom)\n            est_collab = request.form.get('est_collaboration')\n            projet.est_collaboration = est_collab == '1' if est_collab else False",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "delete_project",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def delete_project(id):\n    projet = Projet.query.filter_by(id=id, utilisateur_id=current_user.id).first_or_404()\n    if projet.image_couverture:\n        delete_media_file(projet.image_couverture, 'proj')\n    try:\n        db.session.delete(projet)\n        db.session.commit()\n        flash(\"Projet supprimé de la base de données.\", \"success\")\n    except Exception as e:\n        db.session.rollback()",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "refresh_repos",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def refresh_repos():\n    return redirect(url_for('admin.dashboard'))\n# --- ROUTES DE PROFIL ET MEDIA ---\n@admin_bp.route('/edit-profile', methods=['GET', 'POST'])\n@login_required\ndef edit_profile():\n    if request.method == 'POST':\n        try:\n            current_user.nom_utilisateur = request.form.get('nom_utilisateur', current_user.nom_utilisateur)\n            current_user.email = request.form.get('email', current_user.email)",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "edit_profile",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def edit_profile():\n    if request.method == 'POST':\n        try:\n            current_user.nom_utilisateur = request.form.get('nom_utilisateur', current_user.nom_utilisateur)\n            current_user.email = request.form.get('email', current_user.email)\n            current_user.poste = request.form.get('poste', current_user.poste)\n            current_user.localisation = request.form.get('localisation', current_user.localisation)\n            current_user.site_web = request.form.get('site_web', current_user.site_web)\n            current_user.biographie = request.form.get('biographie', current_user.biographie)\n            current_user.telephone_principal = request.form.get('telephone_principal', current_user.telephone_principal)",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "edit_portfolio_content",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def edit_portfolio_content():\n    config = PortfolioConfig.query.filter_by(utilisateur_id=current_user.id).first()\n    if not config:\n        config = PortfolioConfig(utilisateur_id=current_user.id)\n        db.session.add(config)\n        db.session.flush()\n    if request.method == 'POST':\n        try:\n            config.hero_titre = request.form.get('hero_titre', config.hero_titre)\n            config.hero_description = request.form.get('hero_description', config.hero_description)",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "about_edit",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def about_edit():\n    config = AboutPage.query.filter_by(utilisateur_id=current_user.id).first()\n    if request.method == 'POST':\n        if not config:\n            config = AboutPage(utilisateur_id=current_user.id)\n            db.session.add(config)\n        try:\n            # Traitement des fichiers\n            if 'hero_image' in request.files:\n                file = request.files['hero_image']",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "serve_media",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def serve_media(type, filename):\n    subdirs = {\n        'avatar': 'profiles',\n        'cover': 'covers',\n        'cv': 'docs',\n        'proj': 'projects',\n        'about': 'about'\n    }\n    subdir = subdirs.get(type)\n    if not subdir:",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "migrate_avatars",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def migrate_avatars():\n    \"\"\"Migre les avatars des URLs externes vers des fichiers locaux\"\"\"\n    if current_user.role != 'admin':\n        flash(\"Accès réservé aux administrateurs.\", \"danger\")\n        abort(403)\n    users = Utilisateur.query.all()\n    migrated_avatars = 0\n    migrated_covers = 0\n    errors = 0\n    for user in users:",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "init_media_folders",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def init_media_folders():\n    try:\n        project_root = current_app.root_path\n        media_path = os.path.join(project_root, 'media')\n        subdirs = ['profiles', 'covers', 'docs', 'projects', 'about', 'uploads']\n        for subdir in subdirs:\n            dir_path = os.path.join(media_path, subdir)\n            if not os.path.exists(dir_path):\n                os.makedirs(dir_path, exist_ok=True)\n                print(f\"Créé: {dir_path}\")",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "authorize",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def authorize():\n    flash(\"Veuillez utiliser le lien 'Se connecter avec GitHub' sur la page de connexion.\", \"info\")\n    return redirect(url_for('auth.social_login', name='github'))\n@github_bp.route('/callback')\n@login_required\ndef callback():\n    flash(\"Veuillez utiliser le lien 'Se connecter avec GitHub' sur la page de connexion.\", \"info\")\n    return redirect(url_for('auth.social_login', name='github'))\n@github_bp.route('/revoke')\n@login_required",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "callback",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def callback():\n    flash(\"Veuillez utiliser le lien 'Se connecter avec GitHub' sur la page de connexion.\", \"info\")\n    return redirect(url_for('auth.social_login', name='github'))\n@github_bp.route('/revoke')\n@login_required\ndef revoke():\n    try:\n        current_user.jeton_github = None\n        db.session.commit()\n    except Exception as e:",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "revoke",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def revoke():\n    try:\n        current_user.jeton_github = None\n        db.session.commit()\n    except Exception as e:\n        db.session.rollback()\n        flash(f'Erreur lors de la révocation : {str(e)}', 'error')\n    finally:\n        session.pop('github_token', None)\n        session.pop('github_user', None)",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "check",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def check():\n    token = current_user.jeton_github\n    if token:\n        return {\n            'connected': True,\n            'authenticated': True\n        }\n    return {'connected': False, 'authenticated': True}\n@github_bp.route('/debug')\ndef debug_github():",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "debug_github",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def debug_github():\n    info = {\n        'GITHUB_CLIENT_ID': GITHUB_CLIENT_ID[:5] + '...' if GITHUB_CLIENT_ID else 'NON DÉFINI',\n        'GITHUB_CLIENT_SECRET': 'Défini' if GITHUB_CLIENT_SECRET else 'NON DÉFINI',\n        'GITHUB_AUTHORIZE_URL': GITHUB_AUTHORIZE_URL,\n        'GITHUB_TOKEN_URL': GITHUB_TOKEN_URL,\n        'GOOGLE_CLIENT_ID': GOOGLE_CLIENT_ID[:10] + '...' if GOOGLE_CLIENT_ID else 'NON DÉFINI',\n        'GOOGLE_CLIENT_SECRET': 'Défini' if GOOGLE_CLIENT_SECRET else 'NON DÉFINI',\n        'authenticated': current_user.is_authenticated if hasattr(current_user, 'is_authenticated') else False,\n        'jeton_github': 'Présent' if hasattr(current_user, 'jeton_github') and current_user.jeton_github else 'Absent'",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "home",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def home():\n    context = get_common_context()\n    user = context.get('user')\n    projets = []\n    config = None\n    if user:\n        projets = Projet.query.filter_by(utilisateur_id=user.id).limit(3).all()\n        config = PortfolioConfig.query.filter_by(utilisateur_id=user.id).first()\n    return render_template(\n        'portfolio/portfolio.html', ",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "me_connaitre",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def me_connaitre():\n    context = get_common_context()\n    if not context['user']:\n        abort(404)\n    about_config = AboutPage.query.filter_by(utilisateur_id=context['user'].id).first()\n    return render_template('portfolio/me_connaitre.html', about_config=about_config, **context)\n@portfolio_bp.route('/projets')\ndef projets_liste():\n    context = get_common_context()\n    if not context['user']:",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "projets_liste",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def projets_liste():\n    context = get_common_context()\n    if not context['user']:\n        abort(404)\n    tous_les_projets = Projet.query.filter_by(utilisateur_id=context['user'].id)\\\n                                   .order_by(Projet.id.desc()).all()\n    return render_template('portfolio/projet.html', \n                           projets=tous_les_projets, \n                           **context)\n@portfolio_bp.route('/contact')",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "contact",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def contact():\n    context = get_common_context()\n    if not context['user']:\n        abort(404)\n    return render_template('portfolio/contact.html', **context)\n# ============================================\n# ROUTE UNIQUE POUR LES MÉDIAS PUBLICS DU PORTFOLIO\n# ============================================\n@portfolio_bp.route('/media/<folder>/<path:filename>')\ndef serve_public_media(folder, filename):",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "serve_public_media",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def serve_public_media(folder, filename):\n    subdirs = ['about', 'profiles', 'projects', 'covers', 'docs', 'uploads']\n    if folder not in subdirs:\n        abort(404)\n    media_dir = get_media_path(folder)\n    if not os.path.exists(media_dir):\n        print(f\"ERREUR: Dossier introuvable - {media_dir}\")\n        default_dir = get_media_path('about')\n        try:\n            return send_from_directory(default_dir, 'default-about.jpg')",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "authorize_page",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def authorize_page():\n    if current_user.jeton_github:\n        flash(\"Vous êtes déjà connecté à GitHub.\", \"info\")\n        return redirect(url_for('admin.dashboard'))\n    return render_template('admin/authorize.html')\n@admin_bp.route('/start-github-auth')\n@login_required\ndef start_github_auth():\n    if not GITHUB_CLIENT_ID or not GITHUB_CLIENT_SECRET:\n        flash(\"Erreur de configuration GitHub. Contactez l'administrateur.\", \"danger\")",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "start_github_auth",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def start_github_auth():\n    if not GITHUB_CLIENT_ID or not GITHUB_CLIENT_SECRET:\n        flash(\"Erreur de configuration GitHub. Contactez l'administrateur.\", \"danger\")\n        return redirect(url_for('admin.authorize_page'))\n    return redirect(url_for('auth.social_login', name='github'))\n@admin_bp.route('/skipp-authorize')\n@login_required\ndef skipp_authorize():\n    flash(\"Vous pourrez connecter GitHub plus tard depuis la page de profil.\", \"info\")\n    return redirect(url_for('admin.dashboard'))",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "skipp_authorize",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def skipp_authorize():\n    flash(\"Vous pourrez connecter GitHub plus tard depuis la page de profil.\", \"info\")\n    return redirect(url_for('admin.dashboard'))",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "logger = logging.getLogger(__name__)\n# --- CONFIGURATIONS ---\n# Configuration GitHub OAuth\nGITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID', '')\nGITHUB_CLIENT_SECRET = os.environ.get('GITHUB_CLIENT_SECRET', '')\nGITHUB_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize'\nGITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token'\nGITHUB_USER_URL = 'https://api.github.com/user'\n# Configuration Google OAuth\nGOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "GITHUB_CLIENT_ID",
+        "kind": 5,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID', '')\nGITHUB_CLIENT_SECRET = os.environ.get('GITHUB_CLIENT_SECRET', '')\nGITHUB_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize'\nGITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token'\nGITHUB_USER_URL = 'https://api.github.com/user'\n# Configuration Google OAuth\nGOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')\nGOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', '')\nGOOGLE_DISCOVERY_URL = 'https://accounts.google.com/.well-known/openid-configuration'\n# --- CRÉATION DES BLUEPRINTS ---",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "GITHUB_CLIENT_SECRET",
+        "kind": 5,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "GITHUB_CLIENT_SECRET = os.environ.get('GITHUB_CLIENT_SECRET', '')\nGITHUB_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize'\nGITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token'\nGITHUB_USER_URL = 'https://api.github.com/user'\n# Configuration Google OAuth\nGOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')\nGOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', '')\nGOOGLE_DISCOVERY_URL = 'https://accounts.google.com/.well-known/openid-configuration'\n# --- CRÉATION DES BLUEPRINTS ---\nauth_bp = Blueprint('auth', __name__, url_prefix='/auth')",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "GITHUB_AUTHORIZE_URL",
+        "kind": 5,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "GITHUB_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize'\nGITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token'\nGITHUB_USER_URL = 'https://api.github.com/user'\n# Configuration Google OAuth\nGOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')\nGOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', '')\nGOOGLE_DISCOVERY_URL = 'https://accounts.google.com/.well-known/openid-configuration'\n# --- CRÉATION DES BLUEPRINTS ---\nauth_bp = Blueprint('auth', __name__, url_prefix='/auth')\nmain_bp = Blueprint('main', __name__)",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "GITHUB_TOKEN_URL",
+        "kind": 5,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "GITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token'\nGITHUB_USER_URL = 'https://api.github.com/user'\n# Configuration Google OAuth\nGOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')\nGOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', '')\nGOOGLE_DISCOVERY_URL = 'https://accounts.google.com/.well-known/openid-configuration'\n# --- CRÉATION DES BLUEPRINTS ---\nauth_bp = Blueprint('auth', __name__, url_prefix='/auth')\nmain_bp = Blueprint('main', __name__)\nadmin_bp = Blueprint('admin', __name__, url_prefix='/admin')",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "GITHUB_USER_URL",
+        "kind": 5,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "GITHUB_USER_URL = 'https://api.github.com/user'\n# Configuration Google OAuth\nGOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')\nGOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', '')\nGOOGLE_DISCOVERY_URL = 'https://accounts.google.com/.well-known/openid-configuration'\n# --- CRÉATION DES BLUEPRINTS ---\nauth_bp = Blueprint('auth', __name__, url_prefix='/auth')\nmain_bp = Blueprint('main', __name__)\nadmin_bp = Blueprint('admin', __name__, url_prefix='/admin')\nportfolio_bp = Blueprint('portfolio', __name__)",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "GOOGLE_CLIENT_ID",
+        "kind": 5,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')\nGOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', '')\nGOOGLE_DISCOVERY_URL = 'https://accounts.google.com/.well-known/openid-configuration'\n# --- CRÉATION DES BLUEPRINTS ---\nauth_bp = Blueprint('auth', __name__, url_prefix='/auth')\nmain_bp = Blueprint('main', __name__)\nadmin_bp = Blueprint('admin', __name__, url_prefix='/admin')\nportfolio_bp = Blueprint('portfolio', __name__)\ngithub_bp = Blueprint('github_bp', __name__, url_prefix='/github')\n# --- FONCTIONS UTILITAIRES COMMUNES ---",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "GOOGLE_CLIENT_SECRET",
+        "kind": 5,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', '')\nGOOGLE_DISCOVERY_URL = 'https://accounts.google.com/.well-known/openid-configuration'\n# --- CRÉATION DES BLUEPRINTS ---\nauth_bp = Blueprint('auth', __name__, url_prefix='/auth')\nmain_bp = Blueprint('main', __name__)\nadmin_bp = Blueprint('admin', __name__, url_prefix='/admin')\nportfolio_bp = Blueprint('portfolio', __name__)\ngithub_bp = Blueprint('github_bp', __name__, url_prefix='/github')\n# --- FONCTIONS UTILITAIRES COMMUNES ---\ndef download_and_save_avatar(url, user_id, type_file='avatar'):",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "GOOGLE_DISCOVERY_URL",
+        "kind": 5,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "GOOGLE_DISCOVERY_URL = 'https://accounts.google.com/.well-known/openid-configuration'\n# --- CRÉATION DES BLUEPRINTS ---\nauth_bp = Blueprint('auth', __name__, url_prefix='/auth')\nmain_bp = Blueprint('main', __name__)\nadmin_bp = Blueprint('admin', __name__, url_prefix='/admin')\nportfolio_bp = Blueprint('portfolio', __name__)\ngithub_bp = Blueprint('github_bp', __name__, url_prefix='/github')\n# --- FONCTIONS UTILITAIRES COMMUNES ---\ndef download_and_save_avatar(url, user_id, type_file='avatar'):\n    \"\"\"Télécharge un avatar depuis une URL et le sauvegarde localement\"\"\"",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "auth_bp",
+        "kind": 5,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "auth_bp = Blueprint('auth', __name__, url_prefix='/auth')\nmain_bp = Blueprint('main', __name__)\nadmin_bp = Blueprint('admin', __name__, url_prefix='/admin')\nportfolio_bp = Blueprint('portfolio', __name__)\ngithub_bp = Blueprint('github_bp', __name__, url_prefix='/github')\n# --- FONCTIONS UTILITAIRES COMMUNES ---\ndef download_and_save_avatar(url, user_id, type_file='avatar'):\n    \"\"\"Télécharge un avatar depuis une URL et le sauvegarde localement\"\"\"\n    try:\n        logger.info(f\"Téléchargement de l'avatar depuis: {url}\")",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "main_bp",
+        "kind": 5,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "main_bp = Blueprint('main', __name__)\nadmin_bp = Blueprint('admin', __name__, url_prefix='/admin')\nportfolio_bp = Blueprint('portfolio', __name__)\ngithub_bp = Blueprint('github_bp', __name__, url_prefix='/github')\n# --- FONCTIONS UTILITAIRES COMMUNES ---\ndef download_and_save_avatar(url, user_id, type_file='avatar'):\n    \"\"\"Télécharge un avatar depuis une URL et le sauvegarde localement\"\"\"\n    try:\n        logger.info(f\"Téléchargement de l'avatar depuis: {url}\")\n        response = requests.get(url, timeout=10, stream=True)",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "admin_bp",
+        "kind": 5,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "admin_bp = Blueprint('admin', __name__, url_prefix='/admin')\nportfolio_bp = Blueprint('portfolio', __name__)\ngithub_bp = Blueprint('github_bp', __name__, url_prefix='/github')\n# --- FONCTIONS UTILITAIRES COMMUNES ---\ndef download_and_save_avatar(url, user_id, type_file='avatar'):\n    \"\"\"Télécharge un avatar depuis une URL et le sauvegarde localement\"\"\"\n    try:\n        logger.info(f\"Téléchargement de l'avatar depuis: {url}\")\n        response = requests.get(url, timeout=10, stream=True)\n        if response.status_code == 200:",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "portfolio_bp",
+        "kind": 5,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "portfolio_bp = Blueprint('portfolio', __name__)\ngithub_bp = Blueprint('github_bp', __name__, url_prefix='/github')\n# --- FONCTIONS UTILITAIRES COMMUNES ---\ndef download_and_save_avatar(url, user_id, type_file='avatar'):\n    \"\"\"Télécharge un avatar depuis une URL et le sauvegarde localement\"\"\"\n    try:\n        logger.info(f\"Téléchargement de l'avatar depuis: {url}\")\n        response = requests.get(url, timeout=10, stream=True)\n        if response.status_code == 200:\n            # Déterminer l'extension et le dossier",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "github_bp",
+        "kind": 5,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "github_bp = Blueprint('github_bp', __name__, url_prefix='/github')\n# --- FONCTIONS UTILITAIRES COMMUNES ---\ndef download_and_save_avatar(url, user_id, type_file='avatar'):\n    \"\"\"Télécharge un avatar depuis une URL et le sauvegarde localement\"\"\"\n    try:\n        logger.info(f\"Téléchargement de l'avatar depuis: {url}\")\n        response = requests.get(url, timeout=10, stream=True)\n        if response.status_code == 200:\n            # Déterminer l'extension et le dossier\n            content_type = response.headers.get('content-type', '').lower()",
+        "detail": "routes",
+        "documentation": {}
+    }
+]

@@ -1,8 +1,9 @@
-# routes.py corrigé avec les bonnes configurations OAuth
+# routes.py - Version avec téléchargement local des avatars
 
 import os
 import requests
 import secrets
+import uuid
 from datetime import datetime
 from flask import Blueprint, render_template, request, url_for, flash, redirect, current_app, send_from_directory, abort, session
 from flask_mail import Message
@@ -15,14 +16,16 @@ from dotenv import load_dotenv
 from models import db, Utilisateur, Projet, PortfolioConfig, AboutPage
 from sqlalchemy import inspect, text
 import time
+import logging
 
 # Charger le fichier .env
 load_dotenv()
 
-# --- CONFIGURATIONS ---
-# URL du micro-service Admin (pour redirections, mais en monolithe on peut utiliser url_for)
-admin_url = os.getenv('ADMIN_SERVICE_URL', 'http://127.0.0.1:5002')
+# Configuration du logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
+# --- CONFIGURATIONS ---
 # Configuration GitHub OAuth
 GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID', '')
 GITHUB_CLIENT_SECRET = os.environ.get('GITHUB_CLIENT_SECRET', '')
@@ -36,13 +39,61 @@ GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', '')
 GOOGLE_DISCOVERY_URL = 'https://accounts.google.com/.well-known/openid-configuration'
 
 # --- CRÉATION DES BLUEPRINTS ---
-auth_bp = Blueprint('auth', __name__, url_prefix='/auth')  # Routes d'authentification
-main_bp = Blueprint('main', __name__)  # Routes principales (accueil, etc.)
-admin_bp = Blueprint('admin', __name__, url_prefix='/admin')  # Routes d'administration
-portfolio_bp = Blueprint('portfolio', __name__)  # Routes publiques du portfolio
-github_bp = Blueprint('github_bp', __name__, url_prefix='/github')  # Routes GitHub OAuth
+auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
+main_bp = Blueprint('main', __name__)
+admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
+portfolio_bp = Blueprint('portfolio', __name__)
+github_bp = Blueprint('github_bp', __name__, url_prefix='/github')
 
 # --- FONCTIONS UTILITAIRES COMMUNES ---
+
+def download_and_save_avatar(url, user_id, type_file='avatar'):
+    """Télécharge un avatar depuis une URL et le sauvegarde localement"""
+    try:
+        logger.info(f"Téléchargement de l'avatar depuis: {url}")
+        response = requests.get(url, timeout=10, stream=True)
+        
+        if response.status_code == 200:
+            # Déterminer l'extension et le dossier
+            content_type = response.headers.get('content-type', '').lower()
+            ext = '.jpg'
+            
+            if 'png' in content_type:
+                ext = '.png'
+            elif 'gif' in content_type:
+                ext = '.gif'
+            elif 'webp' in content_type:
+                ext = '.webp'
+            elif 'jpeg' in content_type or 'jpg' in content_type:
+                ext = '.jpg'
+            
+            # Déterminer le dossier
+            folder = 'profiles' if type_file == 'avatar' else 'covers'
+            
+            # Générer un nom de fichier unique
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            unique_id = uuid.uuid4().hex[:8]
+            filename = f"{type_file}_{user_id}_{timestamp}_{unique_id}{ext}"
+            filename = secure_filename(filename)
+            
+            # Sauvegarder le fichier
+            media_dir = get_media_path(folder)
+            file_path = os.path.join(media_dir, filename)
+            
+            with open(file_path, 'wb') as f:
+                for chunk in response.iter_content(chunk_size=8192):
+                    if chunk:
+                        f.write(chunk)
+            
+            logger.info(f"Avatar sauvegardé: {filename}")
+            return filename
+        else:
+            logger.error(f"Erreur téléchargement avatar: status {response.status_code}")
+            return None
+            
+    except Exception as e:
+        logger.error(f"Erreur téléchargement avatar: {str(e)}")
+        return None
 
 def generer_jeton(email, salt):
     """Génère un jeton sécurisé pour les emails"""
@@ -65,7 +116,6 @@ def envoyer_email(destinataire, sujet, template, **kwargs):
         sender=current_app.config.get('MAIL_DEFAULT_SENDER')
     )
     msg.html = render_template(f'auth/{template}', **kwargs)
-    # Récupérer l'instance mail depuis l'application
     mail = current_app.extensions.get('mail')
     if mail:
         try:
@@ -155,35 +205,39 @@ def delete_media_file(filename, type_file):
     return False
 
 def get_common_context():
-    """
-    Fonction utilitaire pour récupérer les données communes à toutes les pages du portfolio.
-    """
-    user = Utilisateur.query.first()  # On récupère le propriétaire du portfolio
-    
-    return {
-        'user': user
-    }
+    """Fonction utilitaire pour récupérer les données communes à toutes les pages du portfolio"""
+    user = Utilisateur.query.first()
+    return {'user': user}
 
 def ensure_token_column_exists():
     """Vérifie et crée la colonne jeton_identification si elle n'existe pas"""
     try:
         inspector = inspect(db.engine)
+        
+        if not inspector.has_table('utilisateurs'):
+            print("⚠️ Table utilisateurs n'existe pas encore")
+            return False
+            
         columns = [col['name'] for col in inspector.get_columns('utilisateurs')]
         
         if 'jeton_identification' not in columns:
-            with db.engine.connect() as conn:
-                conn.execute(text('ALTER TABLE utilisateurs ADD COLUMN jeton_identification VARCHAR(255)'))
-                conn.commit()
-            print("✅ Colonne 'jeton_identification' ajoutée à la table utilisateurs")
-            return True
+            print("⚠️ Colonne jeton_identification manquante, tentative de création...")
+            try:
+                with db.engine.connect() as conn:
+                    conn.execute(text('ALTER TABLE utilisateurs ADD COLUMN jeton_identification VARCHAR(255)'))
+                    conn.commit()
+                print("✅ Colonne 'jeton_identification' ajoutée à la table utilisateurs")
+                return True
+            except Exception as alter_error:
+                print(f"⚠️ Impossible d'ajouter la colonne: {alter_error}")
+                return False
+        return True
     except Exception as e:
         print(f"⚠️ Erreur lors de la vérification/création de la colonne: {e}")
         return False
 
 def fetch_github_repos(token, max_retries=3):
-    """
-    Récupère les dépôts GitHub avec gestion des erreurs de connexion
-    """
+    """Récupère les dépôts GitHub avec gestion des erreurs de connexion"""
     if not token:
         return [], "Token GitHub non configuré"
     
@@ -210,7 +264,7 @@ def fetch_github_repos(token, max_retries=3):
         except requests.exceptions.ConnectionError as e:
             print(f"Erreur de connexion GitHub (tentative {attempt + 1}/{max_retries}): {e}")
             if attempt < max_retries - 1:
-                time.sleep(2)  # Attendre 2 secondes avant de réessayer
+                time.sleep(2)
             else:
                 return [], "Impossible de se connecter à GitHub. Vérifiez votre connexion internet."
         
@@ -291,42 +345,26 @@ def login():
 
         user = Utilisateur.query.filter_by(email=email).first()
 
-        # 1. Vérification identifiants
         if not user or not check_password_hash(user.mot_de_passe_hache, password):
             flash('Email ou mot de passe incorrect.', 'danger')
             return redirect(url_for('auth.login'))
 
-        # 2. Vérification confirmation email
         if not user.est_confirme:
             flash('Veuillez confirmer votre email avant de vous connecter.', 'warning')
             return redirect(url_for('auth.login'))
 
-        # 3. MISE À JOUR DU JETON D'IDENTIFICATION
         try:
-            # S'assurer que la colonne existe
             ensure_token_column_exists()
-            
-            # Générer un nouveau token unique à chaque connexion
             nouveau_token = secrets.token_urlsafe(32)
-            
-            # Mettre à jour le token dans la base de données
             user.jeton_identification = nouveau_token
             user.derniere_connexion = datetime.utcnow()
             db.session.commit()
-            
-            print(f"✅ Nouveau jeton généré pour {user.email}: {nouveau_token[:15]}...")
-            
-            # Stocker le token en session
             session['jeton_identification'] = nouveau_token
-            
         except Exception as e:
             db.session.rollback()
             print(f"⚠️ Erreur lors de la mise à jour du token: {e}")
 
-        # 4. Connexion de l'utilisateur
         login_user(user, remember=remember)
-        
-        # Redirection vers le dashboard admin
         return redirect(url_for('admin.dashboard'))
 
     return render_template("auth/login.html")
@@ -334,15 +372,16 @@ def login():
 @auth_bp.route("/deconnexion")
 @login_required
 def logout():
-    # Nettoyer le token à la déconnexion (optionnel)
     try:
+        # Ne pas supprimer les données utilisateur
         if hasattr(current_user, 'jeton_identification'):
-            current_user.jeton_identification = None
-            db.session.commit()
+            # On garde le token pour la prochaine connexion
+            pass
+        db.session.commit()
     except:
+        db.session.rollback()
         pass
     
-    # Nettoyer la session
     session.pop('jeton_identification', None)
     logout_user()
     flash("Vous avez été déconnecté.", "info")
@@ -391,7 +430,9 @@ def debug_token():
         'email': current_user.email,
         'jeton_identification': getattr(current_user, 'jeton_identification', 'Champ non existant'),
         'jeton_github': current_user.jeton_github,
-        'session_token': session.get('jeton_identification')
+        'session_token': session.get('jeton_identification'),
+        'photo_profil': current_user.photo_profil,
+        'photo_couverture': current_user.photo_couverture
     }
 
 # --- AUTHENTIFICATION SOCIALE (OAUTH) ---
@@ -401,19 +442,14 @@ def social_login(name):
     """Route pour l'authentification sociale (Google, GitHub)"""
     
     if name == 'github':
-        # Vérifier que les variables d'environnement sont configurées
         if not GITHUB_CLIENT_ID or not GITHUB_CLIENT_SECRET:
             flash("Erreur de configuration GitHub. Contactez l'administrateur.", "danger")
             return redirect(url_for('auth.login'))
         
-        # Générer un état aléatoire pour la sécurité
         state = secrets.token_urlsafe(16)
         session['oauth_state'] = state
-        
-        # URL de callback - celle que vous utilisez
         redirect_uri = url_for('auth.auth_callback', name='github', _external=True)
         
-        # Paramètres pour GitHub
         params = {
             'client_id': GITHUB_CLIENT_ID,
             'redirect_uri': redirect_uri,
@@ -422,37 +458,24 @@ def social_login(name):
             'response_type': 'code'
         }
         
-        # URL d'autorisation GitHub
-        github_auth_url = 'https://github.com/login/oauth/authorize'
-        
-        print(f"=== GITHUB OAUTH DEBUG ===")
-        print(f"Redirect URI: {redirect_uri}")
-        print(f"State: {state}")
-        
-        return redirect(f"{github_auth_url}?{urlencode(params)}")
+        return redirect(f"{GITHUB_AUTHORIZE_URL}?{urlencode(params)}")
     
     elif name == 'google':
-        # Vérifier que les variables d'environnement sont configurées
         if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
             flash("Erreur de configuration Google. Contactez l'administrateur.", "danger")
             return redirect(url_for('auth.login'))
         
-        # Générer un état aléatoire pour la sécurité
         state = secrets.token_urlsafe(16)
         session['oauth_state'] = state
         
-        # Récupérer la configuration Google
         google_provider_cfg = get_google_provider_cfg()
         if not google_provider_cfg:
             flash("Impossible de contacter Google. Réessayez plus tard.", "danger")
             return redirect(url_for('auth.login'))
         
         authorization_endpoint = google_provider_cfg["authorization_endpoint"]
-        
-        # URL de callback
         redirect_uri = url_for('auth.auth_callback', name='google', _external=True)
         
-        # Paramètres pour Google
         params = {
             'client_id': GOOGLE_CLIENT_ID,
             'redirect_uri': redirect_uri,
@@ -463,11 +486,6 @@ def social_login(name):
             'prompt': 'consent'
         }
         
-        print(f"=== GOOGLE OAUTH DEBUG ===")
-        print(f"Redirect URI: {redirect_uri}")
-        print(f"Authorization endpoint: {authorization_endpoint}")
-        print(f"Client ID: {GOOGLE_CLIENT_ID[:10]}...")
-        
         return redirect(f"{authorization_endpoint}?{urlencode(params)}")
     
     else:
@@ -476,24 +494,21 @@ def social_login(name):
 
 @auth_bp.route('/auth/<name>')
 def auth_callback(name):
-    """Callback pour l'authentification sociale"""
+    """Callback pour l'authentification sociale - AVEC TÉLÉCHARGEMENT LOCAL DES AVATARS"""
     
     if name == 'github':
-        print(f"=== GITHUB CALLBACK DEBUG ===")
-        print(f"URL reçue: {request.url}")
-        print(f"Arguments: {request.args}")
-        print(f"Session state: {session.get('oauth_state')}")
-        
-        # Vérifier l'état (sécurité CSRF)
         state = request.args.get('state')
         code = request.args.get('code')
         error = request.args.get('error')
+        
+        stored_state = session.get('oauth_state')
+        session.pop('oauth_state', None)
         
         if error:
             flash(f"Erreur GitHub: {error}", "danger")
             return redirect(url_for('auth.login'))
         
-        if not state or state != session.get('oauth_state'):
+        if not state or state != stored_state:
             flash("Erreur de sécurité OAuth (state invalide).", "danger")
             return redirect(url_for('auth.login'))
         
@@ -502,7 +517,6 @@ def auth_callback(name):
             return redirect(url_for('auth.login'))
         
         try:
-            # Échanger le code contre un access_token
             token_response = requests.post(
                 GITHUB_TOKEN_URL,
                 headers={"Accept": "application/json"},
@@ -516,7 +530,6 @@ def auth_callback(name):
             )
             
             token_json = token_response.json()
-            print(f"Réponse token: {token_json}")
             
             if "access_token" not in token_json:
                 error_desc = token_json.get('error_description', 'Erreur inconnue')
@@ -525,7 +538,6 @@ def auth_callback(name):
             
             access_token = token_json["access_token"]
             
-            # Récupérer les informations de l'utilisateur
             user_response = requests.get(
                 GITHUB_USER_URL,
                 headers={
@@ -541,13 +553,11 @@ def auth_callback(name):
             
             user_info = user_response.json()
             
-            # Récupérer l'email (GitHub peut ne pas fournir l'email public)
             email = user_info.get('email')
             if not email:
-                # Récupérer les emails privés
                 emails_response = requests.get(
                     'https://api.github.com/user/emails',
-                    headers={"Authorization": f"token {access_token}"},
+                    headers={"Authorization": f"Bearer {access_token}"},
                     timeout=10
                 )
                 if emails_response.status_code == 200:
@@ -560,11 +570,11 @@ def auth_callback(name):
                 return redirect(url_for('auth.login'))
             
             pseudo = user_info.get('login')
-            avatar = user_info.get('avatar_url')
+            avatar_url = user_info.get('avatar_url')
             
-            # Gestion de l'utilisateur en DB
             user = Utilisateur.query.filter_by(email=email).first()
-            if not user:
+            is_new_user = user is None
+            if is_new_user:
                 user = Utilisateur(
                     email=email,
                     nom_utilisateur=pseudo,
@@ -572,57 +582,60 @@ def auth_callback(name):
                     mot_de_passe_hache=None
                 )
                 db.session.add(user)
+                db.session.flush()
             
-            # Mise à jour du token et avatar
             user.jeton_github = access_token
-            if avatar:
-                user.photo_profil = avatar
             
-            # Générer un jeton d'identification pour la connexion OAuth aussi
+            # ✅ Avatar : uniquement pour les nouveaux utilisateurs
+            # Les utilisateurs existants conservent leur photo personnalisée
+            if is_new_user or not user.photo_profil or user.photo_profil == 'default-avatar.jpg':
+                if avatar_url:
+                    local_avatar = download_and_save_avatar(avatar_url, user.id, 'avatar')
+                    if local_avatar:
+                        user.photo_profil = local_avatar
+                        logger.info(f"Avatar GitHub téléchargé pour {user.email}: {local_avatar}")
+                    else:
+                        # Fallback vers avatar par défaut — on ne stocke JAMAIS une URL externe
+                        user.photo_profil = 'default-avatar.jpg'
+                        logger.warning(f"Échec téléchargement avatar GitHub pour {user.email}, utilisation avatar par défaut")
+                else:
+                    user.photo_profil = 'default-avatar.jpg'
+            else:
+                logger.info(f"Avatar existant conservé pour {user.email}: {user.photo_profil}")
+            
             try:
                 ensure_token_column_exists()
                 nouveau_token = secrets.token_urlsafe(32)
                 user.jeton_identification = nouveau_token
                 session['jeton_identification'] = nouveau_token
-            except:
-                pass
+            except Exception as e:
+                print(f"⚠️ Erreur lors de la génération du jeton: {e}")
             
+            user.derniere_connexion = datetime.utcnow()
             db.session.commit()
             
-            # Nettoyage session
-            session.pop('oauth_state', None)
-            
-            # Connexion et redirection
-            login_user(user)
-            flash(f"Bienvenue {user.nom_utilisateur} !", "success")
+            login_user(user, remember=True)
+            flash(f"Bienvenue {user.nom_utilisateur} ! Vous êtes connecté avec GitHub.", "success")
             return redirect(url_for('admin.dashboard'))
             
-        except requests.exceptions.ConnectionError:
-            flash("Erreur de connexion à GitHub. Vérifiez votre connexion internet.", "danger")
-            return redirect(url_for('auth.login'))
-        except requests.exceptions.Timeout:
-            flash("Délai d'attente dépassé pour la connexion à GitHub.", "danger")
-            return redirect(url_for('auth.login'))
         except Exception as e:
+            print(f"❌ Erreur inattendue GitHub: {e}")
             flash(f"Erreur inattendue: {str(e)}", "danger")
             return redirect(url_for('auth.login'))
     
     elif name == 'google':
-        print(f"=== GOOGLE CALLBACK DEBUG ===")
-        print(f"URL reçue: {request.url}")
-        print(f"Arguments: {request.args}")
-        print(f"Session state: {session.get('oauth_state')}")
-        
-        # Vérifier l'état (sécurité CSRF)
         state = request.args.get('state')
         code = request.args.get('code')
         error = request.args.get('error')
+        
+        stored_state = session.get('oauth_state')
+        session.pop('oauth_state', None)
         
         if error:
             flash(f"Erreur Google: {error}", "danger")
             return redirect(url_for('auth.login'))
         
-        if not state or state != session.get('oauth_state'):
+        if not state or state != stored_state:
             flash("Erreur de sécurité OAuth (state invalide).", "danger")
             return redirect(url_for('auth.login'))
         
@@ -630,16 +643,23 @@ def auth_callback(name):
             flash("Code d'autorisation manquant.", "danger")
             return redirect(url_for('auth.login'))
         
+        # Éviter les doublons de code
+        if session.get('oauth_code_used') == code:
+            print("⚠️ Code déjà utilisé, redirection vers login")
+            flash("Code d'authentification déjà utilisé.", "warning")
+            return redirect(url_for('auth.login'))
+        
+        session['oauth_code_used'] = code
+        
         try:
-            # Récupérer la configuration Google
             google_provider_cfg = get_google_provider_cfg()
             if not google_provider_cfg:
                 flash("Impossible de contacter Google.", "danger")
+                session.pop('oauth_code_used', None)
                 return redirect(url_for('auth.login'))
             
             token_endpoint = google_provider_cfg["token_endpoint"]
             
-            # Échanger le code contre un token
             token_response = requests.post(
                 token_endpoint,
                 data={
@@ -653,14 +673,13 @@ def auth_callback(name):
             )
             
             token_json = token_response.json()
-            print(f"Réponse token: {token_json}")
             
             if "access_token" not in token_json:
                 error_desc = token_json.get('error_description', 'Erreur inconnue')
                 flash(f"Erreur lors de l'authentification: {error_desc}", "danger")
+                session.pop('oauth_code_used', None)
                 return redirect(url_for('auth.login'))
             
-            # Récupérer les informations utilisateur avec le token
             userinfo_endpoint = google_provider_cfg["userinfo_endpoint"]
             user_response = requests.get(
                 userinfo_endpoint,
@@ -670,22 +689,23 @@ def auth_callback(name):
             
             if user_response.status_code != 200:
                 flash("Impossible de récupérer les informations utilisateur Google.", "danger")
+                session.pop('oauth_code_used', None)
                 return redirect(url_for('auth.login'))
             
             user_info = user_response.json()
-            print(f"User info: {user_info}")
             
             email = user_info.get('email')
             pseudo = user_info.get('name', email.split('@')[0])
-            avatar = user_info.get('picture')
+            avatar_url = user_info.get('picture')
             
             if not email:
                 flash("Impossible de récupérer votre email Google.", "danger")
+                session.pop('oauth_code_used', None)
                 return redirect(url_for('auth.login'))
             
-            # Gestion de l'utilisateur en DB
             user = Utilisateur.query.filter_by(email=email).first()
-            if not user:
+            is_new_user = user is None
+            if is_new_user:
                 user = Utilisateur(
                     email=email,
                     nom_utilisateur=pseudo,
@@ -693,37 +713,45 @@ def auth_callback(name):
                     mot_de_passe_hache=None
                 )
                 db.session.add(user)
+                db.session.flush()
             
-            # Mettre à jour l'avatar si disponible
-            if avatar:
-                user.photo_profil = avatar
+            # ✅ Avatar : uniquement pour les nouveaux utilisateurs
+            # Les utilisateurs existants conservent leur photo personnalisée
+            if is_new_user or not user.photo_profil or user.photo_profil == 'default-avatar.jpg':
+                if avatar_url:
+                    local_avatar = download_and_save_avatar(avatar_url, user.id, 'avatar')
+                    if local_avatar:
+                        user.photo_profil = local_avatar
+                        logger.info(f"Avatar Google téléchargé pour {user.email}: {local_avatar}")
+                    else:
+                        # Fallback vers avatar par défaut — on ne stocke JAMAIS une URL externe
+                        user.photo_profil = 'default-avatar.jpg'
+                        logger.warning(f"Échec téléchargement avatar Google pour {user.email}, utilisation avatar par défaut")
+                else:
+                    user.photo_profil = 'default-avatar.jpg'
+            else:
+                logger.info(f"Avatar existant conservé pour {user.email}: {user.photo_profil}")
             
-            # Générer un jeton d'identification
             try:
                 ensure_token_column_exists()
                 nouveau_token = secrets.token_urlsafe(32)
                 user.jeton_identification = nouveau_token
                 session['jeton_identification'] = nouveau_token
-            except:
-                pass
+            except Exception as e:
+                print(f"⚠️ Erreur lors de la génération du jeton: {e}")
             
+            user.derniere_connexion = datetime.utcnow()
             db.session.commit()
             
-            # Nettoyage session
-            session.pop('oauth_state', None)
+            session.pop('oauth_code_used', None)
             
-            # Connexion et redirection
-            login_user(user)
-            flash(f"Bienvenue {user.nom_utilisateur} !", "success")
+            login_user(user, remember=True)
+            flash(f"Bienvenue {user.nom_utilisateur} ! Vous êtes connecté avec Google.", "success")
             return redirect(url_for('admin.dashboard'))
             
-        except requests.exceptions.ConnectionError:
-            flash("Erreur de connexion à Google. Vérifiez votre connexion internet.", "danger")
-            return redirect(url_for('auth.login'))
-        except requests.exceptions.Timeout:
-            flash("Délai d'attente dépassé pour la connexion à Google.", "danger")
-            return redirect(url_for('auth.login'))
         except Exception as e:
+            print(f"❌ Erreur inattendue Google: {e}")
+            session.pop('oauth_code_used', None)
             flash(f"Erreur inattendue: {str(e)}", "danger")
             return redirect(url_for('auth.login'))
     
@@ -746,13 +774,6 @@ def index():
 @admin_bp.route('/dashboard')
 @login_required
 def dashboard():
-    """
-    Affiche le Dashboard divisé en sections :
-    1. Résumé
-    2. Projets Importés (Base de données)
-    3. Dépôts GitHub (API)
-    4. Paramètres
-    """
     repos = []
     error_message = None
     
@@ -782,7 +803,6 @@ def import_view():
         return render_template('admin/import_repos.html', repos=[])
     
     for r in repos:
-        # On identifie les projets des autres
         if r['owner']['login'].lower() != current_user.nom_utilisateur.lower():
             r['user_role'] = f"Invité par {r['owner']['login']}"
         else:
@@ -798,14 +818,12 @@ def import_view():
 @admin_bp.route('/list-repos')
 @login_required
 def list_repos():
-    """Affiche uniquement les projets déjà présents dans PostgreSQL"""
     projets = Projet.query.filter_by(utilisateur_id=current_user.id).order_by(Projet.id.desc()).all()
     return render_template('admin/list_repos.html', projets=projets)
 
 @admin_bp.route('/import-repo/<int:github_id>', methods=['POST'])
 @login_required
 def import_repo(github_id):
-    """Importe un dépôt GitHub vers la base de données PostgreSQL"""
     repo_name = request.form.get('repo_name')
     repo_desc = request.form.get('repo_desc')
     repo_url = request.form.get('repo_url')
@@ -835,22 +853,18 @@ def import_repo(github_id):
 @admin_bp.route('/edit-project/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_project(id):
-    """Modifie les informations d'un projet dans la base de données"""
     projet = Projet.query.filter_by(id=id, utilisateur_id=current_user.id).first_or_404()
 
     if request.method == 'POST':
         try:
-            # Informations de base
             projet.nom = request.form.get('nom', projet.nom)
             projet.description = request.form.get('description', projet.description)
             projet.demo_url = request.form.get('demo_url', projet.demo_url)
             projet.structure_nom = request.form.get('structure_nom', projet.structure_nom)
             
-            # Gestion de la collaboration
             est_collab = request.form.get('est_collaboration')
             projet.est_collaboration = est_collab == '1' if est_collab else False
 
-            # === GESTION DES TECHNOLOGIES ANNEXES (LISTE) ===
             technologies_str = request.form.get('technologies_annexes', '')
             if technologies_str.strip():
                 technologie_liste = [tech.strip() for tech in technologies_str.split(',') if tech.strip()]
@@ -858,19 +872,16 @@ def edit_project(id):
             else:
                 projet.technologies_annexes = []
 
-            # Gestion de l'image de couverture
             file = request.files.get('image_file')
             if file and file.filename:
                 new_filename = save_media_file(file, 'proj', projet.id)
                 if new_filename:
-                    # Supprimer l'ancien fichier s'il existe
                     if projet.image_couverture:
                         delete_media_file(projet.image_couverture, 'proj')
                     projet.image_couverture = new_filename
                 else:
                     flash("Format de fichier non supporté. Utilisez PNG, JPG ou GIF.", "warning")
 
-            # Mettre à jour la date de modification
             projet.date_mise_a_jour = datetime.utcnow()
             
             db.session.commit()
@@ -882,7 +893,6 @@ def edit_project(id):
             flash(f"Erreur lors de l'enregistrement: {str(e)}", "danger")
             return redirect(url_for('admin.edit_project', id=id))
 
-    # Pour l'affichage GET : convertir la liste en chaîne pour le formulaire
     technologies_texte = ""
     if projet.technologies_annexes:
         if isinstance(projet.technologies_annexes, list):
@@ -897,7 +907,6 @@ def edit_project(id):
 @admin_bp.route('/delete-project/<int:id>', methods=['POST'])
 @login_required
 def delete_project(id):
-    """Supprime un projet de la base de données (le retire du front-end)"""
     projet = Projet.query.filter_by(id=id, utilisateur_id=current_user.id).first_or_404()
     
     if projet.image_couverture:
@@ -916,7 +925,6 @@ def delete_project(id):
 @admin_bp.route('/refresh-github', methods=['POST'])
 @login_required
 def refresh_repos():
-    """Redirige simplement vers le dashboard pour forcer un appel API GitHub"""
     return redirect(url_for('admin.dashboard'))
 
 # --- ROUTES DE PROFIL ET MEDIA ---
@@ -924,14 +932,8 @@ def refresh_repos():
 @admin_bp.route('/edit-profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
-    """
-    Gère l'édition du profil utilisateur avec une structure media/ à la racine du projet.
-    Dossiers : media/profiles/, media/covers/, media/docs/
-    """
-
     if request.method == 'POST':
         try:
-            # === 1. INFORMATIONS PERSONNELLES ===
             current_user.nom_utilisateur = request.form.get('nom_utilisateur', current_user.nom_utilisateur)
             current_user.email = request.form.get('email', current_user.email)
             current_user.poste = request.form.get('poste', current_user.poste)
@@ -939,25 +941,20 @@ def edit_profile():
             current_user.site_web = request.form.get('site_web', current_user.site_web)
             current_user.biographie = request.form.get('biographie', current_user.biographie)
             
-            # === 2. NUMÉROS DE TÉLÉPHONE ===
             current_user.telephone_principal = request.form.get('telephone_principal', current_user.telephone_principal)
             current_user.telephone_mobile = request.form.get('telephone_mobile', current_user.telephone_mobile)
             
-            # === 3. RÉSEAUX SOCIAUX ===
             current_user.github = request.form.get('github', current_user.github)
             current_user.linkedin = request.form.get('linkedin', current_user.linkedin)
             current_user.twitter = request.form.get('twitter', current_user.twitter)
             
-            # === 4. TOKEN GITHUB (privé) ===
             new_token = request.form.get('jeton_github', '').strip()
             if new_token:
                 current_user.jeton_github = new_token
                 flash('Token GitHub mis à jour', 'info')
             
-            # === 5. THÈME ===
             current_user.theme_prefere = request.form.get('theme_prefere', current_user.theme_prefere)
             
-            # === 6. GESTION DE L'AVATAR ===
             avatar_file = request.files.get('avatar')
             if avatar_file and avatar_file.filename:
                 allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
@@ -966,15 +963,14 @@ def edit_profile():
                     new_avatar = save_media_file(avatar_file, 'avatar', current_user.id)
                     if new_avatar:
                         if (current_user.photo_profil and 
-                            current_user.photo_profil != 'default-avatar.jpg'):
+                            current_user.photo_profil != 'default-avatar.jpg' and
+                            not current_user.photo_profil.startswith(('http://', 'https://'))):
                             delete_media_file(current_user.photo_profil, 'avatar')
-                        
                         current_user.photo_profil = new_avatar
                         flash('Avatar mis à jour avec succès', 'success')
                 else:
                     flash('Format de fichier non supporté pour l\'avatar. Utilisez PNG, JPG, JPEG, GIF ou WEBP.', 'warning')
             
-            # === 7. GESTION DE LA PHOTO DE COUVERTURE ===
             cover_file = request.files.get('cover')
             if cover_file and cover_file.filename:
                 allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
@@ -983,15 +979,14 @@ def edit_profile():
                     new_cover = save_media_file(cover_file, 'cover', current_user.id)
                     if new_cover:
                         if (current_user.photo_couverture and 
-                            current_user.photo_couverture != 'default-cover.jpg'):
+                            current_user.photo_couverture != 'default-cover.jpg' and
+                            not current_user.photo_couverture.startswith(('http://', 'https://'))):
                             delete_media_file(current_user.photo_couverture, 'cover')
-                        
                         current_user.photo_couverture = new_cover
                         flash('Photo de couverture mise à jour avec succès', 'success')
                 else:
                     flash('Format de fichier non supporté pour la couverture. Utilisez PNG, JPG, JPEG, GIF ou WEBP.', 'warning')
             
-            # === 8. GESTION DU CV (PDF) ===
             cv_file = request.files.get('cv')
             if cv_file and cv_file.filename:
                 allowed_extensions = {'pdf', 'doc', 'docx'}
@@ -1008,16 +1003,12 @@ def edit_profile():
                         if new_cv:
                             if current_user.cv:
                                 delete_media_file(current_user.cv, 'cv')
-                            
                             current_user.cv = new_cv
                             flash('CV mis à jour avec succès', 'success')
                 else:
                     flash('Format de fichier non supporté pour le CV. Utilisez PDF, DOC ou DOCX.', 'warning')
             
-            # Mise à jour de la date de dernière connexion (comme marqueur de modification)
             current_user.derniere_connexion = datetime.utcnow()
-            
-            # === 9. SAUVEGARDE EN BASE DE DONNÉES ===
             db.session.commit()
             flash('Profil mis à jour avec succès!', 'success')
             
@@ -1034,16 +1025,14 @@ def edit_profile():
 @admin_bp.route('/portfolio/edit', methods=['GET', 'POST'])
 @login_required
 def edit_portfolio_content():
-    # Récupérer ou créer la config pour l'utilisateur
     config = PortfolioConfig.query.filter_by(utilisateur_id=current_user.id).first()
     if not config:
         config = PortfolioConfig(utilisateur_id=current_user.id)
         db.session.add(config)
-        db.session.flush()  # Pour obtenir l'ID sans commit
+        db.session.flush()
 
     if request.method == 'POST':
         try:
-            # --- TEXTES SIMPLES ---
             config.hero_titre = request.form.get('hero_titre', config.hero_titre)
             config.hero_description = request.form.get('hero_description', config.hero_description)
             config.about_titre = request.form.get('about_titre', config.about_titre)
@@ -1053,7 +1042,6 @@ def edit_portfolio_content():
             config.projects_titre = request.form.get('projects_titre', config.projects_titre)
             config.cta_titre = request.form.get('cta_titre', config.cta_titre)
 
-            # --- GESTION DES SPÉCIALITÉS ---
             s_noms = request.form.getlist('skill_item_nom[]')
             s_icons = request.form.getlist('skill_item_icon[]')
             
@@ -1063,7 +1051,6 @@ def edit_portfolio_content():
                     skills_list.append({"nom": n.strip(), "icon": i})
             config.about_skills_json = skills_list if skills_list else []
 
-            # --- GESTION DE LA STACK TECHNIQUE ---
             t_noms = request.form.getlist('tech_nom[]')
             t_percents = request.form.getlist('tech_pourcent[]')
             t_icons = request.form.getlist('tech_icon[]')
@@ -1081,7 +1068,6 @@ def edit_portfolio_content():
             
             config.tech_stack_json = tech_list if tech_list else []
 
-            # Sauvegarde en base
             db.session.commit()
             flash("Portfolio mis à jour avec succès !", "success")
             
@@ -1107,7 +1093,6 @@ def about_edit():
         
         try:
             # Traitement des fichiers
-            # Hero image
             if 'hero_image' in request.files:
                 file = request.files['hero_image']
                 if file and file.filename:
@@ -1121,7 +1106,6 @@ def about_edit():
                     delete_media_file(config.hero_image, 'about')
                     config.hero_image = None
             
-            # Philosophie image
             if 'philosophie_image' in request.files:
                 file = request.files['philosophie_image']
                 if file and file.filename:
@@ -1135,7 +1119,6 @@ def about_edit():
                     delete_media_file(config.philosophie_image, 'about')
                     config.philosophie_image = None
             
-            # Parcours image
             if 'parcours_image' in request.files:
                 file = request.files['parcours_image']
                 if file and file.filename:
@@ -1149,7 +1132,6 @@ def about_edit():
                     delete_media_file(config.parcours_image, 'about')
                     config.parcours_image = None
             
-            # Competences image
             if 'competences_image' in request.files:
                 file = request.files['competences_image']
                 if file and file.filename:
@@ -1163,7 +1145,6 @@ def about_edit():
                     delete_media_file(config.competences_image, 'about')
                     config.competences_image = None
             
-            # Certifications image
             if 'certifications_image' in request.files:
                 file = request.files['certifications_image']
                 if file and file.filename:
@@ -1197,7 +1178,6 @@ def about_edit():
             config.certifications_sous_titre = request.form.get('certifications_sous_titre', config.certifications_sous_titre)
             
             # --- GESTION DES JSON ---
-            # Valeurs
             v_icons = request.form.getlist('valeur_icone[]')
             v_titres = request.form.getlist('valeur_titre[]')
             v_descriptions = request.form.getlist('valeur_description[]')
@@ -1212,7 +1192,6 @@ def about_edit():
                     })
             config.values_json = valeurs_list if valeurs_list else []
             
-            # Parcours
             p_periodes = request.form.getlist('parcours_periode[]')
             p_titres = request.form.getlist('parcours_titre[]')
             p_descriptions = request.form.getlist('parcours_description[]')
@@ -1227,7 +1206,6 @@ def about_edit():
                     })
             config.parcours_json = parcours_list if parcours_list else []
             
-            # Compétences
             c_icons = request.form.getlist('competence_icone[]')
             c_titres = request.form.getlist('competence_titre[]')
             c_descriptions = request.form.getlist('competence_description[]')
@@ -1242,7 +1220,6 @@ def about_edit():
                     })
             config.competences_json = competences_list if competences_list else []
             
-            # Certifications
             cert_titres = request.form.getlist('certification_titre[]')
             cert_organismes = request.form.getlist('certification_organisme[]')
             cert_descriptions = request.form.getlist('certification_description[]')
@@ -1257,7 +1234,6 @@ def about_edit():
                     })
             config.certifications_json = certifications_list if certifications_list else []
             
-            # Mise à jour de la date
             config.date_mise_a_jour = datetime.utcnow()
             
             db.session.commit()
@@ -1271,14 +1247,11 @@ def about_edit():
     
     return render_template('admin/about_edit.html', config=config)
 
-
 # --- ROUTES DE SERVICE DE FICHIERS POUR L'ADMIN ---
 
 @admin_bp.route('/media/<type>/<filename>')
 @login_required
 def serve_media(type, filename):
-    """Sert les fichiers depuis le dossier media pour l'admin"""
-    
     subdirs = {
         'avatar': 'profiles',
         'cover': 'covers',
@@ -1293,7 +1266,6 @@ def serve_media(type, filename):
     
     media_dir = get_media_path(subdir)
     
-    # Sécurité : vérifier que le fichier appartient à l'utilisateur
     if type == 'avatar' and not filename.startswith(f'avatar_{current_user.id}_'):
         abort(403)
     elif type == 'cover' and not filename.startswith(f'cover_{current_user.id}_'):
@@ -1301,7 +1273,6 @@ def serve_media(type, filename):
     elif type == 'cv' and not filename.startswith(f'cv_{current_user.id}_'):
         abort(403)
     elif type == 'proj':
-        # Pour les projets, on vérifie que le projet appartient à l'utilisateur
         try:
             projet_id = filename.split('_')[1] if '_' in filename else None
             if projet_id and projet_id.isdigit():
@@ -1316,9 +1287,61 @@ def serve_media(type, filename):
     except FileNotFoundError:
         abort(404)
 
+# --- ROUTE DE MIGRATION DES AVATARS ---
+
+@admin_bp.route('/migrate-avatars')
+@login_required
+def migrate_avatars():
+    """Migre les avatars des URLs externes vers des fichiers locaux"""
+    if current_user.role != 'admin':
+        flash("Accès réservé aux administrateurs.", "danger")
+        abort(403)
+    
+    users = Utilisateur.query.all()
+    migrated_avatars = 0
+    migrated_covers = 0
+    errors = 0
+    
+    for user in users:
+        # Migrer l'avatar
+        if user.photo_profil and user.photo_profil.startswith(('http://', 'https://')):
+            try:
+                logger.info(f"Migration avatar pour {user.email}: {user.photo_profil}")
+                local_avatar = download_and_save_avatar(user.photo_profil, user.id, 'avatar')
+                if local_avatar:
+                    user.photo_profil = local_avatar
+                    migrated_avatars += 1
+                    logger.info(f"Avatar migré avec succès: {local_avatar}")
+                else:
+                    errors += 1
+                    logger.error(f"Échec migration avatar pour {user.email}")
+            except Exception as e:
+                errors += 1
+                logger.error(f"Erreur migration avatar {user.id}: {e}")
+        
+        # Migrer la couverture si c'est une URL externe
+        if user.photo_couverture and user.photo_couverture.startswith(('http://', 'https://')):
+            try:
+                logger.info(f"Migration cover pour {user.email}: {user.photo_couverture}")
+                local_cover = download_and_save_avatar(user.photo_couverture, user.id, 'cover')
+                if local_cover:
+                    user.photo_couverture = local_cover
+                    migrated_covers += 1
+                    logger.info(f"Cover migrée avec succès: {local_cover}")
+            except Exception as e:
+                logger.error(f"Erreur migration cover {user.id}: {e}")
+    
+    try:
+        db.session.commit()
+        flash(f"Migration terminée : {migrated_avatars} avatars migrés, {migrated_covers} couvertures migrées, {errors} erreurs.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Erreur lors de la sauvegarde: {str(e)}", "danger")
+    
+    return redirect(url_for('admin.dashboard'))
+
 @admin_bp.route('/init-media-folders')
 def init_media_folders():
-    """Crée la structure media/ à la racine du projet"""
     try:
         project_root = current_app.root_path
         media_path = os.path.join(project_root, 'media')
@@ -1343,6 +1366,7 @@ def init_media_folders():
             <li>{os.path.join(media_path, 'about')}</li>
             <li>{os.path.join(media_path, 'uploads')}</li>
         </ul>
+        <p><a href="{url_for('admin.migrate_avatars')}" class="btn btn-primary">Lancer la migration des avatars</a></p>
         <p><a href="{url_for('admin.edit_profile')}">Retour à l'édition du profil</a></p>
         '''
     
@@ -1350,38 +1374,31 @@ def init_media_folders():
         return f"Erreur lors de la création de la structure media: {str(e)}"
 
 # ============================================
-# BLUEPRINT GITHUB (Routes GitHub OAuth) - DÉSACTIVÉ
+# BLUEPRINT GITHUB (Routes GitHub OAuth)
 # ============================================
-# Note: Ce blueprint est conservé mais n'est plus utilisé pour l'authentification
-# L'authentification GitHub se fait maintenant via /auth/login/github et /auth/auth/github
 
 @github_bp.route('/authorize')
 @login_required
 def authorize():
-    """Route redirigeant vers la nouvelle méthode d'authentification"""
     flash("Veuillez utiliser le lien 'Se connecter avec GitHub' sur la page de connexion.", "info")
     return redirect(url_for('auth.social_login', name='github'))
 
 @github_bp.route('/callback')
 @login_required
 def callback():
-    """Route redirigeant vers la nouvelle méthode d'authentification"""
     flash("Veuillez utiliser le lien 'Se connecter avec GitHub' sur la page de connexion.", "info")
     return redirect(url_for('auth.social_login', name='github'))
 
 @github_bp.route('/revoke')
 @login_required
 def revoke():
-    """Révoque l'accès GitHub"""
     try:
-        # Supprimer le token de la base de données
         current_user.jeton_github = None
         db.session.commit()
     except Exception as e:
         db.session.rollback()
         flash(f'Erreur lors de la révocation : {str(e)}', 'error')
     finally:
-        # Nettoyer la session
         session.pop('github_token', None)
         session.pop('github_user', None)
         session.pop('oauth_state', None)
@@ -1393,7 +1410,6 @@ def revoke():
 @github_bp.route('/check')
 @login_required
 def check():
-    """Vérifie si l'utilisateur est connecté à GitHub"""
     token = current_user.jeton_github
     
     if token:
@@ -1405,7 +1421,6 @@ def check():
 
 @github_bp.route('/debug')
 def debug_github():
-    """Route de debug pour vérifier la configuration GitHub"""
     info = {
         'GITHUB_CLIENT_ID': GITHUB_CLIENT_ID[:5] + '...' if GITHUB_CLIENT_ID else 'NON DÉFINI',
         'GITHUB_CLIENT_SECRET': 'Défini' if GITHUB_CLIENT_SECRET else 'NON DÉFINI',
@@ -1442,7 +1457,6 @@ def home():
 
 @portfolio_bp.route('/me_connaitre')
 def me_connaitre():
-    """Page de présentation détaillée (À propos)"""
     context = get_common_context()
     if not context['user']:
         abort(404)
@@ -1453,7 +1467,6 @@ def me_connaitre():
 
 @portfolio_bp.route('/projets')
 def projets_liste():
-    """Page affichant l'intégralité des projets réalisés"""
     context = get_common_context()
     if not context['user']:
         abort(404)
@@ -1467,7 +1480,6 @@ def projets_liste():
 
 @portfolio_bp.route('/contact')
 def contact():
-    """Page de contact"""
     context = get_common_context()
     if not context['user']:
         abort(404)
@@ -1480,23 +1492,15 @@ def contact():
 
 @portfolio_bp.route('/media/<folder>/<path:filename>')
 def serve_public_media(folder, filename):
-    """
-    Route UNIQUE pour servir tous les médias publics depuis le dossier media.
-    Supporte les dossiers : about, profiles, projects, covers, etc.
-    """
-    # Chemins possibles
     subdirs = ['about', 'profiles', 'projects', 'covers', 'docs', 'uploads']
     
     if folder not in subdirs:
         abort(404)
     
-    # Chemin absolu vers le dossier media
     media_dir = get_media_path(folder)
     
-    # Vérifier si le dossier existe
     if not os.path.exists(media_dir):
         print(f"ERREUR: Dossier introuvable - {media_dir}")
-        # Fallback vers le dossier about par défaut
         default_dir = get_media_path('about')
         try:
             return send_from_directory(default_dir, 'default-about.jpg')
@@ -1507,7 +1511,6 @@ def serve_public_media(folder, filename):
         return send_from_directory(media_dir, filename)
     except FileNotFoundError:
         print(f"ERREUR: Fichier introuvable - {os.path.join(media_dir, filename)}")
-        # Fallback vers image par défaut selon le dossier
         default_files = {
             'about': 'default-about.jpg',
             'profiles': 'default-profile.jpg',
@@ -1523,14 +1526,9 @@ def serve_public_media(folder, filename):
         except:
             abort(404)
     
-    
 @admin_bp.route('/authorize')
 @login_required
 def authorize_page():
-    """
-    Page d'autorisation GitHub qui affiche la demande de permissions
-    """
-    # Si l'utilisateur a déjà un token, on le redirige vers le dashboard
     if current_user.jeton_github:
         flash("Vous êtes déjà connecté à GitHub.", "info")
         return redirect(url_for('admin.dashboard'))
@@ -1540,14 +1538,8 @@ def authorize_page():
 @admin_bp.route('/start-github-auth')
 @login_required
 def start_github_auth():
-    """
-    Démarre le processus d'authentification GitHub
-    """
-    # Vérifier que les variables d'environnement sont configurées
     if not GITHUB_CLIENT_ID or not GITHUB_CLIENT_SECRET:
         flash("Erreur de configuration GitHub. Contactez l'administrateur.", "danger")
-        print(f"DEBUG - GITHUB_CLIENT_ID: {GITHUB_CLIENT_ID}")
-        print(f"DEBUG - GITHUB_CLIENT_SECRET: {'Présent' if GITHUB_CLIENT_SECRET else 'Absent'}")
         return redirect(url_for('admin.authorize_page'))
     
     return redirect(url_for('auth.social_login', name='github'))
@@ -1555,8 +1547,5 @@ def start_github_auth():
 @admin_bp.route('/skipp-authorize')
 @login_required
 def skipp_authorize():
-    """
-    Permet de passer l'autorisation GitHub pour le moment
-    """
     flash("Vous pourrez connecter GitHub plus tard depuis la page de profil.", "info")
     return redirect(url_for('admin.dashboard'))

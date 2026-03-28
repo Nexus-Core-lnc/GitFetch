@@ -37,8 +37,6 @@ function showSuccessModal() {
 
 // --- GESTIONNAIRE DE SOUMISSION DU FORMULAIRE ---
 form.addEventListener("submit", function (e) {
-  // 1. On empêche l'envoi immédiat pour valider
-  e.preventDefault();
 
   // Validation Email
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

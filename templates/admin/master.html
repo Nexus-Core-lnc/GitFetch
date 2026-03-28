@@ -635,6 +635,161 @@
 
         .lien-plus-tard:hover { color: var(--couleur-github); }
 
+        /* ===== MODAL DE PARTAGE ===== */
+        .modal-partage {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.75);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-partage.actif {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .conteneur-modal {
+            background: white;
+            border-radius: 32px;
+            max-width: 420px;
+            width: 90%;
+            padding: 32px 28px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(40px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-titre {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--texte-sombre);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .modal-titre i {
+            color: var(--couleur-portfolio);
+            font-size: 28px;
+        }
+
+        .modal-sous-titre {
+            font-size: 14px;
+            color: var(--texte-clair);
+            margin-bottom: 28px;
+        }
+
+        .modal-options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .modal-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 8px;
+            border-radius: 16px;
+        }
+
+        .modal-option:hover {
+            transform: translateY(-6px);
+            background: rgba(0,0,0,0.03);
+        }
+
+        .modal-option:active {
+            transform: translateY(-2px);
+        }
+
+        .modal-option-icone {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            transition: all 0.2s ease;
+        }
+
+        .modal-option-icone.whatsapp { background: linear-gradient(135deg, #25D366, #128C7E); }
+        .modal-option-icone.linkedin { background: linear-gradient(135deg, #0077B5, #005885); }
+        .modal-option-icone.facebook { background: linear-gradient(135deg, #1877F2, #0C63D4); }
+        .modal-option-icone.copier { background: linear-gradient(135deg, #6c757d, #495057); }
+        .modal-option-icone.copier.copie-modal { background: linear-gradient(135deg, #28a745, #1e7e34); }
+
+        .modal-option-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--texte-sombre);
+        }
+
+        .modal-lien {
+            background: #f8f9fa;
+            padding: 14px 18px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 24px;
+            border: 1px solid #e9ecef;
+        }
+
+        .modal-lien-texte {
+            font-size: 12px;
+            color: var(--couleur-portfolio);
+            word-break: break-all;
+            text-align: left;
+            flex: 1;
+            font-family: monospace;
+        }
+
+        .bouton-fermer-modal {
+            width: 100%;
+            padding: 14px;
+            background: #f1f3f5;
+            border: none;
+            border-radius: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--texte-sombre);
+            font-size: 15px;
+        }
+
+        .bouton-fermer-modal:hover {
+            background: #e9ecef;
+            transform: translateY(-1px);
+        }
+
         /* ===== NAVIGATION MOBILE ===== */
         .navigation-mobile {
             display: none;
@@ -649,7 +804,6 @@
             z-index: 1100;
         }
 
-        /* Conteneur scrollable horizontal */
         .conteneur-navigation-mobile {
             display: flex;
             align-items: stretch;
@@ -658,7 +812,6 @@
             overflow-y: hidden;
             -webkit-overflow-scrolling: touch;
             scroll-snap-type: x proximity;
-            /* Cache la scrollbar tout en gardant le scroll fonctionnel */
             scrollbar-width: none;
             -ms-overflow-style: none;
         }
@@ -667,7 +820,6 @@
             display: none;
         }
 
-        /* Chaque item */
         .element-navigation-mobile {
             flex: 0 0 auto;
             display: flex;
@@ -708,36 +860,9 @@
             color: var(--jaune-primaire);
         }
 
-        .element-navigation-mobile.admin.actif,
-        .element-navigation-mobile.admin:active {
-            color: var(--couleur-admin);
-        }
-
-        .element-navigation-mobile.admin.actif::after { background: var(--couleur-admin); }
-
-        .element-navigation-mobile.portfolio.actif,
-        .element-navigation-mobile.portfolio:active {
-            color: var(--couleur-portfolio);
-        }
-
-        .element-navigation-mobile.portfolio.actif::after { background: var(--couleur-portfolio); }
-
-        .element-navigation-mobile.me-connaitre.actif,
-        .element-navigation-mobile.me-connaitre:active {
-            color: var(--couleur-me-connaitre);
-        }
-
-        .element-navigation-mobile.me-connaitre.actif::after { background: var(--couleur-me-connaitre); }
-
-        .element-navigation-mobile:active {
-            transform: scale(0.92);
-            background: rgba(0,0,0,0.04);
-        }
-
         .element-navigation-mobile i { font-size: 20px; }
         .element-navigation-mobile span { font-size: 11px; font-weight: 500; }
 
-        /* Badge "plus d'items" - discret indicateur de scroll */
         .indicateur-scroll-mobile {
             position: absolute;
             right: 0;
@@ -769,7 +894,7 @@
 
         /* ===== BULLE FLOTTANTE MOBILE ===== */
         .bulle-flottante {
-            display: none; /* visible seulement sur mobile */
+            display: none;
             position: fixed;
             bottom: calc(var(--nav-mobile-height) + 16px);
             right: 16px;
@@ -779,7 +904,6 @@
             gap: 10px;
         }
 
-        /* Bouton principal de la bulle */
         .bulle-bouton-principal {
             width: 52px;
             height: 52px;
@@ -808,13 +932,11 @@
             box-shadow: 0 6px 20px rgba(239,83,80,0.4);
         }
 
-        /* Conteneur des options */
         .bulle-options {
             display: flex;
             flex-direction: column;
             align-items: flex-end;
             gap: 10px;
-            /* État fermé */
             opacity: 0;
             pointer-events: none;
             transform: translateY(10px) scale(0.92);
@@ -828,7 +950,6 @@
             transform: translateY(0) scale(1);
         }
 
-        /* Chaque option */
         .bulle-option {
             display: flex;
             align-items: center;
@@ -878,15 +999,6 @@
             background: linear-gradient(135deg, #11998e, #38ef7d);
         }
 
-        /* Délais d'animation pour effet cascade */
-        .bulle-options .bulle-option:nth-child(2) {
-            transition-delay: 0.04s;
-        }
-        .bulle-options .bulle-option:nth-child(1) {
-            transition-delay: 0.08s;
-        }
-
-        /* Overlay pour fermer la bulle en cliquant ailleurs */
         .bulle-overlay {
             display: none;
             position: fixed;
@@ -896,7 +1008,6 @@
 
         .bulle-overlay.actif { display: block; }
 
-        /* Sous-menu partage */
         .bulle-sous-menu-partage {
             display: flex;
             flex-direction: column;
@@ -956,43 +1067,31 @@
         .sous-menu-icone.linkedin { background: linear-gradient(135deg, #0077B5, #005885); }
         .sous-menu-icone.facebook { background: linear-gradient(135deg, #1877F2, #0C63D4); }
         .sous-menu-icone.copier   { background: linear-gradient(135deg, #6c757d, #495057); }
-        .sous-menu-icone.copier.copie { background: linear-gradient(135deg, #28a745, #1e7e34); }
+        .sous-menu-icone.partage  { background: linear-gradient(135deg, #667eea, #764ba2); }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
-            /* Masque la sidebar desktop */
             .barre-laterale {
                 transform: translateX(-100%);
                 pointer-events: none;
             }
 
-            /* Le contenu prend toute la largeur et laisse de la place pour la nav mobile */
             .contenu-principal {
                 margin-left: 0;
                 padding-bottom: var(--nav-mobile-height);
             }
 
-            /* Cache complètement l'en-tête sur mobile */
             .en-tete-superieur {
                 display: none;
             }
 
-            /* Flash messages mobile */
             .messages-flash { padding: 10px 14px; }
             .alerte { font-size: 13px; padding: 11px 13px; gap: 10px; }
-
-            /* Main mobile */
             main { padding: 0; }
-
-            /* Authorize page mobile */
             .conteneur-authorize { margin: 16px; padding: 24px 16px; }
             .titre-authorize { font-size: 22px; }
             .sous-titre-authorize { font-size: 15px; }
-
-            /* Affiche la navigation mobile */
             .navigation-mobile { display: block; }
-
-            /* Affiche la bulle flottante */
             .bulle-flottante { display: flex; }
         }
 
@@ -1001,18 +1100,15 @@
                 min-width: 64px;
                 padding: 8px 12px;
             }
-
             .element-navigation-mobile i { font-size: 18px; }
             .element-navigation-mobile span { font-size: 10px; }
         }
 
-        /* Safe area pour iPhone avec encoche/dynamic island */
         @supports (padding-bottom: env(safe-area-inset-bottom)) {
             .navigation-mobile {
                 padding-bottom: env(safe-area-inset-bottom);
                 height: calc(var(--nav-mobile-height) + env(safe-area-inset-bottom));
             }
-
             .contenu-principal {
                 padding-bottom: calc(var(--nav-mobile-height) + env(safe-area-inset-bottom));
             }
@@ -1209,16 +1305,16 @@
                     </div>
                     <div class="droite-en-tete">
                         <div class="boutons-partage">
-                            <button class="bouton-partage whatsapp infobulle" data-infobulle="WhatsApp" onclick="partagerWhatsApp()">
+                            <button class="bouton-partage whatsapp infobulle" data-infobulle="WhatsApp" onclick="ouvrirModalPartage()">
                                 <i class="fab fa-whatsapp"></i>
                             </button>
-                            <button class="bouton-partage linkedin infobulle" data-infobulle="LinkedIn" onclick="partagerLinkedIn()">
+                            <button class="bouton-partage linkedin infobulle" data-infobulle="LinkedIn" onclick="ouvrirModalPartage()">
                                 <i class="fab fa-linkedin-in"></i>
                             </button>
-                            <button class="bouton-partage facebook infobulle" data-infobulle="Facebook" onclick="partagerFacebook()">
+                            <button class="bouton-partage facebook infobulle" data-infobulle="Facebook" onclick="ouvrirModalPartage()">
                                 <i class="fab fa-facebook-f"></i>
                             </button>
-                            <button class="bouton-partage copier infobulle" data-infobulle="Copier le lien" onclick="copierURL()" id="boutonCopier">
+                            <button class="bouton-partage copier infobulle" data-infobulle="Copier le lien" onclick="ouvrirModalPartage()">
                                 <i class="fas fa-link"></i>
                             </button>
                         </div>
@@ -1230,7 +1326,7 @@
                             </a>
                         {% endif %}
                         
-                        <a href="{{ url_for('portfolio.home') }}" class="bouton-primaire" target="_blank">
+                        <a href="{{ url_for('portfolio.home') }}" class="bouton-primaire" target="_blank" id="btnVoirPortfolio">
                             <i class="fas fa-briefcase"></i>
                             Voir mon Portfolio
                         </a>
@@ -1275,84 +1371,111 @@
             </main>
         </div>
 
+        <!-- ===== MODAL DE PARTAGE DU PORTFOLIO ===== -->
+        <div class="modal-partage" id="modalPartage">
+            <div class="conteneur-modal">
+                <div class="modal-titre">
+                    <i class="fas fa-briefcase"></i>
+                    Partager mon Portfolio
+                </div>
+                <div class="modal-sous-titre">
+                    Invitez vos amis, collègues et recruteurs à découvrir votre travail !
+                </div>
+                
+                <div class="modal-options">
+                    <div class="modal-option" onclick="partagerWhatsAppPortfolio()">
+                        <div class="modal-option-icone whatsapp">
+                            <i class="fab fa-whatsapp"></i>
+                        </div>
+                        <span class="modal-option-label">WhatsApp</span>
+                    </div>
+                    <div class="modal-option" onclick="partagerLinkedInPortfolio()">
+                        <div class="modal-option-icone linkedin">
+                            <i class="fab fa-linkedin-in"></i>
+                        </div>
+                        <span class="modal-option-label">LinkedIn</span>
+                    </div>
+                    <div class="modal-option" onclick="partagerFacebookPortfolio()">
+                        <div class="modal-option-icone facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </div>
+                        <span class="modal-option-label">Facebook</span>
+                    </div>
+                    <div class="modal-option" onclick="copierLienPortfolio()">
+                        <div class="modal-option-icone copier" id="iconeCopierModal">
+                            <i class="fas fa-link"></i>
+                        </div>
+                        <span class="modal-option-label" id="labelCopierModal">Copier le lien</span>
+                    </div>
+                </div>
+                
+                <div class="modal-lien">
+                    <div class="modal-lien-texte" id="lienPortfolio">
+                        {{ url_for('portfolio.home', _external=true) }}
+                    </div>
+                </div>
+                
+                <button class="bouton-fermer-modal" onclick="fermerModalPartage()">
+                    <i class="fas fa-times" style="margin-right: 8px;"></i>
+                    Fermer
+                </button>
+            </div>
+        </div>
+
         <!-- ===== BULLE FLOTTANTE MOBILE ===== -->
         <div class="bulle-flottante" id="bulleFlottante" aria-label="Actions rapides">
             <div class="bulle-overlay" id="bulleOverlay"></div>
             <div class="bulle-options" id="bulleOptions">
-                <!-- Option Partage -->
                 <div class="bulle-option" style="position: relative;">
                     <span class="bulle-option-label">Partager</span>
                     <button class="bulle-option-icone partage" id="btnPartage" aria-label="Partager" type="button">
                         <i class="fas fa-share-alt"></i>
                     </button>
-                    <!-- Sous-menu partage -->
                     <div class="bulle-sous-menu-partage" id="sousMenuPartage">
-                        <button class="sous-menu-item" onclick="partagerWhatsApp()" type="button">
-                            <span class="sous-menu-label">WhatsApp</span>
-                            <span class="sous-menu-icone whatsapp"><i class="fab fa-whatsapp"></i></span>
+                        <button class="sous-menu-item" onclick="ouvrirModalPartage()" type="button">
+                            <span class="sous-menu-label">Partager le Portfolio</span>
+                            <span class="sous-menu-icone partage"><i class="fas fa-briefcase"></i></span>
                         </button>
-                        <button class="sous-menu-item" onclick="partagerLinkedIn()" type="button">
-                            <span class="sous-menu-label">LinkedIn</span>
-                            <span class="sous-menu-icone linkedin"><i class="fab fa-linkedin-in"></i></span>
-                        </button>
-                        <button class="sous-menu-item" onclick="partagerFacebook()" type="button">
-                            <span class="sous-menu-label">Facebook</span>
-                            <span class="sous-menu-icone facebook"><i class="fab fa-facebook-f"></i></span>
-                        </button>
-                        <button class="sous-menu-item" id="btnCopierBulle" onclick="copierURLBulle()" type="button">
-                            <span class="sous-menu-label" id="labelCopierBulle">Copier le lien</span>
-                            <span class="sous-menu-icone copier" id="iconeCopierBulle"><i class="fas fa-link"></i></span>
+                        <button class="sous-menu-item" id="btnTraductionMobile" type="button">
+                            <span class="sous-menu-label">Traduire</span>
+                            <span class="sous-menu-icone traduction"><i class="fas fa-language"></i></span>
                         </button>
                     </div>
                 </div>
-                <!-- Option Traduction -->
                 <button class="bulle-option" id="btnTraduction" type="button" aria-label="Traduire la page">
                     <span class="bulle-option-label">Traduire</span>
                     <span class="bulle-option-icone traduction"><i class="fas fa-language"></i></span>
                 </button>
             </div>
-            <!-- Bouton principal -->
             <button class="bulle-bouton-principal" id="bulleBtnPrincipal" type="button" aria-label="Actions rapides" aria-expanded="false">
                 <i class="fas fa-plus" id="bulleIconePrincipale"></i>
             </button>
         </div>
 
-        <!-- ===== NAVIGATION MOBILE (bottom fixed + scroll interne) ===== -->
+        <!-- ===== NAVIGATION MOBILE ===== -->
         <nav class="navigation-mobile" id="navMobile" role="navigation" aria-label="Navigation mobile">
             <div class="conteneur-navigation-mobile" id="conteneurNavMobile">
-                <a href="{{ url_for('admin.dashboard') }}"
-                   class="element-navigation-mobile {% if request.endpoint == 'admin.dashboard' %}actif{% endif %}"
-                   aria-label="Tableau de bord">
+                <a href="{{ url_for('admin.dashboard') }}" class="element-navigation-mobile {% if request.endpoint == 'admin.dashboard' %}actif{% endif %}" aria-label="Tableau de bord">
                     <i class="fas fa-th-large"></i>
                     <span>Tableau</span>
                 </a>
-                <a href="{{ url_for('admin.list_repos') }}"
-                   class="element-navigation-mobile {% if request.endpoint == 'admin.list_repos' %}actif{% endif %}"
-                   aria-label="Mes Projets">
+                <a href="{{ url_for('admin.list_repos') }}" class="element-navigation-mobile {% if request.endpoint == 'admin.list_repos' %}actif{% endif %}" aria-label="Mes Projets">
                     <i class="fas fa-folder-open"></i>
                     <span>Projets</span>
                 </a>
-                <a href="{{ url_for('admin.import_view') }}"
-                   class="element-navigation-mobile {% if request.endpoint == 'admin.import_view' %}actif{% endif %}"
-                   aria-label="Importer GitHub">
+                <a href="{{ url_for('admin.import_view') }}" class="element-navigation-mobile {% if request.endpoint == 'admin.import_view' %}actif{% endif %}" aria-label="Importer GitHub">
                     <i class="fab fa-github"></i>
                     <span>Importer</span>
                 </a>
-                <a href="{{ url_for('admin.edit_portfolio_content') }}"
-                   class="element-navigation-mobile portfolio {% if request.endpoint == 'admin.edit_portfolio_content' %}actif{% endif %}"
-                   aria-label="Éditer Portfolio">
+                <a href="{{ url_for('admin.edit_portfolio_content') }}" class="element-navigation-mobile portfolio {% if request.endpoint == 'admin.edit_portfolio_content' %}actif{% endif %}" aria-label="Éditer Portfolio">
                     <i class="fas fa-briefcase"></i>
                     <span>Portfolio</span>
                 </a>
-                <a href="{{ url_for('admin.about_edit') }}"
-                   class="element-navigation-mobile me-connaitre {% if request.endpoint == 'admin.about_edit' %}actif{% endif %}"
-                   aria-label="Me Connaître">
+                <a href="{{ url_for('admin.about_edit') }}" class="element-navigation-mobile me-connaitre {% if request.endpoint == 'admin.about_edit' %}actif{% endif %}" aria-label="Me Connaître">
                     <i class="fas fa-user-tie"></i>
                     <span>À propos</span>
                 </a>
-                <a href="{{ url_for('admin.edit_profile') }}"
-                   class="element-navigation-mobile {% if request.endpoint == 'admin.edit_profile' %}actif{% endif %}"
-                   aria-label="Mon Profil">
+                <a href="{{ url_for('admin.edit_profile') }}" class="element-navigation-mobile {% if request.endpoint == 'admin.edit_profile' %}actif{% endif %}" aria-label="Mon Profil">
                     <i class="fas fa-user-cog"></i>
                     <span>Profil</span>
                 </a>
@@ -1377,7 +1500,6 @@
                     <span>Sortir</span>
                 </a>
             </div>
-            <!-- Indicateur de scroll visible -->
             <div class="indicateur-scroll-mobile" id="indicateurScroll">
                 <i class="fas fa-chevron-right"></i>
             </div>
@@ -1385,46 +1507,68 @@
     {% endif %}
 
     <script>
-        // ===== PARTAGE SOCIAL =====
-        function partagerWhatsApp() {
-            const url = window.location.href;
-            const texte = "Découvrez GitFetch - Gérez vos projets GitHub facilement !";
-            window.open(`https://wa.me/?text=${encodeURIComponent(texte + ' ' + url)}`, '_blank');
+        // URL du portfolio (la même que celle du bouton "Voir mon Portfolio")
+        const URL_PORTFOLIO = "{{ url_for('portfolio.home', _external=true) }}";
+        const TEXTE_PARTAGE = "✨ Découvrez mon portfolio sur GitFetch ! ✨";
+        
+        // ===== MODAL DE PARTAGE =====
+        const modalPartage = document.getElementById('modalPartage');
+        
+        function ouvrirModalPartage() {
+            if (modalPartage) {
+                modalPartage.classList.add('actif');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        
+        function fermerModalPartage() {
+            if (modalPartage) {
+                modalPartage.classList.remove('actif');
+                document.body.style.overflow = '';
+            }
+        }
+        
+        if (modalPartage) {
+            modalPartage.addEventListener('click', function(e) {
+                if (e.target === modalPartage) {
+                    fermerModalPartage();
+                }
+            });
+        }
+        
+        // ===== FONCTIONS DE PARTAGE AVEC L'URL DU PORTFOLIO =====
+        function partagerWhatsAppPortfolio() {
+            window.open(`https://wa.me/?text=${encodeURIComponent(TEXTE_PARTAGE + ' ' + URL_PORTFOLIO)}`, '_blank');
+            fermerModalPartage();
         }
 
-        function partagerLinkedIn() {
-            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`, '_blank', 'width=600,height=600');
+        function partagerLinkedInPortfolio() {
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(URL_PORTFOLIO)}`, '_blank', 'width=600,height=600');
+            fermerModalPartage();
         }
 
-        function partagerFacebook() {
-            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank', 'width=600,height=600');
+        function partagerFacebookPortfolio() {
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(URL_PORTFOLIO)}`, '_blank', 'width=600,height=600');
+            fermerModalPartage();
         }
 
-        function copierURL() {
-            const boutonCopier = document.getElementById('boutonCopier');
-            if (!boutonCopier) return;
-            navigator.clipboard.writeText(window.location.href).then(() => {
-                boutonCopier.classList.add('copie-effectuee');
-                boutonCopier.innerHTML = '<i class="fas fa-check"></i>';
-                boutonCopier.setAttribute('data-infobulle', 'Lien copié !');
+        function copierLienPortfolio() {
+            const iconeModal = document.getElementById('iconeCopierModal');
+            const labelModal = document.getElementById('labelCopierModal');
+            
+            navigator.clipboard.writeText(URL_PORTFOLIO).then(() => {
+                if (iconeModal) {
+                    iconeModal.classList.add('copie-modal');
+                    iconeModal.innerHTML = '<i class="fas fa-check"></i>';
+                }
+                if (labelModal) labelModal.textContent = 'Copié !';
+                
                 setTimeout(() => {
-                    boutonCopier.classList.remove('copie-effectuee');
-                    boutonCopier.innerHTML = '<i class="fas fa-link"></i>';
-                    boutonCopier.setAttribute('data-infobulle', 'Copier le lien');
-                }, 2000);
-            }).catch(() => alert('Impossible de copier le lien'));
-        }
-
-        // Copier depuis la bulle mobile
-        function copierURLBulle() {
-            const icone = document.getElementById('iconeCopierBulle');
-            const label = document.getElementById('labelCopierBulle');
-            navigator.clipboard.writeText(window.location.href).then(() => {
-                if (icone) { icone.classList.add('copie'); icone.innerHTML = '<i class="fas fa-check"></i>'; }
-                if (label) label.textContent = 'Copié !';
-                setTimeout(() => {
-                    if (icone) { icone.classList.remove('copie'); icone.innerHTML = '<i class="fas fa-link"></i>'; }
-                    if (label) label.textContent = 'Copier le lien';
+                    if (iconeModal) {
+                        iconeModal.classList.remove('copie-modal');
+                        iconeModal.innerHTML = '<i class="fas fa-link"></i>';
+                    }
+                    if (labelModal) labelModal.textContent = 'Copier le lien';
                 }, 2000);
             }).catch(() => alert('Impossible de copier le lien'));
         }
@@ -1437,6 +1581,7 @@
             const btnPartage     = document.getElementById('btnPartage');
             const sousMenuPartage = document.getElementById('sousMenuPartage');
             const btnTraduction  = document.getElementById('btnTraduction');
+            const btnTraductionMobile = document.getElementById('btnTraductionMobile');
 
             if (!btnPrincipal) return;
 
@@ -1465,16 +1610,13 @@
                 if (sousMenuPartage) sousMenuPartage.classList.remove('visible');
             }
 
-            // Toggle bulle principale
             btnPrincipal.addEventListener('click', function(e) {
                 e.stopPropagation();
                 bulleOuverte ? fermerBulle() : ouvrirBulle();
             });
 
-            // Overlay ferme tout
             overlay.addEventListener('click', fermerBulle);
 
-            // Bouton partage → toggle sous-menu
             if (btnPartage) {
                 btnPartage.addEventListener('click', function(e) {
                     e.stopPropagation();
@@ -1483,7 +1625,6 @@
                 });
             }
 
-            // Fermer sous-menu partage quand on clique sur un item dedans
             if (sousMenuPartage) {
                 sousMenuPartage.querySelectorAll('.sous-menu-item').forEach(btn => {
                     btn.addEventListener('click', function() {
@@ -1492,48 +1633,32 @@
                 });
             }
 
-            // Bouton traduction → API de traduction native du navigateur
-            if (btnTraduction) {
-                btnTraduction.addEventListener('click', function(e) {
-                    e.stopPropagation();
-
-                    // Méthode 1 : API Translation (Chrome Android)
-                    if (window.navigator && window.navigator.language) {
-                        const langActuelle = document.documentElement.lang || 'fr';
-                        const langCible = langActuelle === 'fr' ? 'en' : 'fr';
-
-                        // Tenter l'API de traduction native si disponible
-                        if ('translation' in self && 'canDetect' in self.translation) {
-                            // API expérimentale Chrome
-                            self.translation.translate(document.body, { targetLanguage: langCible })
-                                .catch(() => declencherTraductionFallback());
-                        } else {
-                            declencherTraductionFallback();
-                        }
-                    } else {
-                        declencherTraductionFallback();
-                    }
-
-                    fermerBulle();
-                });
-            }
-
             function declencherTraductionFallback() {
-                // Méthode 2 : Ouvrir Google Translate sur la page actuelle
                 const urlActuelle = encodeURIComponent(window.location.href);
                 const langSource = document.documentElement.lang || 'fr';
                 const langCible = langSource === 'fr' ? 'en' : 'fr';
-
-                // Méthode 3 : Simuler Ctrl+Shift+T (raccourci Chrome translate) — pas possible via JS
-                // On tente d'abord l'API native Web Share / navigator.translate
-                // Puis on propose Google Translate comme fallback fiable
                 const urlGoogleTranslate = `https://translate.google.com/translate?sl=${langSource}&tl=${langCible}&u=${urlActuelle}`;
                 window.open(urlGoogleTranslate, '_blank');
             }
 
+            if (btnTraduction) {
+                btnTraduction.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    declencherTraductionFallback();
+                    fermerBulle();
+                });
+            }
+
+            if (btnTraductionMobile) {
+                btnTraductionMobile.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    declencherTraductionFallback();
+                    fermerBulle();
+                });
+            }
         })();
 
-        // ===== NAVIGATION MOBILE - SCROLL & INDICATEUR =====
+        // ===== NAVIGATION MOBILE =====
         (function() {
             const conteneur = document.getElementById('conteneurNavMobile');
             const indicateur = document.getElementById('indicateurScroll');
@@ -1553,7 +1678,6 @@
             conteneur.addEventListener('scroll', majIndicateur, { passive: true });
             window.addEventListener('resize', majIndicateur);
 
-            // Scroll vers l'élément actif
             const elemActif = conteneur.querySelector('.element-navigation-mobile.actif');
             if (elemActif) {
                 requestAnimationFrame(() => {
@@ -1577,7 +1701,7 @@
             });
         });
 
-        // ===== LIEN ACTIF - FALLBACK JS =====
+        // ===== LIEN ACTIF =====
         const cheminActuel = window.location.pathname;
 
         document.querySelectorAll('.lien-navigation').forEach(lien => {
@@ -1590,9 +1714,15 @@
             if (href && href !== '#' && href === cheminActuel) el.classList.add('actif');
         });
 
-        // Empêcher navigation sur href="#"
         document.querySelectorAll('[href="#"]').forEach(el => {
             el.addEventListener('click', e => e.preventDefault());
+        });
+
+        // Fermer la modal avec la touche Échap
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modalPartage && modalPartage.classList.contains('actif')) {
+                fermerModalPartage();
+            }
         });
     </script>
 </body>

@@ -253,6 +253,9 @@
             margin-bottom: 20px;
             font-size: 15px;
             line-height: 1.7;
+            height: 40px;
+            overflow: auto;
+            scrollbar-width: none;
         }
 
         .project-meta {
@@ -430,8 +433,7 @@
                 <div class="project-card">
                     <div class="project-image">
                         {% if projet.image_couverture %}
-                            {# CORRECTION: Utilisation de la route serve_public_media #}
-                            <img src="{{ url_for('portfolio.serve_public_media', folder='projects', filename=projet.image_couverture) }}" 
+                            <img src="{{ url_for('portfolio.serve_public_media', folder='projects', filename='projet.image_couverture') }}" 
                                  alt="{{ projet.nom }}"
                                  onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/default-project.jpg') }}'">
                         {% else %}
