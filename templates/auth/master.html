@@ -41,9 +41,6 @@
     <!-- Inclusion du footer depuis _partials -->
     {% include '_partials/footer.html' %}
     
-    <!-- JavaScript commun -->
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    
     <!-- Block pour le JS spécifique -->
     {% block scripts %}{% endblock %}
 </body>

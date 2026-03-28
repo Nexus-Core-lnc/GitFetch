@@ -1,4 +1,4 @@
-# routes.py - Version avec téléchargement local des avatars
+# routes.py - Version avec téléchargement local des avatars et correction GitHub OAuth
 
 import os
 import requests
@@ -205,8 +205,9 @@ def delete_media_file(filename, type_file):
     return False
 
 def get_common_context():
-    """Fonction utilitaire pour récupérer les données communes à toutes les pages du portfolio"""
-    user = Utilisateur.query.first()
+    user = Utilisateur.query.order_by(Utilisateur.id.asc()).first()
+    # ou mieux, prend le user qui a un CV/profil rempli :
+    user = Utilisateur.query.filter(Utilisateur.est_confirme == True).first()
     return {'user': user}
 
 def ensure_token_column_exists():
@@ -246,40 +247,99 @@ def fetch_github_repos(token, max_retries=3):
         'Accept': 'application/vnd.github.v3+json'
     }
     
-    url = 'https://api.github.com/user/repos?sort=updated&per_page=50&affiliation=owner,collaborator'
+    # Vérifier les scopes du token
+    try:
+        user_response = requests.get('https://api.github.com/user', headers=headers, timeout=5)
+        scopes = user_response.headers.get('X-OAuth-Scopes', '')
+        logger.info(f"Scopes du token GitHub: {scopes}")
+        
+        if 'repo' not in scopes:
+            logger.warning("⚠️ Le token n'a pas le scope 'repo'! Les dépôts privés peuvent ne pas être accessibles.")
+    except Exception as e:
+        logger.error(f"Erreur vérification scopes: {e}")
+    
+    # Récupérer les invitations en attente
+    try:
+        invites_response = requests.get('https://api.github.com/user/repository_invitations', headers=headers, timeout=5)
+        if invites_response.status_code == 200:
+            pending_invites = invites_response.json()
+            if pending_invites:
+                logger.info(f"📨 {len(pending_invites)} invitations en attente trouvées")
+                for invite in pending_invites:
+                    logger.info(f"  - Invitation pour: {invite['repository']['full_name']}")
+    except Exception as e:
+        logger.error(f"Erreur récupération invitations: {e}")
+    
+    all_repos = []
+    page = 1
+    
+    # URL corrigée pour inclure TOUS les dépôts (publics ET privés, propriétaire ET collaborateur)
+    url = 'https://api.github.com/user/repos?sort=updated&per_page=100&affiliation=owner,collaborator,organization_member&visibility=all'
     
     for attempt in range(max_retries):
         try:
-            response = requests.get(url, headers=headers, timeout=10)
-            
-            if response.status_code == 200:
-                return response.json(), None
-            elif response.status_code == 401:
-                return [], "Token GitHub invalide ou expiré"
-            elif response.status_code == 403:
-                return [], "Limite de taux GitHub atteinte. Réessayez plus tard."
-            else:
-                return [], f"Erreur GitHub (Code: {response.status_code})"
+            while True:
+                paginated_url = f'{url}&page={page}'
+                response = requests.get(paginated_url, headers=headers, timeout=10)
                 
+                if response.status_code == 200:
+                    repos = response.json()
+                    if not repos:
+                        break
+                    
+                    all_repos.extend(repos)
+                    logger.info(f"Page {page}: {len(repos)} dépôts récupérés")
+                    
+                    # Vérifier s'il y a une page suivante
+                    if 'Link' in response.headers and 'rel="next"' in response.headers['Link']:
+                        page += 1
+                        continue
+                    break
+                    
+                elif response.status_code == 401:
+                    return [], "Token GitHub invalide ou expiré"
+                elif response.status_code == 403:
+                    reset_time = response.headers.get('X-RateLimit-Reset', 'inconnu')
+                    return [], f"Limite de taux GitHub atteinte. Réessayez plus tard. (Reset: {reset_time})"
+                else:
+                    return [], f"Erreur GitHub (Code: {response.status_code})"
+                    
+            break
+            
         except requests.exceptions.ConnectionError as e:
-            print(f"Erreur de connexion GitHub (tentative {attempt + 1}/{max_retries}): {e}")
+            logger.error(f"Erreur de connexion GitHub (tentative {attempt + 1}/{max_retries}): {e}")
             if attempt < max_retries - 1:
                 time.sleep(2)
             else:
                 return [], "Impossible de se connecter à GitHub. Vérifiez votre connexion internet."
         
         except requests.exceptions.Timeout:
-            print(f"Timeout GitHub (tentative {attempt + 1}/{max_retries})")
+            logger.error(f"Timeout GitHub (tentative {attempt + 1}/{max_retries})")
             if attempt < max_retries - 1:
                 time.sleep(2)
             else:
                 return [], "Délai d'attente dépassé pour la connexion à GitHub."
         
         except Exception as e:
-            print(f"Erreur inattendue GitHub: {e}")
+            logger.error(f"Erreur inattendue GitHub: {e}")
             return [], f"Erreur inattendue: {str(e)}"
     
-    return [], "Erreur inconnue"
+    # Filtrer les doublons
+    unique_repos = {}
+    for repo in all_repos:
+        unique_repos[repo['id']] = repo
+    
+    repos_list = list(unique_repos.values())
+    
+    # Compter publics vs privés
+    public_count = sum(1 for r in repos_list if not r.get('private', False))
+    private_count = sum(1 for r in repos_list if r.get('private', False))
+    logger.info(f"📊 Total: {len(repos_list)} dépôts (Publics: {public_count}, Privés: {private_count})")
+    
+    if len(repos_list) == 0:
+        return [], "Aucun dépôt trouvé. Vérifiez que votre compte GitHub a des dépôts."
+    
+    return repos_list, None
 
 def get_google_provider_cfg():
     """Récupère la configuration Google OAuth"""
@@ -453,9 +513,10 @@ def social_login(name):
         params = {
             'client_id': GITHUB_CLIENT_ID,
             'redirect_uri': redirect_uri,
-            'scope': 'user:email',
+            'scope': 'user:email repo',  # ✅ AJOUT DU SCOPE 'repo' POUR LES DÉPÔTS PRIVÉS
             'state': state,
-            'response_type': 'code'
+            'response_type': 'code',
+             'allow_signup': 'true' 
         }
         
         return redirect(f"{GITHUB_AUTHORIZE_URL}?{urlencode(params)}")
@@ -586,8 +647,7 @@ def auth_callback(name):
             
             user.jeton_github = access_token
             
-            # ✅ Avatar : uniquement pour les nouveaux utilisateurs
-            # Les utilisateurs existants conservent leur photo personnalisée
+            # Avatar : uniquement pour les nouveaux utilisateurs
             if is_new_user or not user.photo_profil or user.photo_profil == 'default-avatar.jpg':
                 if avatar_url:
                     local_avatar = download_and_save_avatar(avatar_url, user.id, 'avatar')
@@ -595,7 +655,6 @@ def auth_callback(name):
                         user.photo_profil = local_avatar
                         logger.info(f"Avatar GitHub téléchargé pour {user.email}: {local_avatar}")
                     else:
-                        # Fallback vers avatar par défaut — on ne stocke JAMAIS une URL externe
                         user.photo_profil = 'default-avatar.jpg'
                         logger.warning(f"Échec téléchargement avatar GitHub pour {user.email}, utilisation avatar par défaut")
                 else:
@@ -715,8 +774,7 @@ def auth_callback(name):
                 db.session.add(user)
                 db.session.flush()
             
-            # ✅ Avatar : uniquement pour les nouveaux utilisateurs
-            # Les utilisateurs existants conservent leur photo personnalisée
+            # Avatar : uniquement pour les nouveaux utilisateurs
             if is_new_user or not user.photo_profil or user.photo_profil == 'default-avatar.jpg':
                 if avatar_url:
                     local_avatar = download_and_save_avatar(avatar_url, user.id, 'avatar')
@@ -724,7 +782,6 @@ def auth_callback(name):
                         user.photo_profil = local_avatar
                         logger.info(f"Avatar Google téléchargé pour {user.email}: {local_avatar}")
                     else:
-                        # Fallback vers avatar par défaut — on ne stocke JAMAIS une URL externe
                         user.photo_profil = 'default-avatar.jpg'
                         logger.warning(f"Échec téléchargement avatar Google pour {user.email}, utilisation avatar par défaut")
                 else:
@@ -857,6 +914,16 @@ def edit_project(id):
 
     if request.method == 'POST':
         try:
+            print("\n" + "="*50)
+            print("DÉBUT MODIFICATION PROJET")
+            print("="*50)
+            print(f"Projet ID: {id}")
+            print(f"Projet nom actuel: {projet.nom}")
+            print(f"Image couverture actuelle: {projet.image_couverture}")
+            print(f"Logo actuel: {projet.logo_projet}")
+            print(f"Utilisateur ID: {current_user.id}")
+            
+            # Récupération des données du formulaire
             projet.nom = request.form.get('nom', projet.nom)
             projet.description = request.form.get('description', projet.description)
             projet.demo_url = request.form.get('demo_url', projet.demo_url)
@@ -864,45 +931,135 @@ def edit_project(id):
             
             est_collab = request.form.get('est_collaboration')
             projet.est_collaboration = est_collab == '1' if est_collab else False
+            print(f"Type de projet: {'Collaboration' if projet.est_collaboration else 'Personnel'}")
 
+            # Gestion des technologies
             technologies_str = request.form.get('technologies_annexes', '')
             if technologies_str.strip():
                 technologie_liste = [tech.strip() for tech in technologies_str.split(',') if tech.strip()]
                 projet.technologies_annexes = technologie_liste
+                print(f"Technologies mises à jour: {technologie_liste}")
             else:
                 projet.technologies_annexes = []
+                print("Technologies vidées")
 
-            file = request.files.get('image_file')
-            if file and file.filename:
-                new_filename = save_media_file(file, 'proj', projet.id)
-                if new_filename:
-                    if projet.image_couverture:
-                        delete_media_file(projet.image_couverture, 'proj')
-                    projet.image_couverture = new_filename
+            # GESTION DE L'IMAGE DE COUVERTURE
+            print("\n--- TRAITEMENT IMAGE DE COUVERTURE ---")
+            
+            delete_image = request.form.get('delete_image')
+            print(f"Suppression demandée: {delete_image}")
+            
+            if delete_image == '1':
+                if projet.image_couverture:
+                    print(f"🗑️ Suppression de l'image: {projet.image_couverture}")
+                    delete_media_file(projet.image_couverture, 'proj')
+                    projet.image_couverture = None
+                    print("✅ Image de couverture supprimée")
+                    flash('Image de couverture supprimée', 'info')
                 else:
-                    flash("Format de fichier non supporté. Utilisez PNG, JPG ou GIF.", "warning")
-
+                    print("⚠️ Aucune image à supprimer")
+            
+            image_file = request.files.get('image_file')
+            
+            if image_file and image_file.filename and image_file.filename.strip():
+                print(f"📤 Upload de nouvelle image: {image_file.filename}")
+                
+                allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+                filename = secure_filename(image_file.filename)
+                ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
+                
+                if ext in allowed_extensions:
+                    new_filename = save_media_file(image_file, 'proj', projet.id)
+                    
+                    if new_filename:
+                        if projet.image_couverture and projet.image_couverture != new_filename:
+                            print(f"  - Suppression de l'ancienne image: {projet.image_couverture}")
+                            delete_media_file(projet.image_couverture, 'proj')
+                        
+                        projet.image_couverture = new_filename
+                        print(f"✅ Image assignée à projet.image_couverture: {projet.image_couverture}")
+                        flash('Image de couverture mise à jour avec succès', 'success')
+                    else:
+                        print("❌ ERREUR: save_media_file a retourné None")
+                        flash('Erreur lors de la sauvegarde de l\'image de couverture', 'danger')
+                else:
+                    print(f"❌ Extension non autorisée: {ext}")
+                    flash(f'Format non supporté pour la couverture. Utilisez: {", ".join(allowed_extensions)}', 'warning')
+            
+            # GESTION DU LOGO
+            print("\n--- TRAITEMENT LOGO ---")
+            
+            delete_logo = request.form.get('delete_logo')
+            print(f"Suppression logo demandée: {delete_logo}")
+            
+            if delete_logo == '1':
+                if projet.logo_projet:
+                    print(f"🗑️ Suppression du logo: {projet.logo_projet}")
+                    delete_media_file(projet.logo_projet, 'proj')
+                    projet.logo_projet = None
+                    print("✅ Logo supprimé")
+                    flash('Logo supprimé', 'info')
+                else:
+                    print("⚠️ Aucun logo à supprimer")
+            
+            logo_file = request.files.get('logo_file')
+            
+            if logo_file and logo_file.filename and logo_file.filename.strip():
+                print(f"📤 Upload de nouveau logo: {logo_file.filename}")
+                
+                allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+                filename = secure_filename(logo_file.filename)
+                ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
+                
+                if ext in allowed_extensions:
+                    new_logo = save_media_file(logo_file, 'proj', projet.id)
+                    
+                    if new_logo:
+                        if projet.logo_projet and projet.logo_projet != new_logo:
+                            print(f"  - Suppression de l'ancien logo: {projet.logo_projet}")
+                            delete_media_file(projet.logo_projet, 'proj')
+                        
+                        projet.logo_projet = new_logo
+                        print(f"✅ Logo assigné à projet.logo_projet: {projet.logo_projet}")
+                        flash('Logo mis à jour avec succès', 'success')
+                    else:
+                        print("❌ ERREUR: save_media_file a retourné None")
+                        flash('Erreur lors de la sauvegarde du logo', 'danger')
+                else:
+                    print(f"❌ Extension non autorisée: {ext}")
+                    flash(f'Format non supporté pour le logo. Utilisez: {", ".join(allowed_extensions)}', 'warning')
+            
             projet.date_mise_a_jour = datetime.utcnow()
             
+            print("\n💾 Tentative de commit dans la base de données...")
             db.session.commit()
+            print("✅ COMMIT RÉUSSI!")
+            
             flash("Informations mises à jour avec succès !", "success")
             return redirect(url_for('admin.list_repos'))
             
         except Exception as e:
             db.session.rollback()
+            print(f"❌ ERREUR: {e}")
+            import traceback
+            traceback.print_exc()
             flash(f"Erreur lors de l'enregistrement: {str(e)}", "danger")
             return redirect(url_for('admin.edit_project', id=id))
-
+    
+    # GET request - Affichage du formulaire
     technologies_texte = ""
     if projet.technologies_annexes:
         if isinstance(projet.technologies_annexes, list):
             technologies_texte = ", ".join(projet.technologies_annexes)
         else:
             technologies_texte = projet.technologies_annexes
-
+    
+    projet_phare = None
+    
     return render_template('admin/edit_project.html', 
                          projet=projet, 
-                         technologies_texte=technologies_texte)
+                         technologies_texte=technologies_texte,
+                         projet_phare=projet_phare)
 
 @admin_bp.route('/delete-project/<int:id>', methods=['POST'])
 @login_required
@@ -1177,7 +1334,7 @@ def about_edit():
             config.certifications_titre = request.form.get('certifications_titre', config.certifications_titre)
             config.certifications_sous_titre = request.form.get('certifications_sous_titre', config.certifications_sous_titre)
             
-            # --- GESTION DES JSON ---
+            # GESTION DES JSON
             v_icons = request.form.getlist('valeur_icone[]')
             v_titres = request.form.getlist('valeur_titre[]')
             v_descriptions = request.form.getlist('valeur_description[]')
@@ -1373,6 +1530,80 @@ def init_media_folders():
     except Exception as e:
         return f"Erreur lors de la création de la structure media: {str(e)}"
 
+# --- ROUTES DE DÉBOGAGE GITHUB ---
+
+@admin_bp.route('/debug-github-token')
+@login_required
+def debug_github_token():
+    """Vérifie les permissions du token GitHub"""
+    if not current_user.jeton_github:
+        return {"error": "Pas de token GitHub"}
+    
+    headers = {
+        'Authorization': f'token {current_user.jeton_github}',
+        'Accept': 'application/vnd.github.v3+json'
+    }
+    
+    # Vérifier les scopes du token
+    response = requests.get('https://api.github.com/user', headers=headers)
+    scopes = response.headers.get('X-OAuth-Scopes', 'Non spécifié')
+    
+    # Vérifier les invitations en attente
+    invites_response = requests.get('https://api.github.com/user/repository_invitations', headers=headers)
+    pending_invites = invites_response.json() if invites_response.status_code == 200 else []
+    
+    return {
+        "scopes": scopes,
+        "has_repo_scope": "repo" in scopes,
+        "pending_invites_count": len(pending_invites),
+        "pending_invites": pending_invites,
+        "token_preview": current_user.jeton_github[:10] + "..."
+    }
+
+@admin_bp.route('/accept-invitations')
+@login_required
+def accept_invitations():
+    """Accepte toutes les invitations GitHub en attente"""
+    if not current_user.jeton_github:
+        flash("Token GitHub non configuré", "danger")
+        return redirect(url_for('admin.edit_profile'))
+    
+    headers = {
+        'Authorization': f'token {current_user.jeton_github}',
+        'Accept': 'application/vnd.github.v3+json'
+    }
+    
+    # Récupérer les invitations
+    response = requests.get('https://api.github.com/user/repository_invitations', headers=headers)
+    
+    if response.status_code != 200:
+        flash("Impossible de récupérer les invitations", "danger")
+        return redirect(url_for('admin.import_view'))
+    
+    invitations = response.json()
+    accepted = 0
+    
+    for invite in invitations:
+        invite_id = invite['id']
+        repo_name = invite['repository']['full_name']
+        
+        # Accepter l'invitation
+        accept_response = requests.patch(
+            f'https://api.github.com/user/repository_invitations/{invite_id}',
+            headers=headers
+        )
+        
+        if accept_response.status_code == 204:
+            accepted += 1
+            flash(f"✅ Invitation acceptée pour {repo_name}", "success")
+        else:
+            flash(f"❌ Erreur pour {repo_name}", "danger")
+    
+    if accepted > 0:
+        flash(f"{accepted} invitation(s) acceptée(s)! Rafraîchissez la liste des dépôts.", "success")
+    
+    return redirect(url_for('admin.import_view'))
+
 # ============================================
 # BLUEPRINT GITHUB (Routes GitHub OAuth)
 # ============================================
@@ -1525,6 +1756,8 @@ def serve_public_media(folder, filename):
             return send_from_directory(media_dir, default_file)
         except:
             abort(404)
+    print(f"Cherche: {os.path.join(media_dir, filename)}")
+    print(f"Existe: {os.path.exists(os.path.join(media_dir, filename))}")
     
 @admin_bp.route('/authorize')
 @login_required

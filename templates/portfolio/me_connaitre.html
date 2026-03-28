@@ -241,11 +241,13 @@
 
         .value-card {
             background: var(--white);
-            padding: 40px 30px;
+            padding: 10px;
             border-radius: 15px;
             text-align: center;
             box-shadow: var(--shadow);
             transition: var(--transition);
+            display: inline-flex;
+            gap: 10px;
         }
 
         .value-card:hover {
@@ -266,15 +268,16 @@
             color: var(--primary);
         }
 
-        .value-card h4 {
+        .content-value h4 {
             font-size: 20px;
             margin-bottom: 15px;
             color: var(--dark-bg);
         }
 
-        .value-card p {
+        .content-value p {
             color: var(--text-light);
             line-height: 1.6;
+            margin-bottom: 0;
         }
 
         /* Formation Items */
@@ -575,8 +578,10 @@
                         <div class="value-icon">
                             <i class="{{ valeur.icon if valeur.icon else 'fas fa-lightbulb' }}"></i>
                         </div>
-                        <h4>{{ valeur.titre }}</h4>
+                        <div class="content-value">
+                            <h4>{{ valeur.titre }}</h4>
                         <p>{{ valeur.description }}</p>
+                        </div>
                     </div>
                     {% endfor %}
                 </div>

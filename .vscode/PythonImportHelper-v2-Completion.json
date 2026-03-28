@@ -738,7 +738,7 @@
         "kind": 2,
         "importPath": "routes",
         "description": "routes",
-        "peekOfCode": "def get_common_context():\n    \"\"\"Fonction utilitaire pour récupérer les données communes à toutes les pages du portfolio\"\"\"\n    user = Utilisateur.query.first()\n    return {'user': user}\ndef ensure_token_column_exists():\n    \"\"\"Vérifie et crée la colonne jeton_identification si elle n'existe pas\"\"\"\n    try:\n        inspector = inspect(db.engine)\n        if not inspector.has_table('utilisateurs'):\n            print(\"⚠️ Table utilisateurs n'existe pas encore\")",
+        "peekOfCode": "def get_common_context():\n    user = Utilisateur.query.order_by(Utilisateur.id.asc()).first()\n    # ou mieux, prend le user qui a un CV/profil rempli :\n    user = Utilisateur.query.filter(Utilisateur.est_confirme == True).first()\n    return {'user': user}\ndef ensure_token_column_exists():\n    \"\"\"Vérifie et crée la colonne jeton_identification si elle n'existe pas\"\"\"\n    try:\n        inspector = inspect(db.engine)\n        if not inspector.has_table('utilisateurs'):",
         "detail": "routes",
         "documentation": {}
     },
@@ -756,7 +756,7 @@
         "kind": 2,
         "importPath": "routes",
         "description": "routes",
-        "peekOfCode": "def fetch_github_repos(token, max_retries=3):\n    \"\"\"Récupère les dépôts GitHub avec gestion des erreurs de connexion\"\"\"\n    if not token:\n        return [], \"Token GitHub non configuré\"\n    headers = {\n        'Authorization': f'token {token}',\n        'Accept': 'application/vnd.github.v3+json'\n    }\n    url = 'https://api.github.com/user/repos?sort=updated&per_page=50&affiliation=owner,collaborator'\n    for attempt in range(max_retries):",
+        "peekOfCode": "def fetch_github_repos(token, max_retries=3):\n    \"\"\"Récupère les dépôts GitHub avec gestion des erreurs de connexion\"\"\"\n    if not token:\n        return [], \"Token GitHub non configuré\"\n    headers = {\n        'Authorization': f'token {token}',\n        'Accept': 'application/vnd.github.v3+json'\n    }\n    # Vérifier les scopes du token\n    try:",
         "detail": "routes",
         "documentation": {}
     },
@@ -900,7 +900,7 @@
         "kind": 2,
         "importPath": "routes",
         "description": "routes",
-        "peekOfCode": "def edit_project(id):\n    projet = Projet.query.filter_by(id=id, utilisateur_id=current_user.id).first_or_404()\n    if request.method == 'POST':\n        try:\n            projet.nom = request.form.get('nom', projet.nom)\n            projet.description = request.form.get('description', projet.description)\n            projet.demo_url = request.form.get('demo_url', projet.demo_url)\n            projet.structure_nom = request.form.get('structure_nom', projet.structure_nom)\n            est_collab = request.form.get('est_collaboration')\n            projet.est_collaboration = est_collab == '1' if est_collab else False",
+        "peekOfCode": "def edit_project(id):\n    projet = Projet.query.filter_by(id=id, utilisateur_id=current_user.id).first_or_404()\n    if request.method == 'POST':\n        try:\n            print(\"\\n\" + \"=\"*50)\n            print(\"DÉBUT MODIFICATION PROJET\")\n            print(\"=\"*50)\n            print(f\"Projet ID: {id}\")\n            print(f\"Projet nom actuel: {projet.nom}\")\n            print(f\"Image couverture actuelle: {projet.image_couverture}\")",
         "detail": "routes",
         "documentation": {}
     },
@@ -973,6 +973,24 @@
         "importPath": "routes",
         "description": "routes",
         "peekOfCode": "def init_media_folders():\n    try:\n        project_root = current_app.root_path\n        media_path = os.path.join(project_root, 'media')\n        subdirs = ['profiles', 'covers', 'docs', 'projects', 'about', 'uploads']\n        for subdir in subdirs:\n            dir_path = os.path.join(media_path, subdir)\n            if not os.path.exists(dir_path):\n                os.makedirs(dir_path, exist_ok=True)\n                print(f\"Créé: {dir_path}\")",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "debug_github_token",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def debug_github_token():\n    \"\"\"Vérifie les permissions du token GitHub\"\"\"\n    if not current_user.jeton_github:\n        return {\"error\": \"Pas de token GitHub\"}\n    headers = {\n        'Authorization': f'token {current_user.jeton_github}',\n        'Accept': 'application/vnd.github.v3+json'\n    }\n    # Vérifier les scopes du token\n    response = requests.get('https://api.github.com/user', headers=headers)",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "accept_invitations",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def accept_invitations():\n    \"\"\"Accepte toutes les invitations GitHub en attente\"\"\"\n    if not current_user.jeton_github:\n        flash(\"Token GitHub non configuré\", \"danger\")\n        return redirect(url_for('admin.edit_profile'))\n    headers = {\n        'Authorization': f'token {current_user.jeton_github}',\n        'Accept': 'application/vnd.github.v3+json'\n    }\n    # Récupérer les invitations",
         "detail": "routes",
         "documentation": {}
     },

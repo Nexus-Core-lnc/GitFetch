@@ -1,7 +1,5 @@
-{% extends "admin/master.html" %}
-
-{% block title %}Modifier Projet - GitFetch{% endblock %}
-
+{% extends "admin/master.html" %} 
+{% block title %}Modifier Projet - GitFetch{% endblock %} 
 {% block content %}
 <!DOCTYPE html>
 <html lang="fr">
@@ -14,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* Votre CSS existant - aucun changement nécessaire */
+        /* Votre CSS existant - aucun changement */
         * {
             margin: 0;
             padding: 0;
@@ -483,7 +481,6 @@
             padding: 30px;
             text-align: center;
             background: rgba(255, 193, 7, 0.05);
-            cursor: pointer;
             transition: all 0.3s;
         }
 
@@ -778,7 +775,6 @@
 
                         <div class="preview-image">
                             {% if projet.image_couverture %}
-                                {# CORRECTION: Utilisation du bon chemin pour les médias #}
                                 <img src="{{ url_for('portfolio.serve_public_media', folder='projects', filename=projet.image_couverture) }}" alt="{{ projet.nom }}">
                             {% else %}
                                 <div class="no-image">
@@ -834,7 +830,6 @@
                                     <i class="fas fa-code"></i> Technologies annexes
                                 </h4>
                                 <div class="tech-tags-container">
-                                    {# CORRECTION: Gestion correcte de la liste de technologies #}
                                     {% if projet.technologies_annexes is string %}
                                         {% set techs = projet.technologies_annexes.split(',') %}
                                     {% else %}
@@ -856,7 +851,6 @@
                     <!-- User Info Sidebar -->
                     <div class="user-info-sidebar">
                         <div class="user-info-header">
-                            {# CORRECTION: Chemin correct pour l'avatar #}
                             <img src="{% if current_user.photo_profil and current_user.photo_profil != 'default-avatar.jpg' %}{{ url_for('portfolio.serve_public_media', folder='profiles', filename=current_user.photo_profil) }}{% else %}{{ url_for('static', filename='img/default-avatar.jpg') }}{% endif %}" 
                                  alt="{{ current_user.nom_utilisateur }}" 
                                  class="user-avatar-img"
@@ -868,7 +862,6 @@
                         </div>
 
                         <div class="user-stats">
-                            {# CORRECTION: Vérification que current_user.projets existe #}
                             <div class="stat-item">
                                 <div class="stat-value">{{ current_user.projets|length if current_user.projets else 0 }}</div>
                                 <div class="stat-label">Projets total</div>
@@ -878,7 +871,6 @@
                                 <div class="stat-label">ID Projet</div>
                             </div>
                             <div class="stat-item">
-                                {# CORRECTION: Gestion des dates None #}
                                 <div class="stat-value">{{ projet.date_creation.strftime('%d/%m/%Y') if projet.date_creation else 'N/A' }}</div>
                                 <div class="stat-label">Créé le</div>
                             </div>
@@ -965,43 +957,92 @@
                             </select>
                         </div>
 
-                        <!-- Image de couverture -->
+                        <!-- Image de couverture - VERSION CORRIGÉE -->
                         <div class="form-group image-upload">
                             <label><i class="fas fa-image"></i> Image de couverture</label>
-                            
+
                             {% if projet.image_couverture %}
                             <div class="current-image">
-                                {# CORRECTION: Chemin correct pour l'image #}
                                 <img src="{{ url_for('portfolio.serve_public_media', folder='projects', filename=projet.image_couverture) }}" alt="Image actuelle">
                                 <div class="image-info">
                                     <p>Image actuelle : <strong>{{ projet.image_couverture }}</strong></p>
-                                    <p style="font-size: 12px; color: #999;">
+                                    <p style="font-size: 12px; color: #999">
                                         <i class="fas fa-info-circle"></i> Laissez vide pour conserver cette image
                                     </p>
                                 </div>
                             </div>
                             {% endif %}
 
-                            <div class="upload-area" onclick="document.getElementById('image_file').click()">
+                            <!-- Upload area CORRIGÉE - ne supprime plus le champ file -->
+                            <div class="upload-area">
                                 <i class="fas fa-cloud-upload-alt"></i>
                                 <p>Cliquez pour télécharger une nouvelle image</p>
                                 <span>JPG, PNG ou GIF (max 5MB)</span>
-                                <input type="file" id="image_file" name="image_file" accept="image/*" style="display: none;" onchange="previewImage(this)">
+                                <input type="file" id="image_file" name="image_file" accept="image/*" 
+                                       style="display: block; margin: 15px auto 0 auto; width: auto; cursor: pointer;" 
+                                       onchange="previewImageFixed(this)">
+                                <div id="image_selection_info" style="margin-top: 10px;"></div>
                             </div>
-                            <div id="image-preview" style="display: none; margin-top: 15px;">
+                            
+                            <div id="image-preview" style="display: none; margin-top: 15px">
                                 <p style="margin-bottom: 10px; font-size: 14px; color: var(--success-color);">
                                     <i class="fas fa-check-circle"></i> Nouvelle image sélectionnée :
                                 </p>
                                 <img id="preview" style="max-width: 100%; max-height: 200px; border-radius: 8px; border: 2px solid var(--primary-color);">
                             </div>
-                            
-                            {# AJOUT: Option pour supprimer l'image #}
+
                             {% if projet.image_couverture %}
-                            <div style="margin-top: 10px;">
+                            <div style="margin-top: 10px">
                                 <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                                     <input type="checkbox" name="delete_image" value="1">
                                     <i class="fas fa-trash-alt" style="color: var(--danger-color);"></i>
                                     Supprimer l'image actuelle
+                                </label>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Logo du projet - VERSION CORRIGÉE -->
+                        <div class="form-group image-upload">
+                            <label><i class="fas fa-star"></i> Logo du projet</label>
+
+                            {% if projet.logo_projet %}
+                            <div class="current-image">
+                                <img src="{{ url_for('portfolio.serve_public_media', folder='projects', filename=projet.logo_projet) }}" 
+                                     alt="Logo actuel"
+                                     style="max-height: 80px; object-fit: contain; background: #f8f9fa; padding: 8px; border-radius: 8px;">
+                                <div class="image-info">
+                                    <p>Logo actuel : <strong>{{ projet.logo_projet }}</strong></p>
+                                    <p style="font-size: 12px; color: #999">
+                                        <i class="fas fa-info-circle"></i> Laissez vide pour conserver ce logo
+                                    </p>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <div class="upload-area">
+                                <i class="fas fa-star"></i>
+                                <p>Cliquez pour télécharger un logo</p>
+                                <span>PNG ou WEBP recommandé (fond transparent)</span>
+                                <input type="file" id="logo_file" name="logo_file" accept="image/*" 
+                                       style="display: block; margin: 15px auto 0 auto; width: auto; cursor: pointer;" 
+                                       onchange="previewLogoFixed(this)">
+                                <div id="logo_selection_info" style="margin-top: 10px;"></div>
+                            </div>
+                            
+                            <div id="logo-preview" style="display: none; margin-top: 15px">
+                                <p style="margin-bottom: 10px; font-size: 14px; color: var(--success-color);">
+                                    <i class="fas fa-check-circle"></i> Nouveau logo sélectionné :
+                                </p>
+                                <img id="preview-logo" style="max-height: 80px; border-radius: 8px; border: 2px solid var(--primary-color); background: #f8f9fa; padding: 6px;">
+                            </div>
+
+                            {% if projet.logo_projet %}
+                            <div style="margin-top: 10px">
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                    <input type="checkbox" name="delete_logo" value="1">
+                                    <i class="fas fa-trash-alt" style="color: var(--danger-color);"></i>
+                                    Supprimer le logo actuel
                                 </label>
                             </div>
                             {% endif %}
@@ -1041,104 +1082,138 @@
     </section>
 
     <script>
-        // Fonction pour prévisualiser l'image
-        function previewImage(input) {
-            const preview = document.getElementById('preview');
-            const previewContainer = document.getElementById('image-preview');
-            
+        // Fonction pour prévisualiser l'image - VERSION CORRIGÉE (ne supprime pas le champ file)
+        function previewImageFixed(input) {
+            const preview = document.getElementById("preview");
+            const previewContainer = document.getElementById("image-preview");
+            const selectionInfo = document.getElementById("image_selection_info");
+
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
-                
+
                 reader.onload = function(e) {
                     preview.src = e.target.result;
-                    previewContainer.style.display = 'block';
-                }
-                
+                    previewContainer.style.display = "block";
+                };
+
                 reader.readAsDataURL(input.files[0]);
                 
-                // Mettre à jour le texte de l'upload area
-                const uploadArea = document.querySelector('.upload-area');
-                uploadArea.innerHTML = `
-                    <i class="fas fa-check-circle" style="color: #28a745;"></i>
-                    <p style="color: #28a745;">Image sélectionnée : ${input.files[0].name}</p>
-                    <span style="color: #28a745;">Cliquez pour changer d'image</span>
-                `;
+                // Afficher l'info sans supprimer le champ file
+                if (selectionInfo) {
+                    selectionInfo.innerHTML = `
+                        <i class="fas fa-check-circle" style="color: #28a745;"></i>
+                        <span style="color: #28a745; margin-left: 5px;">
+                            Fichier sélectionné : ${input.files[0].name}
+                        </span>
+                    `;
+                }
+                
+                // Changer la couleur du texte principal
+                const uploadArea = input.closest('.upload-area');
+                const p = uploadArea.querySelector('p');
+                if (p) {
+                    p.style.color = '#28a745';
+                }
+            }
+        }
+
+        // Fonction pour prévisualiser le logo - VERSION CORRIGÉE
+        function previewLogoFixed(input) {
+            const preview = document.getElementById("preview-logo");
+            const previewContainer = document.getElementById("logo-preview");
+            const selectionInfo = document.getElementById("logo_selection_info");
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    previewContainer.style.display = "block";
+                };
+
+                reader.readAsDataURL(input.files[0]);
+                
+                // Afficher l'info sans supprimer le champ file
+                if (selectionInfo) {
+                    selectionInfo.innerHTML = `
+                        <i class="fas fa-check-circle" style="color: #28a745;"></i>
+                        <span style="color: #28a745; margin-left: 5px;">
+                            Fichier sélectionné : ${input.files[0].name}
+                        </span>
+                    `;
+                }
+                
+                // Changer la couleur du texte principal
+                const uploadArea = input.closest('.upload-area');
+                const p = uploadArea.querySelector('p');
+                if (p) {
+                    p.style.color = '#28a745';
+                }
             }
         }
 
         // Fonction pour confirmer la suppression
         function confirmDelete(projectId) {
-            if (confirm('Êtes-vous sûr de vouloir supprimer ce projet ? Cette action est irréversible.')) {
+            if (confirm("Êtes-vous sûr de vouloir supprimer ce projet ? Cette action est irréversible.")) {
                 document.getElementById(`delete-form-${projectId}`).submit();
             }
         }
 
         // Aperçu en temps réel des technologies annexes
-        document.addEventListener('DOMContentLoaded', function() {
-            const techInput = document.getElementById('technologies_annexes');
-            
+        document.addEventListener("DOMContentLoaded", function() {
+            const techInput = document.getElementById("technologies_annexes");
+
             if (techInput) {
-                const livePreview = document.getElementById('tech-live-preview');
-                const tagsContainer = document.getElementById('live-tags-container');
-                
+                const livePreview = document.getElementById("tech-live-preview");
+                const tagsContainer = document.getElementById("live-tags-container");
+
                 function updateTechPreview() {
                     const techString = techInput.value;
-                    const techs = techString.split(',')
+                    const techs = techString.split(",")
                         .map(t => t.trim())
                         .filter(t => t.length > 0);
-                    
+
                     if (techs.length > 0) {
-                        // Vider le conteneur
-                        tagsContainer.innerHTML = '';
-                        
-                        // Ajouter chaque tag
+                        tagsContainer.innerHTML = "";
                         techs.forEach(tech => {
-                            const tag = document.createElement('span');
-                            tag.className = 'tech-tag';
+                            const tag = document.createElement("span");
+                            tag.className = "tech-tag";
                             tag.innerHTML = `<i class="fas fa-code"></i> ${tech}`;
                             tagsContainer.appendChild(tag);
                         });
-                        
-                        // Afficher le conteneur
-                        livePreview.style.display = 'block';
+                        livePreview.style.display = "block";
                     } else {
-                        // Cacher le conteneur
-                        livePreview.style.display = 'none';
+                        livePreview.style.display = "none";
                     }
                 }
-                
-                // Mettre à jour à chaque frappe
-                techInput.addEventListener('input', updateTechPreview);
-                
-                // Initialiser l'aperçu
+
+                techInput.addEventListener("input", updateTechPreview);
                 updateTechPreview();
             }
         });
 
         // Animation pour les éléments
-        document.addEventListener('DOMContentLoaded', function() {
-            const elements = document.querySelectorAll('.projet-preview, .edit-form-container, .user-info-sidebar');
+        document.addEventListener("DOMContentLoaded", function() {
+            const elements = document.querySelectorAll(".projet-preview, .edit-form-container, .user-info-sidebar");
             elements.forEach((element, index) => {
-                element.style.opacity = '0';
-                element.style.transform = 'translateY(30px)';
-                
+                element.style.opacity = "0";
+                element.style.transform = "translateY(30px)";
                 setTimeout(() => {
-                    element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                    element.style.opacity = '1';
-                    element.style.transform = 'translateY(0)';
+                    element.style.transition = "opacity 0.6s ease, transform 0.6s ease";
+                    element.style.opacity = "1";
+                    element.style.transform = "translateY(0)";
                 }, index * 200);
             });
         });
 
         // Animation du bouton de soumission
-        document.querySelector('.edit-form').addEventListener('submit', function(e) {
+        document.querySelector(".edit-form").addEventListener("submit", function(e) {
             const submitBtn = this.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
-            
+
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement en cours...';
             submitBtn.disabled = true;
-            
-            // Réinitialiser après 5 secondes (sécurité)
+
             setTimeout(() => {
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
@@ -1146,16 +1221,33 @@
         });
 
         // Validation du formulaire côté client
-        document.querySelector('.edit-form').addEventListener('submit', function(e) {
-            const nom = document.getElementById('nom').value.trim();
-            
+        document.querySelector(".edit-form").addEventListener("submit", function(e) {
+            const nom = document.getElementById("nom").value.trim();
             if (!nom) {
                 e.preventDefault();
-                alert('Le nom du projet est obligatoire.');
+                alert("Le nom du projet est obligatoire.");
                 return false;
             }
-            
             return true;
+        });
+
+        // Debug du formulaire
+        document.querySelector('.edit-form').addEventListener('submit', function(e) {
+            console.log('=== SOUMISSION DU FORMULAIRE ===');
+            var formData = new FormData(this);
+            console.log('Données du formulaire:');
+            for (var pair of formData.entries()) {
+                if (pair[0] === 'image_file' || pair[0] === 'logo_file') {
+                    if (pair[1] instanceof File) {
+                        console.log(`  ${pair[0]}: ${pair[1].name} (${pair[1].size} bytes, ${pair[1].type})`);
+                    } else {
+                        console.log(`  ${pair[0]}: ${pair[1]}`);
+                    }
+                } else {
+                    console.log(`  ${pair[0]}: ${pair[1]}`);
+                }
+            }
+            console.log('===============================');
         });
     </script>
 </body>
