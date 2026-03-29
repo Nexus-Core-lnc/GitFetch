@@ -5,6 +5,7 @@
 {% block content %}
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +13,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/portfolio.css') }}">
     <style>
         /* Styles spécifiques à la page À propos */
@@ -44,7 +47,10 @@
             padding-top: 90px;
         }
 
-        h1, h2, h3, h4 {
+        h1,
+        h2,
+        h3,
+        h4 {
             font-family: "Montserrat", sans-serif;
         }
 
@@ -345,6 +351,7 @@
             border-radius: 15px;
             box-shadow: var(--shadow);
             transition: var(--transition);
+            display: block;
         }
 
         .skill-item:hover {
@@ -364,7 +371,16 @@
             font-size: 24px;
             color: var(--primary);
         }
-
+        .skill-icon{
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+        }
+        .content-skill{
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+        }
         .skill-item span {
             font-size: 18px;
             font-weight: 600;
@@ -449,6 +465,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -456,8 +473,13 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         .animated {
@@ -466,6 +488,7 @@
 
         /* Responsive */
         @media (max-width: 992px) {
+
             .hero-content,
             .alternating-content {
                 grid-template-columns: 1fr;
@@ -517,107 +540,114 @@
         }
     </style>
 </head>
+
 <body>
 
-<!-- HERO SECTION -->
-<section class="hero">
-    <div class="container">
-        <div class="hero-content">
-            <div class="hero-text content-left">
-                <h1>{{ about_config.hero_titre|default("PLUS QU'UN <span class='highlight'>DÉVELOPPEUR</span>", true)|safe }}</h1>
-                <p>{{ about_config.hero_texte|default("Une passion pour l'innovation, une rigueur d'ingénieur et une vision stratégique. Découvrez le parcours et les valeurs qui façonnent mon approche technologique.", true) }}</p>
-                <div class="hero-buttons">
-                    {% if about_config and about_config.hero_bouton_1_texte %}
-                    <a href="{{ about_config.hero_bouton_1_lien|default('#formation', true) }}" class="btn">
-                        <i class="fas fa-graduation-cap"></i>
-                        {{ about_config.hero_bouton_1_texte }}
-                    </a>
-                    {% endif %}
-                    {% if about_config and about_config.hero_bouton_2_texte %}
-                    <a href="{{ about_config.hero_bouton_2_lien|default('#contact', true) }}" class="btn btn-secondary">
-                        <i class="fas fa-handshake"></i>
-                        {{ about_config.hero_bouton_2_texte }}
-                    </a>
-                    {% endif %}
-                </div>
-            </div>
-            <div class="hero-image image-right">
-                <img src="{% if about_config and about_config.hero_image %}{{ url_for('portfolio.serve_public_media', folder='about', filename=about_config.hero_image) }}{% else %}https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=1000&auto=format&fit=crop{% endif %}" 
-                     alt="Espace de travail"
-                     onerror="this.src='https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=1000&auto=format&fit=crop'">
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- PHILOSOPHIE SECTION -->
-<section class="alternating-section">
-    <div class="container">
-        <div class="alternating-content">
-            <div class="about-text content-left">
-                <div class="section-header">
-                    <h2>{{ about_config.philosophie_titre|default("MA <span class='highlight'>PHILOSOPHIE</span>", true)|safe }}</h2>
-                    {% if about_config and about_config.philosophie_sous_titre %}
-                    <h3 style="font-size: 28px; margin-bottom: 30px; color: var(--dark-bg);">{{ about_config.philosophie_sous_titre }}</h3>
-                    {% endif %}
-                </div>
-                
-                {% if about_config and about_config.philosophie_description_1 %}
-                <p style="margin-bottom: 20px;">{{ about_config.philosophie_description_1 }}</p>
-                {% endif %}
-                
-                {% if about_config and about_config.philosophie_description_2 %}
-                <p>{{ about_config.philosophie_description_2 }}</p>
-                {% endif %}
-                
-                <!-- VALEURS -->
-                {% if about_config and about_config.values_json and about_config.values_json|length > 0 %}
-                <div class="values-grid">
-                    {% for valeur in about_config.values_json %}
-                    <div class="value-card">
-                        <div class="value-icon">
-                            <i class="{{ valeur.icon if valeur.icon else 'fas fa-lightbulb' }}"></i>
-                        </div>
-                        <div class="content-value">
-                            <h4>{{ valeur.titre }}</h4>
-                        <p>{{ valeur.description }}</p>
-                        </div>
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text content-left">
+                    <h1>{{ about_config.hero_titre|default("PLUS QU'UN <span class='highlight'>DÉVELOPPEUR</span>",
+                        true)|safe }}</h1>
+                    <p>{{ about_config.hero_texte|default("Une passion pour l'innovation, une rigueur d'ingénieur et une
+                        vision stratégique. Découvrez le parcours et les valeurs qui façonnent mon approche
+                        technologique.", true) }}</p>
+                    <div class="hero-buttons">
+                        {% if about_config and about_config.hero_bouton_1_texte %}
+                        <a href="{{ about_config.hero_bouton_1_lien|default('#formation', true) }}" class="btn">
+                            <i class="fas fa-graduation-cap"></i>
+                            {{ about_config.hero_bouton_1_texte }}
+                        </a>
+                        {% endif %}
+                        {% if about_config and about_config.hero_bouton_2_texte %}
+                        <a href="{{ about_config.hero_bouton_2_lien|default('#contact', true) }}"
+                            class="btn btn-secondary">
+                            <i class="fas fa-handshake"></i>
+                            {{ about_config.hero_bouton_2_texte }}
+                        </a>
+                        {% endif %}
                     </div>
-                    {% endfor %}
+                </div>
+                <div class="hero-image image-right">
+                    <img src="{% if about_config and about_config.hero_image %}{{ url_for('portfolio.serve_public_media', folder='about', filename=about_config.hero_image) }}{% else %}https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=1000&auto=format&fit=crop{% endif %}"
+                        alt="Espace de travail"
+                        onerror="this.src='https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=1000&auto=format&fit=crop'">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PHILOSOPHIE SECTION -->
+    <section class="alternating-section">
+        <div class="container">
+            <div class="alternating-content">
+                <div class="about-text content-left">
+                    <div class="section-header">
+                        <h2>{{ about_config.philosophie_titre|default("MA <span class='highlight'>PHILOSOPHIE</span>",
+                            true)|safe }}</h2>
+                        {% if about_config and about_config.philosophie_sous_titre %}
+                        <h3 style="font-size: 28px; margin-bottom: 30px; color: var(--dark-bg);">{{
+                            about_config.philosophie_sous_titre }}</h3>
+                        {% endif %}
+                    </div>
+
+                    {% if about_config and about_config.philosophie_description_1 %}
+                    <p style="margin-bottom: 20px;">{{ about_config.philosophie_description_1 }}</p>
+                    {% endif %}
+
+                    {% if about_config and about_config.philosophie_description_2 %}
+                    <p>{{ about_config.philosophie_description_2 }}</p>
+                    {% endif %}
+
+                    <!-- VALEURS -->
+                    {% if about_config and about_config.values_json and about_config.values_json|length > 0 %}
+                    <div class="values-grid">
+                        {% for valeur in about_config.values_json %}
+                        <div class="value-card">
+                            <div class="value-icon">
+                                <i class="{{ valeur.icon if valeur.icon else 'fas fa-lightbulb' }}"></i>
+                            </div>
+                            <div class="content-value">
+                                <h4>{{ valeur.titre }}</h4>
+                                <p>{{ valeur.description }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if about_config and about_config.philosophie_image %}
+                <div class="image-container image-right">
+                    <img src="{{ url_for('portfolio.serve_public_media', folder='about', filename=about_config.philosophie_image) }}"
+                        alt="Philosophie"
+                        onerror="this.src='https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1000&auto=format&fit=crop'">
                 </div>
                 {% endif %}
             </div>
-            
-            {% if about_config and about_config.philosophie_image %}
-            <div class="image-container image-right">
-                <img src="{{ url_for('portfolio.serve_public_media', folder='about', filename=about_config.philosophie_image) }}" 
-                     alt="Philosophie"
-                     onerror="this.src='https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1000&auto=format&fit=crop'">
-            </div>
-            {% endif %}
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- PARCOURS SECTION -->
-<section class="formation-parcours" id="formation">
-    <div class="container">
-        <div class="alternating-content">
-            {% if about_config and about_config.parcours_image %}
-            <div class="image-container image-left">
-                <img src="{{ url_for('portfolio.serve_public_media', folder='about', filename=about_config.parcours_image) }}" 
-                     alt="Formation et parcours"
-                     onerror="this.src='https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=1000&auto=format&fit=crop'">
-            </div>
-            {% endif %}
-            
-            <div class="content-right">
-                <div class="section-header">
-                    <h2>FORMATION & <span class="highlight">PARCOURS</span></h2>
-                    <p>Mon évolution technique et mon expertise construite pas à pas.</p>
+    <!-- PARCOURS SECTION -->
+    <section class="formation-parcours" id="formation">
+        <div class="container">
+            <div class="alternating-content">
+                {% if about_config and about_config.parcours_image %}
+                <div class="image-container image-left">
+                    <img src="{{ url_for('portfolio.serve_public_media', folder='about', filename=about_config.parcours_image) }}"
+                        alt="Formation et parcours"
+                        onerror="this.src='https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=1000&auto=format&fit=crop'">
                 </div>
-                
-                {% if about_config and about_config.parcours_json and about_config.parcours_json|length > 0 %}
+                {% endif %}
+
+                <div class="content-right">
+                    <div class="section-header">
+                        <h2>FORMATION & <span class="highlight">PARCOURS</span></h2>
+                        <p>Mon évolution technique et mon expertise construite pas à pas.</p>
+                    </div>
+
+                    {% if about_config and about_config.parcours_json and about_config.parcours_json|length > 0 %}
                     {% for item in about_config.parcours_json %}
                     <div class="formation-item">
                         <div class="formation-year">{{ item.periode }}</div>
@@ -627,130 +657,139 @@
                         </div>
                     </div>
                     {% endfor %}
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- COMPÉTENCES SECTION -->
-<section class="alternating-section">
-    <div class="container">
-        <div class="alternating-content">
-            <div class="content-left">
-                <div class="section-header">
-                    <h2>{{ about_config.competences_titre|default("COMPÉTENCES <span class='highlight'>CLÉS</span>", true)|safe }}</h2>
-                    {% if about_config and about_config.competences_sous_titre %}
-                    <p>{{ about_config.competences_sous_titre }}</p>
                     {% endif %}
                 </div>
-                
-                {% if about_config and about_config.competences_json and about_config.competences_json|length > 0 %}
-                <div class="skills-grid">
-                    {% for competence in about_config.competences_json %}
-                    <div class="skill-item">
-                        <div class="skill-icon">
-                            <i class="{{ competence.icon if competence.icon else 'fas fa-code' }}"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMPÉTENCES SECTION -->
+    <section class="alternating-section">
+        <div class="container">
+            <div class="alternating-content">
+                <div class="content-left">
+                    <div class="section-header">
+                        <h2>{{ about_config.competences_titre|default("COMPÉTENCES <span class='highlight'>CLÉS</span>",
+                            true)|safe }}</h2>
+                        {% if about_config and about_config.competences_sous_titre %}
+                        <p>{{ about_config.competences_sous_titre }}</p>
+                        {% endif %}
+                    </div>
+
+                    {% if about_config and about_config.competences_json and about_config.competences_json|length > 0 %}
+                    <div class="skills-grid">
+                        {% for competence in about_config.competences_json %}
+                        <div class="skill-item">
+                            <div class="skill-icon">
+                                <i class="{{ competence.icon if competence.icon else 'fas fa-code' }}"></i>
+                            </div>
+                            <div class="content" style="display: flex;flex-direction: column;align-items: center;">
+                                <span>{{ competence.titre }}</span>
+                                <p>{{ competence.description }}</p>
+                            </div>
+
                         </div>
-                        <span>{{ competence.titre }}</span>
-                        <p>{{ competence.description }}</p>
                     </div>
                     {% endfor %}
                 </div>
                 {% endif %}
             </div>
-            
+
             {% if about_config and about_config.competences_image %}
             <div class="image-container image-right">
-                <img src="{{ url_for('portfolio.serve_public_media', folder='about', filename=about_config.competences_image) }}" 
-                     alt="Compétences techniques"
-                     onerror="this.src='https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000&auto=format&fit=crop'">
+                <img src="{{ url_for('portfolio.serve_public_media', folder='about', filename=about_config.competences_image) }}"
+                    alt="Compétences techniques"
+                    onerror="this.src='https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000&auto=format&fit=crop'">
             </div>
             {% endif %}
         </div>
-    </div>
-</section>
+        </div>
+    </section>
 
-<!-- CERTIFICATIONS SECTION -->
-<section class="certifications alternating-section">
-    <div class="container">
-        <div class="alternating-content">
-            {% if about_config and about_config.certifications_image %}
-            <div class="image-container image-left">
-                <img src="{{ url_for('portfolio.serve_public_media', folder='about', filename=about_config.certifications_image) }}" 
-                     alt="Certifications"
-                     onerror="this.src='https://images.unsplash.com/photo-1546410531-bb4caa6b424d?q=80&w=1000&auto=format&fit=crop'">
-            </div>
-            {% endif %}
-            
-            <div class="content-right">
-                <div class="section-header">
-                    <h2>{{ about_config.certifications_titre|default("CERTIFICATIONS <span class='highlight'>RECONNUES</span>", true)|safe }}</h2>
-                    {% if about_config and about_config.certifications_sous_titre %}
-                    <p>{{ about_config.certifications_sous_titre }}</p>
-                    {% endif %}
-                </div>
-                
-                {% if about_config and about_config.certifications_json and about_config.certifications_json|length > 0 %}
-                <div class="cert-grid">
-                    {% for cert in about_config.certifications_json %}
-                    <div class="cert-card">
-                        <h4>{{ cert.titre }}</h4>
-                        <span class="issuer">{{ cert.organisme }}</span>
-                        <p>{{ cert.description }}</p>
-                    </div>
-                    {% endfor %}
+    <!-- CERTIFICATIONS SECTION -->
+    <section class="certifications alternating-section">
+        <div class="container">
+            <div class="alternating-content">
+                {% if about_config and about_config.certifications_image %}
+                <div class="image-container image-left">
+                    <img src="{{ url_for('portfolio.serve_public_media', folder='about', filename=about_config.certifications_image) }}"
+                        alt="Certifications"
+                        onerror="this.src='https://images.unsplash.com/photo-1546410531-bb4caa6b424d?q=80&w=1000&auto=format&fit=crop'">
                 </div>
                 {% endif %}
+
+                <div class="content-right">
+                    <div class="section-header">
+                        <h2>{{ about_config.certifications_titre|default("CERTIFICATIONS <span
+                                class='highlight'>RECONNUES</span>", true)|safe }}</h2>
+                        {% if about_config and about_config.certifications_sous_titre %}
+                        <p>{{ about_config.certifications_sous_titre }}</p>
+                        {% endif %}
+                    </div>
+
+                    {% if about_config and about_config.certifications_json and about_config.certifications_json|length
+                    > 0 %}
+                    <div class="cert-grid">
+                        {% for cert in about_config.certifications_json %}
+                        <div class="cert-card">
+                            <h4>{{ cert.titre }}</h4>
+                            <span class="issuer">{{ cert.organisme }}</span>
+                            <p>{{ cert.description }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- CTA SECTION -->
-<section class="cta" id="contact">
-    <div class="container">
-        <h2>PARLONS DE <span class="light">VOS PROJETS</span></h2>
-        <p>Chaque grande collaboration commence par une conversation. Partagez vos idées et construisons ensemble l'avenir numérique.</p>
-        <a href="{{ url_for('portfolio.contact') }}" class="btn btn-dark">
-            <i class="fas fa-comments"></i>
-            COMMENCER LA DISCUSSION
-        </a>
-    </div>
-</section>
+    <!-- CTA SECTION -->
+    <section class="cta" id="contact">
+        <div class="container">
+            <h2>PARLONS DE <span class="light">VOS PROJETS</span></h2>
+            <p>Chaque grande collaboration commence par une conversation. Partagez vos idées et construisons ensemble
+                l'avenir numérique.</p>
+            <a href="{{ url_for('portfolio.contact') }}" class="btn btn-dark">
+                <i class="fas fa-comments"></i>
+                COMMENCER LA DISCUSSION
+            </a>
+        </div>
+    </section>
 
-<script>
-    // Animation des éléments au scroll
-    document.addEventListener('DOMContentLoaded', function() {
-        const animatedElements = document.querySelectorAll('.formation-item, .value-card, .cert-card, .image-container');
-        
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animated');
-                    observer.unobserve(entry.target);
-                }
+    <script>
+        // Animation des éléments au scroll
+        document.addEventListener('DOMContentLoaded', function () {
+            const animatedElements = document.querySelectorAll('.formation-item, .value-card, .cert-card, .image-container');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animated');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
             });
-        }, {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
+
+            animatedElements.forEach(el => {
+                observer.observe(el);
+            });
+
+            // Animation des cartes de valeurs avec délai
+            document.querySelectorAll('.value-card').forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.2}s`;
+            });
+
+            // Animation des items de formation avec délai
+            document.querySelectorAll('.formation-item').forEach((item, index) => {
+                item.style.animationDelay = `${index * 0.15}s`;
+            });
         });
-        
-        animatedElements.forEach(el => {
-            observer.observe(el);
-        });
-        
-        // Animation des cartes de valeurs avec délai
-        document.querySelectorAll('.value-card').forEach((card, index) => {
-            card.style.animationDelay = `${index * 0.2}s`;
-        });
-        
-        // Animation des items de formation avec délai
-        document.querySelectorAll('.formation-item').forEach((item, index) => {
-            item.style.animationDelay = `${index * 0.15}s`;
-        });
-    });
-</script>
+    </script>
 </body>
+
 </html>
 {% endblock %}

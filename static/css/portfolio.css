@@ -202,10 +202,16 @@ h4,
   opacity: 0;
   animation: fadeInUp 1s ease-out 0.8s forwards;
 }
+.content-skill {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
 
 .skill-item {
   display: flex;
   align-items: center;
+  flex-direction: row;
   gap: 15px;
   padding: 15px;
   background: #f9f9f9;
