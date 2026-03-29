@@ -30,7 +30,6 @@
             --white: #ffffff;
             --light-bg: #f9f9f9;
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.15);
             --success-color: #28a745;
             --danger-color: #dc3545;
         }
@@ -40,10 +39,6 @@
             color: #333;
             line-height: 1.6;
             background-color: var(--white);
-        }
-
-        h1, h2, h3, h4 {
-            font-family: "Montserrat", sans-serif;
         }
 
         .container {
@@ -78,12 +73,10 @@
         .btn-success {
             background: var(--success-color);
             color: white;
-            border: none;
         }
 
         .btn-success:hover {
             background: #218838;
-            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
         }
 
         .btn-small {
@@ -96,29 +89,12 @@
             color: white;
         }
 
-        .btn-danger:hover {
-            background: #c82333;
-            box-shadow: 0 10px 20px rgba(220, 53, 69, 0.3);
-        }
-
         /* Page Header */
         .page-header {
             background: linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
             padding: 80px 0 60px;
             color: var(--white);
             position: relative;
-            overflow: hidden;
-        }
-
-        .page-header::before {
-            content: "";
-            position: absolute;
-            width: 400px;
-            height: 400px;
-            background: rgba(255, 193, 7, 0.03);
-            border-radius: 50%;
-            top: -200px;
-            right: -100px;
         }
 
         .page-header-content {
@@ -133,33 +109,10 @@
         .page-header-text h1 {
             font-size: 46px;
             margin-bottom: 15px;
-            opacity: 0;
-            animation: fadeInUp 1s ease-out forwards;
         }
 
         .page-header-text h1 .highlight {
             color: var(--primary-color);
-            position: relative;
-            display: inline-block;
-        }
-
-        .page-header-text h1 .highlight::after {
-            content: "";
-            position: absolute;
-            bottom: 5px;
-            left: 0;
-            width: 100%;
-            height: 8px;
-            background-color: rgba(255, 193, 7, 0.2);
-            z-index: -1;
-        }
-
-        .page-header-text p {
-            color: var(--light-text);
-            font-size: 18px;
-            max-width: 700px;
-            opacity: 0;
-            animation: fadeInUp 1s ease-out 0.3s forwards;
         }
 
         .back-btn {
@@ -173,7 +126,6 @@
             border-radius: 8px;
             font-weight: 600;
             transition: all 0.3s;
-            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .back-btn:hover {
@@ -205,12 +157,6 @@
         .form-header h2 {
             font-size: 32px;
             color: var(--dark-bg);
-            margin-bottom: 10px;
-        }
-
-        .form-header p {
-            color: var(--gray-text);
-            font-size: 16px;
         }
 
         /* Section Cards */
@@ -219,7 +165,6 @@
             border-radius: 12px;
             padding: 30px;
             margin-bottom: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         }
 
         .section-header {
@@ -275,19 +220,10 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 15px;
         }
 
         .form-group label i {
             color: var(--primary-color);
-        }
-
-        .label-hint {
-            display: block;
-            font-size: 13px;
-            color: var(--gray-text);
-            font-weight: 400;
-            margin-top: 3px;
         }
 
         .form-group input,
@@ -302,16 +238,111 @@
         }
 
         .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
+        .form-group textarea:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.1);
         }
 
         .form-group textarea {
             min-height: 100px;
             resize: vertical;
+        }
+
+        /* Preview Cards */
+        .preview-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .preview-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark-bg);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .preview-title i {
+            color: var(--primary-color);
+        }
+
+        .skills-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .skill-badge {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            padding: 12px 20px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            color: #000;
+            box-shadow: 0 4px 10px rgba(255, 193, 7, 0.2);
+        }
+
+        .skill-badge i {
+            font-size: 24px;
+        }
+
+        /* Progress Bar Styles */
+        .tech-progress-preview {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .tech-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .tech-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .tech-header i {
+            font-size: 28px;
+            color: var(--primary-color);
+            width: 40px;
+        }
+
+        .tech-name {
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .tech-percent {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .progress-bar-container {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-bar-fill {
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            width: 0%;
         }
 
         /* Dynamic Items */
@@ -330,7 +361,6 @@
 
         .dynamic-item:hover {
             border-color: var(--primary-color);
-            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.1);
         }
 
         .item-header {
@@ -360,6 +390,8 @@
             color: var(--danger-color);
             padding: 6px 12px;
             font-size: 13px;
+            border-radius: 6px;
+            cursor: pointer;
         }
 
         .btn-remove:hover {
@@ -406,7 +438,6 @@
 
         .selected-icon:hover {
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.1);
         }
 
         .selected-icon i {
@@ -414,11 +445,6 @@
             color: var(--primary-color);
             width: 30px;
             text-align: center;
-        }
-
-        .selected-icon span {
-            color: var(--gray-text);
-            font-size: 14px;
         }
 
         /* Icon Picker Modal */
@@ -447,7 +473,6 @@
             max-height: 80vh;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
 
         .icon-picker-header {
@@ -458,12 +483,6 @@
             align-items: center;
         }
 
-        .icon-picker-header h3 {
-            font-size: 24px;
-            color: var(--dark-bg);
-            margin: 0;
-        }
-
         .icon-picker-close {
             width: 40px;
             height: 40px;
@@ -472,10 +491,6 @@
             border: none;
             font-size: 20px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
         }
 
         .icon-picker-close:hover {
@@ -485,7 +500,6 @@
 
         .icon-picker-search {
             padding: 20px 30px;
-            border-bottom: 1px solid var(--light-bg);
         }
 
         .icon-picker-search input {
@@ -493,19 +507,10 @@
             padding: 12px 15px;
             border: 2px solid #eee;
             border-radius: 8px;
-            font-size: 15px;
-            font-family: "Poppins", sans-serif;
-        }
-
-        .icon-picker-search input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.1);
         }
 
         .icon-picker-categories {
-            padding: 20px 30px;
-            border-bottom: 1px solid var(--light-bg);
+            padding: 0 30px 20px 30px;
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
@@ -516,14 +521,9 @@
             border: 2px solid #eee;
             background: var(--white);
             border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-            color: var(--gray-text);
         }
 
-        .category-btn:hover,
         .category-btn.active {
             border-color: var(--primary-color);
             background: rgba(255, 193, 7, 0.1);
@@ -551,7 +551,6 @@
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s;
-            background: var(--white);
         }
 
         .icon-option:hover {
@@ -562,23 +561,6 @@
 
         .icon-option i {
             font-size: 28px;
-            color: var(--dark-bg);
-        }
-
-        .icon-option:hover i {
-            color: var(--primary-color);
-        }
-
-        .no-icons-message {
-            text-align: center;
-            padding: 40px;
-            color: var(--gray-text);
-        }
-
-        .no-icons-message i {
-            font-size: 48px;
-            opacity: 0.3;
-            margin-bottom: 15px;
         }
 
         /* Form Actions */
@@ -591,41 +573,12 @@
             border-top: 2px solid var(--light-bg);
         }
 
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
+        @media (max-width: 768px) {
             .form-grid {
                 grid-template-columns: 1fr;
             }
-        }
-
-        @media (max-width: 768px) {
             .page-header-content {
                 flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .page-header-text h1 {
-                font-size: 32px;
-            }
-
-            .edit-form-container {
-                padding: 25px;
-            }
-
-            .section-card {
-                padding: 20px;
             }
         }
     </style>
@@ -641,50 +594,36 @@
                 </div>
                 <a href="{{ url_for('admin.dashboard') }}" class="back-btn">
                     <i class="fas fa-arrow-left"></i>
-                    <span>Retour</span>
+                    <span>Retour au tableau de bord</span>
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- Edit Section -->
     <section class="edit-section">
         <div class="container">
             <div class="edit-form-container">
                 <div class="form-header">
                     <h2><i class="fas fa-cog"></i> Paramètres du Portfolio</h2>
-                    <p>Configurez les différentes sections de votre portfolio en temps réel</p>
+                    <p>Configurez les différentes sections de votre portfolio</p>
                 </div>
 
-                <form method="POST" class="portfolio-form">
+                <form method="POST" class="portfolio-form" action="{{ url_for('admin.edit_portfolio_content') }}" id="portfolioForm">
                     
                     <!-- Section Hero -->
                     <div class="section-card">
                         <div class="section-header">
-                            <div class="section-icon">
-                                <i class="fas fa-home"></i>
-                            </div>
+                            <div class="section-icon"><i class="fas fa-home"></i></div>
                             <h3>Section Hero (Accueil)</h3>
                         </div>
-
                         <div class="form-grid single-column">
                             <div class="form-group">
-                                <label>
-                                    <i class="fas fa-heading"></i>
-                                    Slogan principal
-                                    <span class="label-hint">Le texte s'affichera en majuscules par défaut via votre CSS</span>
-                                </label>
-                                <input type="text" name="hero_titre" value="{{ config.hero_titre }}" 
-                                       placeholder="Ex: Créons ensemble votre présence digitale">
+                                <label><i class="fas fa-heading"></i> Slogan principal</label>
+                                <input type="text" name="hero_titre" value="{{ config.hero_titre if config else 'CONSTRUIRE LE FUTUR DU CODE' }}" placeholder="Slogan principal">
                             </div>
-
                             <div class="form-group">
-                                <label>
-                                    <i class="fas fa-align-left"></i>
-                                    Description sous le slogan
-                                </label>
-                                <textarea name="hero_description" rows="3" 
-                                          placeholder="Décrivez votre activité principale...">{{ config.hero_description }}</textarea>
+                                <label><i class="fas fa-align-left"></i> Description</label>
+                                <textarea name="hero_description" rows="3" placeholder="Description...">{{ config.hero_description if config else '' }}</textarea>
                             </div>
                         </div>
                     </div>
@@ -692,213 +631,229 @@
                     <!-- Section À Propos -->
                     <div class="section-card">
                         <div class="section-header">
-                            <div class="section-icon">
-                                <i class="fas fa-user-circle"></i>
-                            </div>
+                            <div class="section-icon"><i class="fas fa-user-circle"></i></div>
                             <h3>Section À Propos</h3>
                         </div>
-
                         <div class="form-grid">
                             <div class="form-group">
-                                <label>
-                                    <i class="fas fa-heading"></i>
-                                    Titre principal
-                                </label>
-                                <input type="text" name="about_titre" value="{{ config.about_titre }}" 
-                                       placeholder="Ex: Spécialiste IT & Solutions Web">
+                                <label><i class="fas fa-heading"></i> Titre principal</label>
+                                <input type="text" name="about_titre" value="{{ config.about_titre if config else 'Spécialiste IT multi-domaines' }}">
                             </div>
-
                             <div class="form-group">
-                                <label>
-                                    <i class="fas fa-text-width"></i>
-                                    Sous-titre
-                                </label>
-                                <input type="text" name="about_soustitre" value="{{ config.about_soustitre }}" 
-                                       placeholder="Ex: Précision. Performance. Innovation.">
+                                <label><i class="fas fa-text-width"></i> Sous-titre</label>
+                                <input type="text" name="about_soustitre" value="{{ config.about_soustitre if config else 'Précision. Performance. Innovation.' }}">
                             </div>
-
                             <div class="form-group full-width">
-                                <label>
-                                    <i class="fas fa-align-left"></i>
-                                    Paragraphe descriptif
-                                </label>
-                                <textarea name="about_description" rows="5" 
-                                          placeholder="Présentez votre parcours et expertise...">{{ config.about_description }}</textarea>
+                                <label><i class="fas fa-align-left"></i> Description</label>
+                                <textarea name="about_description" rows="5">{{ config.about_description if config else '' }}</textarea>
                             </div>
-
                             <div class="form-group">
-                                <label>
-                                    <i class="fas fa-link"></i>
-                                    Texte du lien "En savoir plus"
-                                </label>
-                                <input type="text" name="about_lien_texte" value="{{ config.about_lien_texte }}" 
-                                       placeholder="Ex: Découvrir mon parcours">
+                                <label><i class="fas fa-link"></i> Texte du lien</label>
+                                <input type="text" name="about_lien_texte" value="{{ config.about_lien_texte if config else 'EN SAVOIR PLUS' }}">
                             </div>
                         </div>
                     </div>
 
-                    <!-- Items Spécialités -->
+                    <!-- Spécialités -->
                     <div class="section-card">
                         <div class="section-header">
-                            <div class="section-icon">
-                                <i class="fas fa-star"></i>
-                            </div>
+                            <div class="section-icon"><i class="fas fa-star"></i></div>
                             <h3>Spécialités & Expertises</h3>
                         </div>
 
+                        <!-- Preview des spécialités -->
+                        <div class="preview-card">
+                            <div class="preview-title">
+                                <i class="fas fa-eye"></i>
+                                <span>Aperçu visuel</span>
+                            </div>
+                            <div class="skills-preview" id="skillsPreview">
+                                <!-- Mise à jour dynamique -->
+                            </div>
+                        </div>
+
                         <div class="dynamic-items-section" id="skills-section">
-                            {% for skill in config.about_skills_json|default([], true) %}
-                            <div class="dynamic-item">
-                                <div class="item-header">
-                                    <span class="item-number">
-                                        <i class="fas fa-grip-vertical"></i>
-                                        Spécialité #{{ loop.index }}
-                                    </span>
-                                    <button type="button" class="btn btn-small btn-remove" onclick="this.closest('.dynamic-item').remove()">
-                                        <i class="fas fa-times"></i> Supprimer
-                                    </button>
-                                </div>
-                                <div class="form-grid">
-                                    <div class="form-group">
-                                        <label>
-                                            <i class="fas fa-tag"></i>
-                                            Nom de la spécialité
-                                        </label>
-                                        <input type="text" name="skill_item_nom[]" value="{{ skill.nom }}" 
-                                               placeholder="Ex: SÉCURITÉ" required>
+                            {% if config and config.about_skills_json %}
+                                {% for skill in config.about_skills_json %}
+                                <div class="dynamic-item" data-skill-index="{{ loop.index0 }}">
+                                    <div class="item-header">
+                                        <span class="item-number"><i class="fas fa-grip-vertical"></i> Spécialité #{{ loop.index }}</span>
+                                        <button type="button" class="btn-remove" onclick="removeSkillItem(this)">
+                                            <i class="fas fa-times"></i> Supprimer
+                                        </button>
                                     </div>
-                                    <div class="form-group">
-                                        <label>
-                                            <i class="fas fa-icons"></i>
-                                            Icône de la spécialité
-                                        </label>
-                                        <div class="icon-selector" onclick="openIconPicker(this, 'skill')">
-                                            <input type="hidden" name="skill_item_icon[]" value="{{ skill.icon }}" required>
-                                            <div class="selected-icon">
-                                                <i class="{{ skill.icon }}"></i>
-                                                <span>Changer l'icône</span>
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label><i class="fas fa-tag"></i> Nom</label>
+                                            <input type="text" name="skill_item_nom[]" value="{{ skill.nom }}" class="skill-name-input" placeholder="Ex: SÉCURITÉ" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label><i class="fas fa-icons"></i> Icône</label>
+                                            <div class="icon-selector" onclick="openIconPicker(this, 'skill')">
+                                                <input type="hidden" name="skill_item_icon[]" value="{{ skill.icon if skill.icon else 'fas fa-star' }}" class="skill-icon-input">
+                                                <div class="selected-icon">
+                                                    <i class="{{ skill.icon if skill.icon else 'fas fa-star' }}"></i>
+                                                    <span>Changer l'icône</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            {% endfor %}
+                                {% endfor %}
+                            {% else %}
+                                <div class="dynamic-item" data-skill-index="0">
+                                    <div class="item-header">
+                                        <span class="item-number"><i class="fas fa-grip-vertical"></i> Spécialité #1</span>
+                                        <button type="button" class="btn-remove" onclick="removeSkillItem(this)">
+                                            <i class="fas fa-times"></i> Supprimer
+                                        </button>
+                                    </div>
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label><i class="fas fa-tag"></i> Nom</label>
+                                            <input type="text" name="skill_item_nom[]" class="skill-name-input" placeholder="Ex: SÉCURITÉ" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label><i class="fas fa-icons"></i> Icône</label>
+                                            <div class="icon-selector" onclick="openIconPicker(this, 'skill')">
+                                                <input type="hidden" name="skill_item_icon[]" value="fas fa-star" class="skill-icon-input">
+                                                <div class="selected-icon">
+                                                    <i class="fas fa-star"></i>
+                                                    <span>Changer l'icône</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
                         </div>
-
                         <button type="button" class="add-item-btn" onclick="addSkillItem()">
-                            <i class="fas fa-plus"></i>
-                            Ajouter une spécialité
+                            <i class="fas fa-plus"></i> Ajouter une spécialité
                         </button>
                     </div>
 
-                    <!-- Stack Technique -->
+                    <!-- Stack Technique avec barres de progression -->
                     <div class="section-card">
                         <div class="section-header">
-                            <div class="section-icon">
-                                <i class="fas fa-code"></i>
-                            </div>
+                            <div class="section-icon"><i class="fas fa-code"></i></div>
                             <h3>Stack Technique</h3>
                         </div>
 
-                        <div class="dynamic-items-section" id="tech-section">
-                            {% for tech in config.tech_stack_json|default([], true) %}
-                            <div class="dynamic-item">
-                                <div class="item-header">
-                                    <span class="item-number">
-                                        <i class="fas fa-grip-vertical"></i>
-                                        Technologie #{{ loop.index }}
-                                    </span>
-                                    <button type="button" class="btn btn-small btn-remove" onclick="this.closest('.dynamic-item').remove()">
-                                        <i class="fas fa-times"></i> Supprimer
-                                    </button>
-                                </div>
-                                <div class="form-grid">
-                                    <div class="form-group">
-                                        <label>
-                                            <i class="fas fa-laptop-code"></i>
-                                            Nom de la technologie
-                                        </label>
-                                        <input type="text" name="tech_nom[]" value="{{ tech.nom }}" 
-                                               placeholder="Ex: Python" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>
-                                            <i class="fas fa-percentage"></i>
-                                            Niveau de maîtrise (%)
-                                        </label>
-                                        <input type="number" name="tech_pourcent[]" value="{{ tech.pourcent }}" 
-                                               min="0" max="100" placeholder="85" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>
-                                            <i class="fas fa-icons"></i>
-                                            Icône
-                                        </label>
-                                        <div class="icon-selector" onclick="openIconPicker(this, 'tech')">
-                                            <input type="hidden" name="tech_icon[]" value="{{ tech.icon }}">
-                                            <div class="selected-icon">
-                                                <i class="{{ tech.icon if tech.icon else 'fas fa-code' }}"></i>
-                                                <span>Changer l'icône</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>
-                                            <i class="fas fa-folder"></i>
-                                            Catégorie
-                                        </label>
-                                        <input type="text" name="tech_cat[]" value="{{ tech.cat }}" 
-                                               placeholder="Ex: BACK-END">
-                                    </div>
-                                </div>
+                        <!-- Preview des barres de progression -->
+                        <div class="preview-card">
+                            <div class="preview-title">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Aperçu des barres de progression</span>
                             </div>
-                            {% endfor %}
+                            <div class="tech-progress-preview" id="techPreview">
+                                <!-- Mise à jour dynamique -->
+                            </div>
                         </div>
 
+                        <div class="dynamic-items-section" id="tech-section">
+                            {% if config and config.tech_stack_json %}
+                                {% for tech in config.tech_stack_json %}
+                                <div class="dynamic-item" data-tech-index="{{ loop.index0 }}">
+                                    <div class="item-header">
+                                        <span class="item-number"><i class="fas fa-grip-vertical"></i> Technologie #{{ loop.index }}</span>
+                                        <button type="button" class="btn-remove" onclick="removeTechItem(this)">
+                                            <i class="fas fa-times"></i> Supprimer
+                                        </button>
+                                    </div>
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label><i class="fas fa-laptop-code"></i> Nom</label>
+                                            <input type="text" name="tech_nom[]" value="{{ tech.nom }}" class="tech-name-input" placeholder="Ex: Python" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label><i class="fas fa-percentage"></i> Niveau (%)</label>
+                                            <input type="range" name="tech_pourcent[]" min="0" max="100" value="{{ tech.pourcent }}" class="tech-percent-range" oninput="this.nextElementSibling.value = this.value">
+                                            <output>{{ tech.pourcent }}</output>
+                                        </div>
+                                        <div class="form-group">
+                                            <label><i class="fas fa-icons"></i> Icône</label>
+                                            <div class="icon-selector" onclick="openIconPicker(this, 'tech')">
+                                                <input type="hidden" name="tech_icon[]" value="{{ tech.icon if tech.icon else 'fas fa-code' }}" class="tech-icon-input">
+                                                <div class="selected-icon">
+                                                    <i class="{{ tech.icon if tech.icon else 'fas fa-code' }}"></i>
+                                                    <span>Changer l'icône</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label><i class="fas fa-folder"></i> Catégorie</label>
+                                            <input type="text" name="tech_cat[]" value="{{ tech.cat if tech.cat else '' }}" placeholder="Ex: BACK-END">
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="dynamic-item" data-tech-index="0">
+                                    <div class="item-header">
+                                        <span class="item-number"><i class="fas fa-grip-vertical"></i> Technologie #1</span>
+                                        <button type="button" class="btn-remove" onclick="removeTechItem(this)">
+                                            <i class="fas fa-times"></i> Supprimer
+                                        </button>
+                                    </div>
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label><i class="fas fa-laptop-code"></i> Nom</label>
+                                            <input type="text" name="tech_nom[]" class="tech-name-input" placeholder="Ex: Python" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label><i class="fas fa-percentage"></i> Niveau (%)</label>
+                                            <input type="range" name="tech_pourcent[]" min="0" max="100" value="75" class="tech-percent-range" oninput="this.nextElementSibling.value = this.value">
+                                            <output>75</output>
+                                        </div>
+                                        <div class="form-group">
+                                            <label><i class="fas fa-icons"></i> Icône</label>
+                                            <div class="icon-selector" onclick="openIconPicker(this, 'tech')">
+                                                <input type="hidden" name="tech_icon[]" value="fas fa-code" class="tech-icon-input">
+                                                <div class="selected-icon">
+                                                    <i class="fas fa-code"></i>
+                                                    <span>Changer l'icône</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label><i class="fas fa-folder"></i> Catégorie</label>
+                                            <input type="text" name="tech_cat[]" placeholder="Ex: BACK-END">
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
                         <button type="button" class="add-item-btn" onclick="addTechStack()">
-                            <i class="fas fa-plus"></i>
-                            Ajouter une compétence technique
+                            <i class="fas fa-plus"></i> Ajouter une compétence technique
                         </button>
                     </div>
 
                     <!-- Autres Titres -->
                     <div class="section-card">
                         <div class="section-header">
-                            <div class="section-icon">
-                                <i class="fas fa-palette"></i>
-                            </div>
-                            <h3>Titres des autres sections</h3>
+                            <div class="section-icon"><i class="fas fa-palette"></i></div>
+                            <h3>Titres des sections</h3>
                         </div>
-
                         <div class="form-grid">
                             <div class="form-group">
-                                <label>
-                                    <i class="fas fa-project-diagram"></i>
-                                    Titre de la section Projets
-                                </label>
-                                <input type="text" name="projects_titre" value="{{ config.projects_titre }}" 
-                                       placeholder="Ex: Mes Réalisations">
+                                <label><i class="fas fa-project-diagram"></i> Titre Projets</label>
+                                <input type="text" name="projects_titre" value="{{ config.projects_titre if config else 'PROJETS RÉCENTS' }}">
                             </div>
-
                             <div class="form-group">
-                                <label>
-                                    <i class="fas fa-envelope"></i>
-                                    Titre de la section Contact (CTA)
-                                </label>
-                                <input type="text" name="cta_titre" value="{{ config.cta_titre }}" 
-                                       placeholder="Ex: Travaillons Ensemble">
+                                <label><i class="fas fa-envelope"></i> Titre CTA</label>
+                                <input type="text" name="cta_titre" value="{{ config.cta_titre if config else 'PRÊT À LANCER VOTRE PROCHAIN PROJET' }}">
                             </div>
                         </div>
                     </div>
 
-                    <!-- Form Actions -->
                     <div class="form-actions">
                         <button type="submit" class="btn btn-success">
-                            <i class="fas fa-save"></i>
-                            Enregistrer toutes les modifications
+                            <i class="fas fa-save"></i> Enregistrer
                         </button>
+                        <a href="{{ url_for('portfolio.home') }}" class="btn" target="_blank">
+                            <i class="fas fa-eye"></i> Voir l'aperçu
+                        </a>
                     </div>
-
                 </form>
             </div>
         </div>
@@ -909,25 +864,18 @@
         <div class="icon-picker-content">
             <div class="icon-picker-header">
                 <h3><i class="fas fa-icons"></i> Choisir une icône</h3>
-                <button class="icon-picker-close" onclick="closeIconPicker()">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button class="icon-picker-close" onclick="closeIconPicker()"><i class="fas fa-times"></i></button>
             </div>
-
             <div class="icon-picker-search">
-                <input type="text" id="iconSearch" placeholder="Rechercher une icône..." 
-                       oninput="filterIcons(this.value)">
+                <input type="text" id="iconSearch" placeholder="Rechercher..." oninput="filterIcons(this.value)">
             </div>
-
             <div class="icon-picker-categories">
-                <button class="category-btn active" onclick="filterByCategory('all')">Tout</button>
-                <button class="category-btn" onclick="filterByCategory('business')">Business</button>
-                <button class="category-btn" onclick="filterByCategory('tech')">Tech</button>
-                <button class="category-btn" onclick="filterByCategory('design')">Design</button>
-                <button class="category-btn" onclick="filterByCategory('communication')">Communication</button>
-                <button class="category-btn" onclick="filterByCategory('misc')">Autres</button>
+                <button class="category-btn active" onclick="filterByCategory('all', event)">Tout</button>
+                <button class="category-btn" onclick="filterByCategory('business', event)">Business</button>
+                <button class="category-btn" onclick="filterByCategory('tech', event)">Tech</button>
+                <button class="category-btn" onclick="filterByCategory('design', event)">Design</button>
+                <button class="category-btn" onclick="filterByCategory('communication', event)">Communication</button>
             </div>
-
             <div class="icon-picker-grid">
                 <div class="icons-grid" id="iconsGrid"></div>
             </div>
@@ -935,184 +883,146 @@
     </div>
 
     <script>
-        // Base d'icônes organisée par catégorie
+        // Base d'icônes
         const iconDatabase = {
-            business: [
-                'fas fa-briefcase', 'fas fa-chart-line', 'fas fa-handshake', 'fas fa-bullseye',
-                'fas fa-trophy', 'fas fa-award', 'fas fa-medal', 'fas fa-star',
-                'fas fa-clipboard-check', 'fas fa-tasks', 'fas fa-project-diagram', 'fas fa-sitemap'
-            ],
-            tech: [
-                'fas fa-laptop-code', 'fas fa-code', 'fas fa-terminal', 'fas fa-database',
-                'fas fa-server', 'fas fa-network-wired', 'fas fa-microchip', 'fas fa-robot',
-                'fab fa-python', 'fab fa-js', 'fab fa-react', 'fab fa-node',
-                'fab fa-docker', 'fab fa-git', 'fab fa-github', 'fab fa-npm',
-                'fas fa-shield-alt', 'fas fa-lock', 'fas fa-key', 'fas fa-fingerprint',
-                'fas fa-mobile-alt', 'fas fa-tablet-alt', 'fas fa-desktop', 'fas fa-cloud'
-            ],
-            design: [
-                'fas fa-paint-brush', 'fas fa-palette', 'fas fa-pencil-ruler', 'fas fa-drafting-compass',
-                'fas fa-magic', 'fas fa-wand-magic', 'fas fa-fill-drip', 'fas fa-eye',
-                'fab fa-figma', 'fab fa-sketch', 'fas fa-bezier-curve', 'fas fa-vector-square'
-            ],
-            communication: [
-                'fas fa-comments', 'fas fa-comment-dots', 'fas fa-envelope', 'fas fa-paper-plane',
-                'fas fa-phone', 'fas fa-video', 'fas fa-microphone', 'fas fa-headset',
-                'fas fa-bullhorn', 'fas fa-rss', 'fab fa-slack', 'fab fa-discord'
-            ],
-            misc: [
-                'fas fa-lightbulb', 'fas fa-rocket', 'fas fa-fire', 'fas fa-bolt',
-                'fas fa-heart', 'fas fa-thumbs-up', 'fas fa-check', 'fas fa-check-circle',
-                'fas fa-cog', 'fas fa-tools', 'fas fa-wrench', 'fas fa-hammer',
-                'fas fa-globe', 'fas fa-map-marker-alt', 'fas fa-flag', 'fas fa-bookmark',
-                'fas fa-user', 'fas fa-users', 'fas fa-user-tie', 'fas fa-graduation-cap',
-                'fas fa-book', 'fas fa-file-alt', 'fas fa-folder', 'fas fa-archive'
-            ]
+            business: ['fas fa-briefcase', 'fas fa-chart-line', 'fas fa-handshake', 'fas fa-bullseye', 'fas fa-trophy', 'fas fa-award', 'fas fa-medal', 'fas fa-star'],
+            tech: ['fas fa-laptop-code', 'fas fa-code', 'fas fa-terminal', 'fas fa-database', 'fas fa-server', 'fab fa-python', 'fab fa-js', 'fab fa-react', 'fab fa-node', 'fab fa-docker', 'fab fa-github'],
+            design: ['fas fa-paint-brush', 'fas fa-palette', 'fas fa-pencil-ruler', 'fas fa-drafting-compass', 'fab fa-figma'],
+            communication: ['fas fa-comments', 'fas fa-envelope', 'fas fa-paper-plane', 'fas fa-phone', 'fas fa-bullhorn']
         };
 
         let currentIconSelector = null;
-        let currentIconType = null;
 
-        // Ouvrir le sélecteur d'icônes
         function openIconPicker(selector, type) {
             currentIconSelector = selector;
-            currentIconType = type;
-            
-            const modal = document.getElementById('iconPickerModal');
-            modal.classList.add('active');
-            
-            // Réinitialiser et afficher toutes les icônes
-            document.getElementById('iconSearch').value = '';
+            document.getElementById('iconPickerModal').classList.add('active');
             filterByCategory('all');
         }
 
-        // Fermer le sélecteur
         function closeIconPicker() {
-            const modal = document.getElementById('iconPickerModal');
-            modal.classList.remove('active');
+            document.getElementById('iconPickerModal').classList.remove('active');
             currentIconSelector = null;
-            currentIconType = null;
         }
 
-        // Fermer en cliquant en dehors
-        document.getElementById('iconPickerModal')?.addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeIconPicker();
+        function filterByCategory(category, event) {
+            if (event && event.target) {
+                document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+                event.target.classList.add('active');
             }
-        });
-
-        // Filtrer par catégorie
-        function filterByCategory(category) {
-            // Mettre à jour les boutons actifs
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-
-            // Obtenir les icônes de la catégorie
-            let icons = [];
-            if (category === 'all') {
-                Object.values(iconDatabase).forEach(cat => {
-                    icons = icons.concat(cat);
-                });
-            } else {
-                icons = iconDatabase[category] || [];
-            }
-
-            // Afficher les icônes
+            let icons = category === 'all' ? Object.values(iconDatabase).flat() : (iconDatabase[category] || []);
             displayIcons(icons);
         }
 
-        // Filtrer par recherche
         function filterIcons(searchTerm) {
             if (!searchTerm.trim()) {
                 filterByCategory('all');
                 return;
             }
-
-            // Rechercher dans toutes les icônes
-            let allIcons = [];
-            Object.values(iconDatabase).forEach(cat => {
-                allIcons = allIcons.concat(cat);
-            });
-
-            const filtered = allIcons.filter(icon => 
-                icon.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-
+            let allIcons = Object.values(iconDatabase).flat();
+            let filtered = allIcons.filter(icon => icon.toLowerCase().includes(searchTerm.toLowerCase()));
             displayIcons(filtered);
         }
 
-        // Afficher les icônes dans la grille
         function displayIcons(icons) {
             const grid = document.getElementById('iconsGrid');
-            
             if (icons.length === 0) {
-                grid.innerHTML = `
-                    <div class="no-icons-message">
-                        <i class="fas fa-search"></i>
-                        <p>Aucune icône trouvée</p>
-                    </div>
-                `;
+                grid.innerHTML = '<div class="no-icons-message"><i class="fas fa-search"></i><p>Aucune icône</p></div>';
                 return;
             }
-
-            grid.innerHTML = icons.map(iconClass => `
-                <div class="icon-option" onclick="selectIcon('${iconClass}')">
-                    <i class="${iconClass}"></i>
-                </div>
-            `).join('');
+            grid.innerHTML = icons.map(icon => `<div class="icon-option" onclick="selectIcon('${icon}')"><i class="${icon}"></i></div>`).join('');
         }
 
-        // Sélectionner une icône
         function selectIcon(iconClass) {
-            if (!currentIconSelector) return;
-
-            // Mettre à jour l'input caché et l'affichage
-            const hiddenInput = currentIconSelector.querySelector('input[type="hidden"]');
-            const iconDisplay = currentIconSelector.querySelector('.selected-icon i');
-            
-            hiddenInput.value = iconClass;
-            iconDisplay.className = iconClass;
-
-            // Fermer la modal
-            closeIconPicker();
+            if (currentIconSelector) {
+                let hiddenInput = currentIconSelector.querySelector('input[type="hidden"]');
+                let iconDisplay = currentIconSelector.querySelector('.selected-icon i');
+                hiddenInput.value = iconClass;
+                iconDisplay.className = iconClass;
+                closeIconPicker();
+                updatePreviews();
+            }
         }
 
-        // Compteurs pour les items dynamiques
-        let skillCount = {{ config.about_skills_json|default([], true)|length }};
-        let techCount = {{ config.tech_stack_json|default([], true)|length }};
+        // Mise à jour des aperçus
+        function updatePreviews() {
+            updateSkillsPreview();
+            updateTechPreview();
+        }
 
-        // Ajouter une spécialité
+        function updateSkillsPreview() {
+            const skills = [];
+            document.querySelectorAll('#skills-section .dynamic-item').forEach(item => {
+                const name = item.querySelector('.skill-name-input')?.value;
+                const icon = item.querySelector('.skill-icon-input')?.value;
+                if (name && name.trim()) {
+                    skills.push({ name: name.trim(), icon: icon || 'fas fa-star' });
+                }
+            });
+            
+            const preview = document.getElementById('skillsPreview');
+            if (preview) {
+                preview.innerHTML = skills.map(skill => `
+                    <div class="skill-badge">
+                        <i class="${skill.icon}"></i>
+                        <span>${skill.name}</span>
+                    </div>
+                `).join('');
+                if (skills.length === 0) {
+                    preview.innerHTML = '<p style="color: #999;">Aucune spécialité pour le moment</p>';
+                }
+            }
+        }
+
+        function updateTechPreview() {
+            const techs = [];
+            document.querySelectorAll('#tech-section .dynamic-item').forEach(item => {
+                const name = item.querySelector('.tech-name-input')?.value;
+                const percent = item.querySelector('.tech-percent-range')?.value;
+                const icon = item.querySelector('.tech-icon-input')?.value;
+                if (name && name.trim()) {
+                    techs.push({ name: name.trim(), percent: percent || 0, icon: icon || 'fas fa-code' });
+                }
+            });
+            
+            const preview = document.getElementById('techPreview');
+            if (preview) {
+                preview.innerHTML = techs.map(tech => `
+                    <div class="tech-item">
+                        <div class="tech-header">
+                            <i class="${tech.icon}"></i>
+                            <span class="tech-name">${tech.name}</span>
+                            <span class="tech-percent">${tech.percent}%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill" style="width: ${tech.percent}%;"></div>
+                        </div>
+                    </div>
+                `).join('');
+                if (techs.length === 0) {
+                    preview.innerHTML = '<p style="color: #999;">Aucune technologie pour le moment</p>';
+                }
+            }
+        }
+
+        // Ajout/Suppression d'items
         function addSkillItem() {
-            skillCount++;
             const container = document.getElementById('skills-section');
+            const count = container.children.length + 1;
             const html = `
             <div class="dynamic-item">
                 <div class="item-header">
-                    <span class="item-number">
-                        <i class="fas fa-grip-vertical"></i>
-                        Spécialité #${skillCount}
-                    </span>
-                    <button type="button" class="btn btn-small btn-remove" onclick="this.closest('.dynamic-item').remove()">
-                        <i class="fas fa-times"></i> Supprimer
-                    </button>
+                    <span class="item-number"><i class="fas fa-grip-vertical"></i> Spécialité #${count}</span>
+                    <button type="button" class="btn-remove" onclick="removeSkillItem(this)"><i class="fas fa-times"></i> Supprimer</button>
                 </div>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>
-                            <i class="fas fa-tag"></i>
-                            Nom de la spécialité
-                        </label>
-                        <input type="text" name="skill_item_nom[]" placeholder="Ex: SÉCURITÉ" required>
+                        <label><i class="fas fa-tag"></i> Nom</label>
+                        <input type="text" name="skill_item_nom[]" class="skill-name-input" placeholder="Ex: SÉCURITÉ" required oninput="updatePreviews()">
                     </div>
                     <div class="form-group">
-                        <label>
-                            <i class="fas fa-icons"></i>
-                            Icône de la spécialité
-                        </label>
+                        <label><i class="fas fa-icons"></i> Icône</label>
                         <div class="icon-selector" onclick="openIconPicker(this, 'skill')">
-                            <input type="hidden" name="skill_item_icon[]" value="fas fa-star" required>
+                            <input type="hidden" name="skill_item_icon[]" value="fas fa-star" class="skill-icon-input">
                             <div class="selected-icon">
                                 <i class="fas fa-star"></i>
                                 <span>Changer l'icône</span>
@@ -1122,45 +1032,42 @@
                 </div>
             </div>`;
             container.insertAdjacentHTML('beforeend', html);
+            updatePreviews();
         }
 
-        // Ajouter une compétence technique
+        function removeSkillItem(btn) {
+            btn.closest('.dynamic-item').remove();
+            updatePreviews();
+            // Renuméroter
+            document.querySelectorAll('#skills-section .dynamic-item').forEach((item, idx) => {
+                const numberSpan = item.querySelector('.item-number');
+                if (numberSpan) numberSpan.innerHTML = `<i class="fas fa-grip-vertical"></i> Spécialité #${idx + 1}`;
+            });
+        }
+
         function addTechStack() {
-            techCount++;
             const container = document.getElementById('tech-section');
+            const count = container.children.length + 1;
             const html = `
             <div class="dynamic-item">
                 <div class="item-header">
-                    <span class="item-number">
-                        <i class="fas fa-grip-vertical"></i>
-                        Technologie #${techCount}
-                    </span>
-                    <button type="button" class="btn btn-small btn-remove" onclick="this.closest('.dynamic-item').remove()">
-                        <i class="fas fa-times"></i> Supprimer
-                    </button>
+                    <span class="item-number"><i class="fas fa-grip-vertical"></i> Technologie #${count}</span>
+                    <button type="button" class="btn-remove" onclick="removeTechItem(this)"><i class="fas fa-times"></i> Supprimer</button>
                 </div>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>
-                            <i class="fas fa-laptop-code"></i>
-                            Nom de la technologie
-                        </label>
-                        <input type="text" name="tech_nom[]" placeholder="Ex: Python" required>
+                        <label><i class="fas fa-laptop-code"></i> Nom</label>
+                        <input type="text" name="tech_nom[]" class="tech-name-input" placeholder="Ex: Python" required oninput="updatePreviews()">
                     </div>
                     <div class="form-group">
-                        <label>
-                            <i class="fas fa-percentage"></i>
-                            Niveau de maîtrise (%)
-                        </label>
-                        <input type="number" name="tech_pourcent[]" min="0" max="100" placeholder="85" required>
+                        <label><i class="fas fa-percentage"></i> Niveau (%)</label>
+                        <input type="range" name="tech_pourcent[]" min="0" max="100" value="75" class="tech-percent-range" oninput="this.nextElementSibling.value = this.value; updatePreviews()">
+                        <output>75</output>
                     </div>
                     <div class="form-group">
-                        <label>
-                            <i class="fas fa-icons"></i>
-                            Icône
-                        </label>
+                        <label><i class="fas fa-icons"></i> Icône</label>
                         <div class="icon-selector" onclick="openIconPicker(this, 'tech')">
-                            <input type="hidden" name="tech_icon[]" value="fas fa-code">
+                            <input type="hidden" name="tech_icon[]" value="fas fa-code" class="tech-icon-input">
                             <div class="selected-icon">
                                 <i class="fas fa-code"></i>
                                 <span>Changer l'icône</span>
@@ -1168,33 +1075,34 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>
-                            <i class="fas fa-folder"></i>
-                            Catégorie
-                        </label>
+                        <label><i class="fas fa-folder"></i> Catégorie</label>
                         <input type="text" name="tech_cat[]" placeholder="Ex: BACK-END">
                     </div>
                 </div>
             </div>`;
             container.insertAdjacentHTML('beforeend', html);
+            updatePreviews();
         }
 
-        // Animation au chargement
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialiser avec toutes les icônes
-            filterByCategory('all');
+        function removeTechItem(btn) {
+            btn.closest('.dynamic-item').remove();
+            updatePreviews();
+            document.querySelectorAll('#tech-section .dynamic-item').forEach((item, idx) => {
+                const numberSpan = item.querySelector('.item-number');
+                if (numberSpan) numberSpan.innerHTML = `<i class="fas fa-grip-vertical"></i> Technologie #${idx + 1}`;
+            });
+        }
 
-            // Feedback lors de la soumission
-            const form = document.querySelector('.portfolio-form');
-            if (form) {
-                form.addEventListener('submit', function() {
-                    const submitBtn = this.querySelector('.btn-success');
-                    if (submitBtn) {
-                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement en cours...';
-                        submitBtn.disabled = true;
-                    }
-                });
-            }
+        // Écouter les changements en temps réel
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePreviews();
+            
+            // Écouter les changements sur les inputs existants
+            document.querySelectorAll('.skill-name-input, .tech-name-input, .tech-percent-range').forEach(input => {
+                input.addEventListener('input', updatePreviews);
+            });
+            
+            displayIcons([...iconDatabase.business, ...iconDatabase.tech, ...iconDatabase.design, ...iconDatabase.communication]);
         });
     </script>
 </body>

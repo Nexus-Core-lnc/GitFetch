@@ -5,7 +5,6 @@
 {% block content %}
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,24 +12,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@300;400;500;600&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/portfolio.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Styles spécifiques à la page À propos */
         :root {
             --primary: #ffc107;
             --primary-dark: #f9a825;
+            --primary-rgb: 255, 193, 7;
             --dark-bg: #0a192f;
             --darker-bg: #112240;
-            --light-text: #ccd6f6;
-            --text-light: #666;
+            --light-bg: #f5f7fa;
+            --text-dark: #1a1a2e;
+            --text-light: #6c757d;
             --white: #ffffff;
-            --bg-light: #f9f9f9;
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.15);
-            --transition: all 0.3s ease;
+            --shadow-sm: 0 5px 20px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.15);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * {
@@ -41,501 +38,582 @@
 
         body {
             font-family: "Poppins", sans-serif;
-            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+            color: var(--text-dark);
             line-height: 1.6;
-            background: var(--white);
-            padding-top: 90px;
-        }
-
-        h1,
-        h2,
-        h3,
-        h4 {
-            font-family: "Montserrat", sans-serif;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Boutons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 15px 35px;
-            background: var(--primary);
-            color: #000;
-            text-decoration: none;
-            font-weight: 600;
-            border-radius: 50px;
-            transition: var(--transition);
-            border: none;
-            cursor: pointer;
-            font-family: "Poppins", sans-serif;
-            font-size: 16px;
-        }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(255, 193, 7, 0.3);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            border: 2px solid var(--primary);
-            color: var(--primary);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 193, 7, 0.1);
-        }
-
-        .btn-dark {
-            background: var(--dark-bg);
-            color: white;
-        }
-
-        .btn-dark:hover {
-            background: var(--primary);
-            color: #000;
-        }
-
-        /* Section Header */
-        .section-header {
-            text-align: left;
-            margin-bottom: 60px;
-        }
-
-        .section-header h2 {
-            font-size: 42px;
-            margin-bottom: 20px;
-            color: var(--dark-bg);
-        }
-
-        .section-header .highlight {
-            color: var(--primary);
+            padding: 0 40px;
             position: relative;
-        }
-
-        .section-header .highlight::after {
-            content: '';
-            position: absolute;
-            bottom: 5px;
-            left: 0;
-            width: 100%;
-            height: 8px;
-            background: rgba(255, 193, 7, 0.2);
-            z-index: -1;
-        }
-
-        .section-header p {
-            font-size: 18px;
-            color: var(--text-light);
+            z-index: 1;
         }
 
         /* Hero Section */
         .hero {
-            padding: 120px 0;
-            background: var(--white);
+            position: relative;
+            padding: 160px 0 100px;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+            overflow: hidden;
+            border-radius: 0 0 50px 50px;
+            margin-bottom: 60px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 80%;
+            height: 150%;
+            background: radial-gradient(circle, rgba(255,193,7,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
         }
 
         .hero-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 60px;
+            gap: 80px;
             align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-text {
+            animation: slideInLeft 0.8s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .hero-text h1 {
-            font-size: 52px;
+            font-size: 64px;
             font-weight: 900;
             line-height: 1.2;
-            margin-bottom: 30px;
-            color: var(--dark-bg);
-        }
-
-        .hero-text h1 .highlight {
-            color: var(--primary);
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .hero-text p {
             font-size: 18px;
+            color: rgba(255, 255, 255, 0.9);
             margin-bottom: 40px;
-            color: var(--text-light);
+            line-height: 1.8;
         }
 
-        .hero-image {
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 32px;
+            font-weight: 600;
+            border-radius: 50px;
             transition: var(--transition);
+            text-decoration: none;
+            font-size: 16px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .hero-image:hover {
-            transform: scale(1.02);
-            box-shadow: var(--shadow-hover);
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: #000;
+            box-shadow: 0 5px 20px rgba(255, 193, 7, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 193, 7, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 193, 7, 0.2);
+            transform: translateY(-3px);
         }
 
         .hero-image img {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
+            border-radius: 30px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            transition: var(--transition);
         }
 
-        /* Alternating Sections */
-        .alternating-section {
-            padding: 120px 0;
+        /* Section Styles */
+        .section {
+            padding: 80px 0;
+            position: relative;
         }
 
-        .alternating-section:nth-child(even) {
-            background: var(--bg-light);
+        .section-dark {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+            color: white;
+            border-radius: 50px;
+            margin: 40px 0;
         }
 
-        .alternating-content {
+        .section-dark .section-header h2 {
+            color: white;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header .badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #000;
+        }
+
+        .section-header h2 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-dark .section-header h2 {
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Philosophy Grid */
+        .philosophy-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 60px;
             align-items: center;
         }
 
-        .image-container {
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
+        .philosophy-text p {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--text-light);
+            line-height: 1.8;
         }
 
-        .image-container:hover {
-            transform: scale(1.02);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .image-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        .image-left {
-            order: 1;
-        }
-
-        .image-right {
-            order: 2;
-        }
-
-        .content-left {
-            order: 1;
-        }
-
-        .content-right {
-            order: 2;
-        }
-
-        /* Valeurs Grid */
+        /* Values Grid - 3 par ligne */
         .values-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 30px;
-            margin-top: 40px;
+            margin-top: 60px;
         }
 
         .value-card {
-            background: var(--white);
-            padding: 10px;
-            border-radius: 15px;
+            background: white;
+            padding: 35px 25px;
+            border-radius: 20px;
             text-align: center;
-            box-shadow: var(--shadow);
             transition: var(--transition);
-            display: inline-flex;
-            gap: 10px;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .value-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
         }
 
         .value-card:hover {
             transform: translateY(-10px);
-            box-shadow: var(--shadow-hover);
+            box-shadow: var(--shadow-lg);
         }
 
         .value-icon {
             width: 80px;
             height: 80px;
-            background: rgba(255, 193, 7, 0.1);
+            background: linear-gradient(135deg, rgba(255,193,7,0.1), rgba(255,193,7,0.2));
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 25px;
-            font-size: 32px;
+            margin: 0 auto 20px;
+            font-size: 36px;
             color: var(--primary);
+            transition: var(--transition);
         }
 
-        .content-value h4 {
-            font-size: 20px;
+        .value-card:hover .value-icon {
+            transform: scale(1.1) rotate(10deg);
+        }
+
+        .value-card h4 {
+            font-size: 22px;
             margin-bottom: 15px;
             color: var(--dark-bg);
         }
 
-        .content-value p {
+        .value-card p {
             color: var(--text-light);
             line-height: 1.6;
-            margin-bottom: 0;
         }
 
-        /* Formation Items */
-        .formation-parcours {
-            padding: 120px 0;
-            background: var(--bg-light);
+        /* Timeline for Formation & Parcours */
+        .timeline-wrapper {
+            position: relative;
+            padding: 40px 0;
         }
 
-        .formation-item {
-            display: grid;
-            grid-template-columns: 150px 1fr;
-            gap: 40px;
-            margin-bottom: 40px;
-            padding: 30px;
-            background: var(--white);
-            border-radius: 15px;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
+        .timeline {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
         }
 
-        .formation-item:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .formation-year {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-        }
-
-        .formation-year::before {
+        .timeline::before {
             content: '';
-            width: 40px;
-            height: 4px;
-            background: var(--primary);
-            margin-right: 15px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), rgba(255,193,7,0.2), transparent);
+            border-radius: 3px;
         }
 
-        .formation-content h3 {
-            font-size: 24px;
+        .timeline-item {
+            margin-bottom: 60px;
+            position: relative;
+            width: 100%;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 0 5px rgba(255,193,7,0.2);
+            z-index: 2;
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            width: calc(50% - 40px);
+            position: relative;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content {
+            margin-left: auto;
+        }
+
+        .timeline-content:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .timeline-year {
+            display: inline-block;
+            padding: 5px 15px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .timeline-content h3 {
+            font-size: 22px;
             margin-bottom: 10px;
             color: var(--dark-bg);
         }
 
-        .formation-content p {
+        .timeline-content p {
             color: var(--text-light);
-            line-height: 1.8;
+            line-height: 1.6;
         }
 
         /* Skills Grid */
         .skills-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 30px;
             margin-top: 40px;
         }
 
-        .skill-item {
-            background: var(--white);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: var(--shadow);
+        .skill-card {
+            background: white;
+            padding: 35px 30px;
+            border-radius: 20px;
             transition: var(--transition);
-            display: block;
+            box-shadow: var(--shadow-sm);
         }
 
-        .skill-item:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-hover);
+        .skill-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .skill-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
         }
 
         .skill-icon {
             width: 60px;
             height: 60px;
-            background: rgba(255, 193, 7, 0.1);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 20px;
             font-size: 24px;
-            color: var(--primary);
-        }
-        .skill-icon{
-            display: flex;
-            align-items: center;
-            flex-direction: column;
-        }
-        .content-skill{
-            display: flex;
-            align-items: center;
-            flex-direction: column;
-        }
-        .skill-item span {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--dark-bg);
-            display: block;
-            margin-bottom: 10px;
+            color: #000;
         }
 
-        .skill-item p {
+        .skill-header h3 {
+            font-size: 22px;
+            color: var(--dark-bg);
+            margin: 0;
+        }
+
+        .skill-card p {
             color: var(--text-light);
-            line-height: 1.6;
-            margin-bottom: 0;
+            margin-bottom: 20px;
+        }
+
+        .skill-level {
+            margin-top: 15px;
+        }
+
+        .skill-level span {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            border-radius: 4px;
+            width: 0;
+            transition: width 1s ease;
         }
 
         /* Certifications Grid */
         .cert-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 30px;
             margin-top: 40px;
         }
 
         .cert-card {
-            background: var(--white);
+            background: white;
             padding: 30px;
-            border-radius: 15px;
-            border-left: 5px solid var(--primary);
-            box-shadow: var(--shadow);
+            border-radius: 20px;
             transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--primary);
         }
 
         .cert-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-hover);
+            transform: translateX(10px);
+            box-shadow: var(--shadow-lg);
         }
 
         .cert-card h4 {
-            color: var(--dark-bg);
-            margin-bottom: 10px;
             font-size: 20px;
+            margin-bottom: 10px;
+            color: var(--dark-bg);
         }
 
-        .cert-card .issuer {
+        .cert-issuer {
             color: var(--primary);
             font-weight: 600;
             margin-bottom: 15px;
             display: block;
         }
 
-        .cert-card p {
-            color: var(--text-light);
-            line-height: 1.6;
-        }
-
         /* CTA Section */
-        .cta {
-            background: var(--primary);
+        .cta-section {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+            border-radius: 30px;
+            padding: 80px;
             text-align: center;
-            padding: 100px 0;
+            margin: 60px 0;
+            position: relative;
+            overflow: hidden;
         }
 
-        .cta h2 {
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 60%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,193,7,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        .cta-section h2 {
             font-size: 48px;
+            color: white;
             margin-bottom: 20px;
-            color: #000;
+            position: relative;
+            z-index: 1;
         }
 
-        .cta .light {
-            color: var(--dark-bg);
-        }
-
-        .cta p {
+        .cta-section p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 30px;
             font-size: 18px;
-            max-width: 700px;
-            margin: 0 auto 40px;
-            color: #333;
-        }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        .animated {
-            animation: fadeInUp 0.8s ease-out forwards;
+            position: relative;
+            z-index: 1;
         }
 
         /* Responsive */
-        @media (max-width: 992px) {
+        @media (max-width: 1200px) {
+            .values-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 25px;
+            }
+        }
 
-            .hero-content,
-            .alternating-content {
+        @media (max-width: 992px) {
+            .hero-content {
                 grid-template-columns: 1fr;
+                gap: 40px;
             }
 
             .hero-text h1 {
-                font-size: 42px;
+                font-size: 48px;
             }
 
-            .values-grid,
-            .skills-grid {
+            .philosophy-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .values-grid {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 25px;
             }
 
-            .image-left,
-            .image-right,
-            .content-left,
-            .content-right {
-                order: initial;
+            .timeline::before {
+                left: 30px;
+            }
+
+            .timeline-content {
+                width: calc(100% - 80px);
+                margin-left: 80px !important;
+            }
+
+            .timeline-dot {
+                left: 30px;
             }
         }
 
         @media (max-width: 768px) {
-            .hero {
-                padding: 80px 0;
+            .container {
+                padding: 0 20px;
             }
 
             .hero-text h1 {
                 font-size: 36px;
             }
 
-            .values-grid,
-            .skills-grid {
-                grid-template-columns: 1fr;
+            .section-header h2 {
+                font-size: 32px;
             }
 
-            .formation-item {
+            .values-grid {
                 grid-template-columns: 1fr;
                 gap: 20px;
             }
 
-            .formation-year::before {
-                display: none;
+            .value-card {
+                padding: 25px 20px;
             }
 
-            .cta h2 {
-                font-size: 36px;
+            .value-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 28px;
+            }
+
+            .value-card h4 {
+                font-size: 18px;
+            }
+
+            .cta-section {
+                padding: 40px 20px;
+            }
+
+            .cta-section h2 {
+                font-size: 28px;
+            }
+
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cert-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -547,249 +625,279 @@
     <section class="hero">
         <div class="container">
             <div class="hero-content">
-                <div class="hero-text content-left">
-                    <h1>{{ about_config.hero_titre|default("PLUS QU'UN <span class='highlight'>DÉVELOPPEUR</span>",
-                        true)|safe }}</h1>
-                    <p>{{ about_config.hero_texte|default("Une passion pour l'innovation, une rigueur d'ingénieur et une
-                        vision stratégique. Découvrez le parcours et les valeurs qui façonnent mon approche
-                        technologique.", true) }}</p>
+                <div class="hero-text">
+                    <h1>{{ about_config.hero_titre|default("PLUS QU'UN <span style='color: var(--primary);'>DÉVELOPPEUR</span>", true)|safe }}</h1>
+                    <p>{{ about_config.hero_texte|default("Une passion pour l'innovation, une rigueur d'ingénieur et une vision stratégique. Découvrez le parcours et les valeurs qui façonnent mon approche technologique.", true) }}</p>
                     <div class="hero-buttons">
-                        {% if about_config and about_config.hero_bouton_1_texte %}
-                        <a href="{{ about_config.hero_bouton_1_lien|default('#formation', true) }}" class="btn">
+                        <a href="#parcours" class="btn btn-primary">
                             <i class="fas fa-graduation-cap"></i>
-                            {{ about_config.hero_bouton_1_texte }}
+                            {{ about_config.hero_bouton_1_texte|default("Mon parcours") }}
                         </a>
-                        {% endif %}
-                        {% if about_config and about_config.hero_bouton_2_texte %}
-                        <a href="{{ about_config.hero_bouton_2_lien|default('#contact', true) }}"
-                            class="btn btn-secondary">
+                        <a href="#contact" class="btn btn-secondary">
                             <i class="fas fa-handshake"></i>
-                            {{ about_config.hero_bouton_2_texte }}
+                            {{ about_config.hero_bouton_2_texte|default("Échanger ensemble") }}
                         </a>
-                        {% endif %}
                     </div>
                 </div>
-                <div class="hero-image image-right">
+                <div class="hero-image">
                     <img src="{% if about_config and about_config.hero_image %}{{ url_for('portfolio.serve_public_media', folder='about', filename=about_config.hero_image) }}{% else %}https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=1000&auto=format&fit=crop{% endif %}"
-                        alt="Espace de travail"
-                        onerror="this.src='https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=1000&auto=format&fit=crop'">
+                        alt="Espace de travail">
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- PHILOSOPHIE SECTION -->
-    <section class="alternating-section">
+    <!-- SECTION: MA PHILOSOPHIE -->
+    <section class="section">
         <div class="container">
-            <div class="alternating-content">
-                <div class="about-text content-left">
-                    <div class="section-header">
-                        <h2>{{ about_config.philosophie_titre|default("MA <span class='highlight'>PHILOSOPHIE</span>",
-                            true)|safe }}</h2>
-                        {% if about_config and about_config.philosophie_sous_titre %}
-                        <h3 style="font-size: 28px; margin-bottom: 30px; color: var(--dark-bg);">{{
-                            about_config.philosophie_sous_titre }}</h3>
-                        {% endif %}
-                    </div>
+            <div class="section-header">
+                <span class="badge"><i class="fas fa-heart"></i> Mes valeurs fondamentales</span>
+                <h2>{{ about_config.philosophie_titre|default("MA <span style='color: var(--primary);'>PHILOSOPHIE</span>", true)|safe }}</h2>
+                {% if about_config and about_config.philosophie_sous_titre %}
+                <p style="font-size: 18px; color: var(--text-light);">{{ about_config.philosophie_sous_titre }}</p>
+                {% endif %}
+            </div>
 
+            <div class="philosophy-grid">
+                <div class="philosophy-text">
                     {% if about_config and about_config.philosophie_description_1 %}
-                    <p style="margin-bottom: 20px;">{{ about_config.philosophie_description_1 }}</p>
+                    <p><i class="fas fa-quote-left" style="color: var(--primary); margin-right: 10px;"></i> {{ about_config.philosophie_description_1 }}</p>
                     {% endif %}
-
                     {% if about_config and about_config.philosophie_description_2 %}
                     <p>{{ about_config.philosophie_description_2 }}</p>
                     {% endif %}
+                </div>
+                {% if about_config and about_config.philosophie_image %}
+                <div class="philosophy-image">
+                    <img src="{{ url_for('portfolio.serve_public_media', folder='about', filename=about_config.philosophie_image) }}"
+                        alt="Philosophie" style="width: 100%; border-radius: 20px; box-shadow: var(--shadow-md);">
+                </div>
+                {% endif %}
+            </div>
 
-                    <!-- VALEURS -->
-                    {% if about_config and about_config.values_json and about_config.values_json|length > 0 %}
-                    <div class="values-grid">
-                        {% for valeur in about_config.values_json %}
-                        <div class="value-card">
-                            <div class="value-icon">
-                                <i class="{{ valeur.icon if valeur.icon else 'fas fa-lightbulb' }}"></i>
-                            </div>
-                            <div class="content-value">
-                                <h4>{{ valeur.titre }}</h4>
-                                <p>{{ valeur.description }}</p>
+            <!-- Valeurs multiples - 3 par ligne -->
+            {% if about_config and about_config.values_json and about_config.values_json|length > 0 %}
+            <div class="values-grid">
+                {% for valeur in about_config.values_json %}
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="{{ valeur.icon if valeur.icon else 'fas fa-lightbulb' }}"></i>
+                    </div>
+                    <h4>{{ valeur.titre }}</h4>
+                    <p>{{ valeur.description }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- SECTION: FORMATION & PARCOURS -->
+    <section class="section section-dark" id="parcours">
+        <div class="container">
+            <div class="section-header">
+                <span class="badge"><i class="fas fa-road"></i> Mon évolution</span>
+                <h2>FORMATION & <span style="color: var(--primary);">PARCOURS</span></h2>
+                <p style="color: rgba(255,255,255,0.8);">Mon évolution technique et mon expertise construite pas à pas</p>
+            </div>
+
+            <div class="timeline-wrapper">
+                <div class="timeline">
+                    {% if about_config and about_config.parcours_json and about_config.parcours_json|length > 0 %}
+                        {% for item in about_config.parcours_json %}
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <span class="timeline-year">{{ item.periode }}</span>
+                                <h3>{{ item.titre }}</h3>
+                                <p>{{ item.description }}</p>
                             </div>
                         </div>
                         {% endfor %}
-                    </div>
-                    {% endif %}
-                </div>
-
-                {% if about_config and about_config.philosophie_image %}
-                <div class="image-container image-right">
-                    <img src="{{ url_for('portfolio.serve_public_media', folder='about', filename=about_config.philosophie_image) }}"
-                        alt="Philosophie"
-                        onerror="this.src='https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1000&auto=format&fit=crop'">
-                </div>
-                {% endif %}
-            </div>
-        </div>
-    </section>
-
-    <!-- PARCOURS SECTION -->
-    <section class="formation-parcours" id="formation">
-        <div class="container">
-            <div class="alternating-content">
-                {% if about_config and about_config.parcours_image %}
-                <div class="image-container image-left">
-                    <img src="{{ url_for('portfolio.serve_public_media', folder='about', filename=about_config.parcours_image) }}"
-                        alt="Formation et parcours"
-                        onerror="this.src='https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=1000&auto=format&fit=crop'">
-                </div>
-                {% endif %}
-
-                <div class="content-right">
-                    <div class="section-header">
-                        <h2>FORMATION & <span class="highlight">PARCOURS</span></h2>
-                        <p>Mon évolution technique et mon expertise construite pas à pas.</p>
-                    </div>
-
-                    {% if about_config and about_config.parcours_json and about_config.parcours_json|length > 0 %}
-                    {% for item in about_config.parcours_json %}
-                    <div class="formation-item">
-                        <div class="formation-year">{{ item.periode }}</div>
-                        <div class="formation-content">
-                            <h3>{{ item.titre }}</h3>
-                            <p>{{ item.description }}</p>
+                    {% else %}
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <span class="timeline-year">2024 - Présent</span>
+                                <h3>Développeur Full Stack Senior</h3>
+                                <p>Expertise en développement web avec React, Node.js et Python. Architecture de solutions cloud.</p>
+                            </div>
                         </div>
-                    </div>
-                    {% endfor %}
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <span class="timeline-year">2022 - 2024</span>
+                                <h3>Ingénieur DevOps</h3>
+                                <p>Mise en place de pipelines CI/CD, gestion d'infrastructure cloud et automatisation.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <span class="timeline-year">2020 - 2022</span>
+                                <h3>Master en Informatique</h3>
+                                <p>Spécialisation en Intelligence Artificielle et Big Data.</p>
+                            </div>
+                        </div>
                     {% endif %}
                 </div>
             </div>
+
+            {% if about_config and about_config.parcours_image %}
+            <div style="text-align: center; margin-top: 50px;">
+                <img src="{{ url_for('portfolio.serve_public_media', folder='about', filename=about_config.parcours_image) }}"
+                    alt="Parcours" style="max-width: 100%; border-radius: 20px; box-shadow: var(--shadow-md);">
+            </div>
+            {% endif %}
         </div>
     </section>
 
-    <!-- COMPÉTENCES SECTION -->
-    <section class="alternating-section">
+    <!-- SECTION: COMPÉTENCES -->
+    <section class="section">
         <div class="container">
-            <div class="alternating-content">
-                <div class="content-left">
-                    <div class="section-header">
-                        <h2>{{ about_config.competences_titre|default("COMPÉTENCES <span class='highlight'>CLÉS</span>",
-                            true)|safe }}</h2>
-                        {% if about_config and about_config.competences_sous_titre %}
-                        <p>{{ about_config.competences_sous_titre }}</p>
-                        {% endif %}
-                    </div>
+            <div class="section-header">
+                <span class="badge"><i class="fas fa-code"></i> Mon expertise technique</span>
+                <h2>{{ about_config.competences_titre|default("COMPÉTENCES <span style='color: var(--primary);'>CLÉS</span>", true)|safe }}</h2>
+                {% if about_config and about_config.competences_sous_titre %}
+                <p>{{ about_config.competences_sous_titre }}</p>
+                {% endif %}
+            </div>
 
-                    {% if about_config and about_config.competences_json and about_config.competences_json|length > 0 %}
-                    <div class="skills-grid">
-                        {% for competence in about_config.competences_json %}
-                        <div class="skill-item">
+            <div class="skills-grid">
+                {% if about_config and about_config.competences_json and about_config.competences_json|length > 0 %}
+                    {% for competence in about_config.competences_json %}
+                    <div class="skill-card">
+                        <div class="skill-header">
                             <div class="skill-icon">
                                 <i class="{{ competence.icon if competence.icon else 'fas fa-code' }}"></i>
                             </div>
-                            <div class="content" style="display: flex;flex-direction: column;align-items: center;">
-                                <span>{{ competence.titre }}</span>
-                                <p>{{ competence.description }}</p>
+                            <h3>{{ competence.titre }}</h3>
+                        </div>
+                        <p>{{ competence.description }}</p>
+                        <div class="skill-level">
+                            <span>Niveau de maîtrise</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" data-percent="{% if competence.pourcent %}{{ competence.pourcent }}{% else %}85{% endif %}"></div>
                             </div>
-
                         </div>
                     </div>
                     {% endfor %}
-                </div>
                 {% endif %}
             </div>
 
             {% if about_config and about_config.competences_image %}
-            <div class="image-container image-right">
+            <div style="text-align: center; margin-top: 50px;">
                 <img src="{{ url_for('portfolio.serve_public_media', folder='about', filename=about_config.competences_image) }}"
-                    alt="Compétences techniques"
-                    onerror="this.src='https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000&auto=format&fit=crop'">
+                    alt="Compétences" style="max-width: 100%; border-radius: 20px; box-shadow: var(--shadow-md);">
             </div>
             {% endif %}
         </div>
-        </div>
     </section>
 
-    <!-- CERTIFICATIONS SECTION -->
-    <section class="certifications alternating-section">
+    <!-- SECTION: CERTIFICATIONS -->
+    <section class="section section-dark">
         <div class="container">
-            <div class="alternating-content">
-                {% if about_config and about_config.certifications_image %}
-                <div class="image-container image-left">
-                    <img src="{{ url_for('portfolio.serve_public_media', folder='about', filename=about_config.certifications_image) }}"
-                        alt="Certifications"
-                        onerror="this.src='https://images.unsplash.com/photo-1546410531-bb4caa6b424d?q=80&w=1000&auto=format&fit=crop'">
-                </div>
+            <div class="section-header">
+                <span class="badge"><i class="fas fa-certificate"></i> Reconnaissances officielles</span>
+                <h2>{{ about_config.certifications_titre|default("CERTIFICATIONS <span style='color: var(--primary);'>RECONNUES</span>", true)|safe }}</h2>
+                {% if about_config and about_config.certifications_sous_titre %}
+                <p style="color: rgba(255,255,255,0.8);">{{ about_config.certifications_sous_titre }}</p>
                 {% endif %}
-
-                <div class="content-right">
-                    <div class="section-header">
-                        <h2>{{ about_config.certifications_titre|default("CERTIFICATIONS <span
-                                class='highlight'>RECONNUES</span>", true)|safe }}</h2>
-                        {% if about_config and about_config.certifications_sous_titre %}
-                        <p>{{ about_config.certifications_sous_titre }}</p>
-                        {% endif %}
-                    </div>
-
-                    {% if about_config and about_config.certifications_json and about_config.certifications_json|length
-                    > 0 %}
-                    <div class="cert-grid">
-                        {% for cert in about_config.certifications_json %}
-                        <div class="cert-card">
-                            <h4>{{ cert.titre }}</h4>
-                            <span class="issuer">{{ cert.organisme }}</span>
-                            <p>{{ cert.description }}</p>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-                </div>
             </div>
+
+            <div class="cert-grid">
+                {% if about_config and about_config.certifications_json and about_config.certifications_json|length > 0 %}
+                    {% for cert in about_config.certifications_json %}
+                    <div class="cert-card">
+                        <h4>{{ cert.titre }}</h4>
+                        <span class="cert-issuer">{{ cert.organisme }}</span>
+                        <p>{{ cert.description }}</p>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            {% if about_config and about_config.certifications_image %}
+            <div style="text-align: center; margin-top: 50px;">
+                <img src="{{ url_for('portfolio.serve_public_media', folder='about', filename=about_config.certifications_image) }}"
+                    alt="Certifications" style="max-width: 100%; border-radius: 20px; box-shadow: var(--shadow-md);">
+            </div>
+            {% endif %}
         </div>
     </section>
 
     <!-- CTA SECTION -->
-    <section class="cta" id="contact">
+    <section class="section" id="contact">
         <div class="container">
-            <h2>PARLONS DE <span class="light">VOS PROJETS</span></h2>
-            <p>Chaque grande collaboration commence par une conversation. Partagez vos idées et construisons ensemble
-                l'avenir numérique.</p>
-            <a href="{{ url_for('portfolio.contact') }}" class="btn btn-dark">
-                <i class="fas fa-comments"></i>
-                COMMENCER LA DISCUSSION
-            </a>
+            <div class="cta-section">
+                <h2>PARLONS DE <span style="color: var(--primary);">VOS PROJETS</span></h2>
+                <p>Chaque grande collaboration commence par une conversation. Partagez vos idées et construisons ensemble l'avenir numérique.</p>
+                <a href="{{ url_for('portfolio.contact') }}" class="btn btn-primary">
+                    <i class="fas fa-comments"></i>
+                    COMMENCER LA DISCUSSION
+                </a>
+            </div>
         </div>
     </section>
 
     <script>
+        // Animation des barres de progression
+        const observerOptions = {
+            threshold: 0.3,
+            rootMargin: '0px'
+        };
+
+        const progressObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const fills = entry.target.querySelectorAll('.progress-fill');
+                    fills.forEach(fill => {
+                        const percent = fill.getAttribute('data-percent') || '85';
+                        fill.style.width = percent + '%';
+                    });
+                    progressObserver.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.skills-grid').forEach(grid => {
+            progressObserver.observe(grid);
+        });
+
         // Animation des éléments au scroll
-        document.addEventListener('DOMContentLoaded', function () {
-            const animatedElements = document.querySelectorAll('.formation-item, .value-card, .cert-card, .image-container');
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('animated');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
+        const animatedElements = document.querySelectorAll('.value-card, .skill-card, .cert-card, .timeline-item');
+        
+        const fadeObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    fadeObserver.unobserve(entry.target);
+                }
             });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-            animatedElements.forEach(el => {
-                observer.observe(el);
-            });
+        animatedElements.forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease-out';
+            fadeObserver.observe(el);
+        });
 
-            // Animation des cartes de valeurs avec délai
-            document.querySelectorAll('.value-card').forEach((card, index) => {
-                card.style.animationDelay = `${index * 0.2}s`;
-            });
+        // Animation des timelines avec délai progressif
+        document.querySelectorAll('.timeline-content').forEach((content, index) => {
+            content.style.animationDelay = `${index * 0.2}s`;
+        });
 
-            // Animation des items de formation avec délai
-            document.querySelectorAll('.formation-item').forEach((item, index) => {
-                item.style.animationDelay = `${index * 0.15}s`;
-            });
+        // Parallax effect
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero');
+            if (hero) {
+                hero.style.transform = `translateY(${scrolled * 0.3}px)`;
+            }
         });
     </script>
 </body>
-
 </html>
 {% endblock %}

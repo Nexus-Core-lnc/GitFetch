@@ -86,6 +86,7 @@ class PortfolioConfig(db.Model):
     hero_titre = db.Column(db.String(200), default="CONSTRUIRE LE FUTUR DU CODE")
     
     # SECTION ABOUT 
+    hero_description = db.Column(db.Text, default="")
     about_titre = db.Column(db.String(200), default="Spécialiste IT multi-domaines")
     about_soustitre = db.Column(db.String(200), default="Précision. Performance. Innovation.")
     about_description = db.Column(db.Text)

@@ -1187,27 +1187,50 @@ def edit_portfolio_content():
         config = PortfolioConfig(utilisateur_id=current_user.id)
         db.session.add(config)
         db.session.flush()
+        
+        # Initialiser les JSON par défaut
+        config.about_skills_json = []
+        config.tech_stack_json = []
+        db.session.commit()
 
     if request.method == 'POST':
         try:
+            print("\n" + "="*50)
+            print("📝 ENREGISTREMENT PORTFOLIO")
+            print("="*50)
+            
+            # Section Hero
             config.hero_titre = request.form.get('hero_titre', config.hero_titre)
-            config.hero_description = request.form.get('hero_description', config.hero_description)
+            
+            # Vérifier si hero_description existe
+            if hasattr(config, 'hero_description'):
+                config.hero_description = request.form.get('hero_description', '')
+            
+            # Section About
             config.about_titre = request.form.get('about_titre', config.about_titre)
             config.about_soustitre = request.form.get('about_soustitre', config.about_soustitre)
             config.about_description = request.form.get('about_description', config.about_description)
             config.about_lien_texte = request.form.get('about_lien_texte', config.about_lien_texte)
+            
+            # Section Projets et CTA
             config.projects_titre = request.form.get('projects_titre', config.projects_titre)
             config.cta_titre = request.form.get('cta_titre', config.cta_titre)
 
+            # Traitement des spécialités (skills)
             s_noms = request.form.getlist('skill_item_nom[]')
             s_icons = request.form.getlist('skill_item_icon[]')
             
             skills_list = []
             for n, i in zip(s_noms, s_icons):
                 if n and n.strip():
-                    skills_list.append({"nom": n.strip(), "icon": i})
+                    skills_list.append({
+                        "nom": n.strip(), 
+                        "icon": i if i else "fas fa-star"
+                    })
             config.about_skills_json = skills_list if skills_list else []
+            print(f"✅ {len(skills_list)} spécialités enregistrées: {skills_list}")
 
+            # Traitement de la stack technique
             t_noms = request.form.getlist('tech_nom[]')
             t_percents = request.form.getlist('tech_pourcent[]')
             t_icons = request.form.getlist('tech_icon[]')
@@ -1218,24 +1241,34 @@ def edit_portfolio_content():
                 if n and n.strip():
                     tech_list.append({
                         "nom": n.strip(), 
-                        "pourcent": p, 
-                        "icon": i, 
-                        "cat": c
+                        "pourcent": p if p else "0", 
+                        "icon": i if i else "fas fa-code", 
+                        "cat": c if c else ""
                     })
             
             config.tech_stack_json = tech_list if tech_list else []
-
+            print(f"✅ {len(tech_list)} technologies enregistrées")
+            
             db.session.commit()
+            print("✅ COMMIT RÉUSSI!")
             flash("Portfolio mis à jour avec succès !", "success")
+            return redirect(url_for('admin.edit_portfolio_content'))
             
         except Exception as e:
             db.session.rollback()
+            print(f"❌ ERREUR: {str(e)}")
+            import traceback
+            traceback.print_exc()
             flash(f"Erreur lors de l'enregistrement : {str(e)}", "danger")
-        
-        return redirect(url_for('admin.edit_portfolio_content'))
+            return redirect(url_for('admin.edit_portfolio_content'))
 
+    # GET request - S'assurer que les JSON ne sont pas None
+    if config.about_skills_json is None:
+        config.about_skills_json = []
+    if config.tech_stack_json is None:
+        config.tech_stack_json = []
+    
     return render_template('admin/edit_portfolio.html', config=config)
-
 # --- ROUTES ABOUT (Administration) ---
 
 @admin_bp.route('/about/edit', methods=['GET', 'POST'])
