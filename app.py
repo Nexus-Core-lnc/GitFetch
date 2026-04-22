@@ -9,78 +9,80 @@ from dotenv import load_dotenv
 from models import db, Utilisateur
 from routes import auth_bp, main_bp, admin_bp, portfolio_bp, github_bp
 
-# Charger les variables d'environnement depuis .env
+# Charger .env
 load_dotenv()
 
 def create_application():
     application = Flask(__name__)
-    
+
     # ============================================
-    # CONFIGURATION DE LA BASE DE DONNÉES POSTGRESQL
+    # CONFIGURATION BASE DE DONNÉES - SQLITE
     # ============================================
     
-    # Utilisation directe de DATABASE_URL depuis .env
-    application.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///gitfetch.db')
+    # Utiliser SQLite (par défaut)
+    database_url = "sqlite:///gitfetch.db"
+    
+    # Optionnel: Vous pouvez aussi garder la possibilité de passer à PostgreSQL plus tard
+    # en commentant/décommentant cette ligne
+    # if os.getenv("DATABASE_URL"):
+    #     database_url = os.getenv("DATABASE_URL")
+    
+    application.config['SQLALCHEMY_DATABASE_URI'] = database_url
     application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    
-    # Afficher la base de données utilisée (sans le mot de passe pour la sécurité)
-    db_uri = application.config['SQLALCHEMY_DATABASE_URI']
-    if 'postgresql' in db_uri:
-        print(f"✅ Connexion à PostgreSQL: {db_uri.split('@')[1] if '@' in db_uri else db_uri}")
-    else:
-        print(f"⚠️ Utilisation de SQLite: {db_uri}")
-    
+
+    print(f"✅ Base de données utilisée: SQLite (gitfetch.db)")
+
     # ============================================
-    # CONFIGURATION DES EMAILS
+    # CONFIG MAIL
     # ============================================
-    
+
     application.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
     application.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
     application.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'True') == 'True'
     application.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
     application.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
-    application.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', os.getenv('MAIL_USERNAME'))
-    
+    application.config['MAIL_DEFAULT_SENDER'] = os.getenv(
+        'MAIL_DEFAULT_SENDER', os.getenv('MAIL_USERNAME')
+    )
+
     # ============================================
-    # CONFIGURATION OAUTH
+    # CONFIG SÉCURITÉ / OAUTH
     # ============================================
-    
+
+    application.config['SECRET_KEY'] = os.getenv(
+        'SECRET_KEY', 'change-this-in-production'
+    )
+
     application.config['GITHUB_CLIENT_ID'] = os.getenv('GITHUB_CLIENT_ID')
     application.config['GITHUB_CLIENT_SECRET'] = os.getenv('GITHUB_CLIENT_SECRET')
+
     application.config['GOOGLE_CLIENT_ID'] = os.getenv('GOOGLE_CLIENT_ID')
     application.config['GOOGLE_CLIENT_SECRET'] = os.getenv('GOOGLE_CLIENT_SECRET')
-    application.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-key-change-in-production')
-    
+
     # ============================================
-    # INITIALISATION DES EXTENSIONS
+    # INIT EXTENSIONS
     # ============================================
-    
-    # Initialisation SQLAlchemy
+
     db.init_app(application)
-    
-    # Initialisation Flask-Migrate
-    migrate = Migrate(application, db)
-    
-    # Initialisation Flask-Mail
-    mail = Mail()
-    mail.init_app(application)
-    
-    # Initialisation Flask-Login
+    Migrate(application, db)
+
+    mail = Mail(application)
+
     login_manager = LoginManager()
     login_manager.init_app(application)
     login_manager.login_view = 'auth.login'
-    login_manager.login_message = "Veuillez vous connecter pour accéder à cette page."
-    login_manager.login_message_category = "info"
-    
+
     @login_manager.user_loader
     def load_user(user_id):
         return db.session.get(Utilisateur, int(user_id))
-    
-    # Initialisation OAuth
+
     oauth = OAuth(application)
-    
-    # Configuration GitHub OAuth
-    if application.config['GITHUB_CLIENT_ID'] and application.config['GITHUB_CLIENT_SECRET']:
+
+    # ============================================
+    # OAUTH GITHUB
+    # ============================================
+
+    if application.config['GITHUB_CLIENT_ID']:
         oauth.register(
             name='github',
             client_id=application.config['GITHUB_CLIENT_ID'],
@@ -90,12 +92,13 @@ def create_application():
             api_base_url='https://api.github.com',
             client_kwargs={'scope': 'user:email'},
         )
-        print("✅ GitHub OAuth configuré")
-    else:
-        print("⚠️ GitHub OAuth non configuré (clés manquantes)")
-    
-    # Configuration Google OAuth
-    if application.config['GOOGLE_CLIENT_ID'] and application.config['GOOGLE_CLIENT_SECRET']:
+        print("✅ GitHub OAuth OK")
+
+    # ============================================
+    # OAUTH GOOGLE
+    # ============================================
+
+    if application.config['GOOGLE_CLIENT_ID']:
         oauth.register(
             name='google',
             client_id=application.config['GOOGLE_CLIENT_ID'],
@@ -103,62 +106,43 @@ def create_application():
             server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
             client_kwargs={'scope': 'openid email profile'}
         )
-        print("✅ Google OAuth configuré")
-    else:
-        print("⚠️ Google OAuth non configuré (clés manquantes)")
-    
-    # Stockage des extensions
-    application.extensions['mail'] = mail
-    application.extensions['oauth'] = oauth
-    application.extensions['login_manager'] = login_manager
-    
+        print("✅ Google OAuth OK")
+
     # ============================================
-    # ENREGISTREMENT DES BLUEPRINTS
+    # BLUEPRINTS
     # ============================================
-    
+
     application.register_blueprint(auth_bp)
     application.register_blueprint(main_bp)
     application.register_blueprint(admin_bp)
     application.register_blueprint(portfolio_bp)
     application.register_blueprint(github_bp)
-    
+
     # ============================================
-    # CRÉATION DES DOSSIERS MEDIA
+    # DOSSIERS MEDIA
     # ============================================
-    
+
     media_folders = [
-        os.path.join(application.root_path, 'media', 'profiles'),
-        os.path.join(application.root_path, 'media', 'covers'),
-        os.path.join(application.root_path, 'media', 'docs'),
-        os.path.join(application.root_path, 'media', 'projects'),
-        os.path.join(application.root_path, 'media', 'about'),
-        os.path.join(application.root_path, 'media', 'uploads'),
+        'profiles', 'covers', 'docs', 'projects', 'about', 'uploads'
     ]
-    
+
     for folder in media_folders:
-        os.makedirs(folder, exist_ok=True)
-    
+        path = os.path.join(application.root_path, 'media', folder)
+        os.makedirs(path, exist_ok=True)
+
     return application
 
+
 # ============================================
-# POINT D'ENTRÉE POUR GUNICORN ET COMMANDES FLASK
+# ENTRYPOINT
 # ============================================
 
-# Création de l'application
 application = create_application()
-
-# Alias pour Flask CLI (certaines commandes attendent 'app')
 app = application
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
     debug = os.getenv("FLASK_DEBUG", "True") == "True"
-    host = os.getenv("HOST", "0.0.0.0")
-    
-    print(f"╔══════════════════════════════════════════════════════════╗")
-    print(f"║   🚀 GitFetch - Serveur de Développement                 ║")
-    print(f"║   📍 Accès : http://{host}:{port}                         ║")
-    print(f"║   📦 Base de données: {'PostgreSQL' if 'postgresql' in str(application.config['SQLALCHEMY_DATABASE_URI']) else 'SQLite'} ║")
-    print(f"╚══════════════════════════════════════════════════════════╝")
-    
-    application.run(host=host, port=port, debug=debug)
+
+    print("🚀 GitFetch lancé avec SQLite")
+    application.run(host="0.0.0.0", port=port, debug=debug)

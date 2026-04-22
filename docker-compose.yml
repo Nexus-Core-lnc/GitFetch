@@ -11,3 +11,4 @@ services:
       - .env
     volumes:
       - ./media:/app/media
+      - ./gitfetch.db:/app/gitfetch.db  # Persistance de la base SQLite

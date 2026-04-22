@@ -647,7 +647,7 @@
         "kind": 2,
         "importPath": "app",
         "description": "app",
-        "peekOfCode": "def create_application():\n    application = Flask(__name__)\n    # ============================================\n    # CONFIGURATION DE LA BASE DE DONNÉES POSTGRESQL\n    # ============================================\n    # Utilisation directe de DATABASE_URL depuis .env\n    application.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///gitfetch.db')\n    application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False\n    # Afficher la base de données utilisée (sans le mot de passe pour la sécurité)\n    db_uri = application.config['SQLALCHEMY_DATABASE_URI']",
+        "peekOfCode": "def create_application():\n    application = Flask(__name__)\n    # ============================================\n    # CONFIGURATION BASE DE DONNÉES - SQLITE\n    # ============================================\n    # Utiliser SQLite (par défaut)\n    database_url = \"sqlite:///gitfetch.db\"\n    # Optionnel: Vous pouvez aussi garder la possibilité de passer à PostgreSQL plus tard\n    # en commentant/décommentant cette ligne\n    # if os.getenv(\"DATABASE_URL\"):",
         "detail": "app",
         "documentation": {}
     },
@@ -656,7 +656,7 @@
         "kind": 5,
         "importPath": "app",
         "description": "app",
-        "peekOfCode": "application = create_application()\n# Alias pour Flask CLI (certaines commandes attendent 'app')\napp = application\nif __name__ == \"__main__\":\n    port = int(os.getenv(\"PORT\", 5000))\n    debug = os.getenv(\"FLASK_DEBUG\", \"True\") == \"True\"\n    host = os.getenv(\"HOST\", \"0.0.0.0\")\n    print(f\"╔══════════════════════════════════════════════════════════╗\")\n    print(f\"║   🚀 GitFetch - Serveur de Développement                 ║\")\n    print(f\"║   📍 Accès : http://{host}:{port}                         ║\")",
+        "peekOfCode": "application = create_application()\napp = application\nif __name__ == \"__main__\":\n    port = int(os.getenv(\"PORT\", 5000))\n    debug = os.getenv(\"FLASK_DEBUG\", \"True\") == \"True\"\n    print(\"🚀 GitFetch lancé avec SQLite\")\n    application.run(host=\"0.0.0.0\", port=port, debug=debug)",
         "detail": "app",
         "documentation": {}
     },
@@ -665,7 +665,7 @@
         "kind": 5,
         "importPath": "app",
         "description": "app",
-        "peekOfCode": "app = application\nif __name__ == \"__main__\":\n    port = int(os.getenv(\"PORT\", 5000))\n    debug = os.getenv(\"FLASK_DEBUG\", \"True\") == \"True\"\n    host = os.getenv(\"HOST\", \"0.0.0.0\")\n    print(f\"╔══════════════════════════════════════════════════════════╗\")\n    print(f\"║   🚀 GitFetch - Serveur de Développement                 ║\")\n    print(f\"║   📍 Accès : http://{host}:{port}                         ║\")\n    print(f\"║   📦 Base de données: {'PostgreSQL' if 'postgresql' in str(application.config['SQLALCHEMY_DATABASE_URI']) else 'SQLite'} ║\")\n    print(f\"╚══════════════════════════════════════════════════════════╝\")",
+        "peekOfCode": "app = application\nif __name__ == \"__main__\":\n    port = int(os.getenv(\"PORT\", 5000))\n    debug = os.getenv(\"FLASK_DEBUG\", \"True\") == \"True\"\n    print(\"🚀 GitFetch lancé avec SQLite\")\n    application.run(host=\"0.0.0.0\", port=port, debug=debug)",
         "detail": "app",
         "documentation": {}
     },
