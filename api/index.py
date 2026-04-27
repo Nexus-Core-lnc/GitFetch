@@ -9,7 +9,7 @@ from models import db, Utilisateur
 from routes import auth_bp, main_bp, admin_bp, portfolio_bp, github_bp
 
 # Charger .env
-load_dotenv()
+load_dotenv('.env.production')
 
 def create_application():
     # Configuration Flask pour Vercel (dossiers parents)
