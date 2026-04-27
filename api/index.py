@@ -28,9 +28,9 @@ def create_application():
     if database_url and database_url.startswith("postgres://"):
         database_url = database_url.replace("postgres://", "postgresql://", 1)
     
-    # Si aucune URL n'est trouvée (local), utilise ta config locale
-    if not database_url:
-        database_url = "postgresql://postgres:root@localhost:5432/GitFetch"
+    # # Si aucune URL n'est trouvée (local), utilise ta config locale
+    # if not database_url:
+    #     database_url = "postgresql://postgres:root@localhost:5432/GitFetch"
     
     application.config['SQLALCHEMY_DATABASE_URI'] = database_url
     application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
