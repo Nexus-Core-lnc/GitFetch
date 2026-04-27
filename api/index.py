@@ -21,7 +21,12 @@ def create_application():
     # CONFIGURATION BASE DE DONNÉES - POSTGRESQL
     # ============================================
     
-    database_url = "gitfetch_POSTGRES_URL_NON_POOLING=postgresql://neondb_owner:npg_YsNDXI2KxL8m@ep-solitary-sky-am37b693.c-5.us-east-1.aws.neon.tech/neondb?channel_binding=require&sslmode=require"
+    database_url = os.getenv("DATABASE_URL")
+    
+    # Correction cruciale pour SQLAlchemy 1.4+ / 2.0+ 
+    # Vercel ou Heroku fournissent parfois 'postgres://', il faut 'postgresql://'
+    if database_url and database_url.startswith("postgres://"):
+        database_url = "database_url.replace("postgres://", "postgresql://", 1)"
     
     # # Si aucune URL n'est trouvée (local), utilise ta config locale
     # if not database_url:
