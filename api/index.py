@@ -1395,7 +1395,7 @@ def create_application():
                         template_folder='templates')
 
     # Configuration base de données
-    database_url = os.getenv("POSTGRES_URL")
+    database_url = os.getenv("DATABASE_URL")
     if not database_url:
         raise ValueError("❌ POSTGRES_URL non définie dans les variables d'environnement Vercel")
     if database_url.startswith("postgres://"):
