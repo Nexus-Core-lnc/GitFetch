@@ -154,7 +154,7 @@ class AboutPage(db.Model):
     date_mise_a_jour = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 # ============================================
-# CONFIGURATIONS ET FONCTIONS UTILITAIRES (contenu de routes.py)
+# CONFIGURATIONS ET FONCTIONS UTILITAIRES
 # ============================================
 
 logging.basicConfig(level=logging.INFO)
@@ -177,7 +177,7 @@ admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 portfolio_bp = Blueprint('portfolio', __name__)
 github_bp = Blueprint('github_bp', __name__, url_prefix='/github')
 
-# --- FONCTIONS UTILITAIRES (copiées de routes.py) ---
+# --- FONCTIONS UTILITAIRES ---
 
 def download_and_save_avatar(url, user_id, type_file='avatar'):
     try:
@@ -1386,100 +1386,105 @@ def serve_public_media(folder, filename):
             abort(404)
 
 # ============================================
-# CRÉATION DE L'APPLICATION FLASK
+# CRÉATION DE L'APPLICATION FLASK (directe pour Vercel)
 # ============================================
 
-def create_application():
-    application = Flask(__name__,
-                        static_folder='static',
-                        template_folder='templates')
+app = Flask(__name__,
+            static_folder='../static',
+            template_folder='../templates')
 
-    # Configuration base de données
-    database_url = os.getenv("DATABASE_URL")
-    if not database_url:
-        raise ValueError("❌ POSTGRES_URL non définie dans les variables d'environnement Vercel")
-    if database_url.startswith("postgres://"):
-        database_url = database_url.replace("postgres://", "postgresql://", 1)
-    application.config['SQLALCHEMY_DATABASE_URI'] = database_url
-    application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# Configuration base de données
+database_url = os.getenv("DATABASE_URL")
+if not database_url:
+    raise ValueError("❌ DATABASE_URL non définie dans les variables d'environnement Vercel")
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-    # Configuration mail
-    mail_server = os.getenv('MAIL_SERVER')
-    mail_port = os.getenv('MAIL_PORT')
-    mail_use_tls = os.getenv('MAIL_USE_TLS')
-    mail_username = os.getenv('MAIL_USERNAME')
-    mail_password = os.getenv('MESSAGERIE_MOT_DE_PASSE')
-    mail_default_sender = os.getenv('MAIL_DEFAULT_SENDER')
-    if not all([mail_server, mail_port, mail_username, mail_password]):
-        raise ValueError("❌ Configuration email incomplète")
-    application.config['MAIL_SERVER'] = mail_server
-    application.config['MAIL_PORT'] = int(mail_port)
-    application.config['MAIL_USE_TLS'] = mail_use_tls == 'True' if mail_use_tls else True
-    application.config['MAIL_USERNAME'] = mail_username
-    application.config['MAIL_PASSWORD'] = mail_password
-    application.config['MAIL_DEFAULT_SENDER'] = mail_default_sender
+# Configuration mail
+mail_server = os.getenv('MAIL_SERVER')
+mail_port = os.getenv('MAIL_PORT')
+mail_use_tls = os.getenv('MAIL_USE_TLS')
+mail_username = os.getenv('MAIL_USERNAME')
+mail_password = os.getenv('MESSAGERIE_MOT_DE_PASSE')
+mail_default_sender = os.getenv('MAIL_DEFAULT_SENDER')
+if not all([mail_server, mail_port, mail_username, mail_password]):
+    raise ValueError("❌ Configuration email incomplète")
+app.config['MAIL_SERVER'] = mail_server
+app.config['MAIL_PORT'] = int(mail_port)
+app.config['MAIL_USE_TLS'] = mail_use_tls == 'True' if mail_use_tls else True
+app.config['MAIL_USERNAME'] = mail_username
+app.config['MAIL_PASSWORD'] = mail_password
+app.config['MAIL_DEFAULT_SENDER'] = mail_default_sender
 
-    # Sécurité et OAuth
-    secret_key = os.getenv('SECRET_KEY')
-    if not secret_key:
-        raise ValueError("❌ SECRET_KEY non définie")
-    application.config['SECRET_KEY'] = secret_key
+# Sécurité et OAuth
+secret_key = os.getenv('SECRET_KEY')
+if not secret_key:
+    raise ValueError("❌ SECRET_KEY non définie")
+app.config['SECRET_KEY'] = secret_key
 
-    github_client_id = os.getenv('ID_CLIENT_GITHUB')
-    github_client_secret = os.getenv('SECRET_DU_CLIENT_GITHUB')
-    if not github_client_id or not github_client_secret:
-        raise ValueError("❌ Configuration GitHub OAuth incomplète")
-    application.config['GITHUB_CLIENT_ID'] = github_client_id
-    application.config['GITHUB_CLIENT_SECRET'] = github_client_secret
+github_client_id = os.getenv('ID_CLIENT_GITHUB')
+github_client_secret = os.getenv('SECRET_DU_CLIENT_GITHUB')
+if not github_client_id or not github_client_secret:
+    raise ValueError("❌ Configuration GitHub OAuth incomplète")
+app.config['GITHUB_CLIENT_ID'] = github_client_id
+app.config['GITHUB_CLIENT_SECRET'] = github_client_secret
 
-    google_client_id = os.getenv('ID_CLIENT_GOOGLE')
-    google_client_secret = os.getenv('SECRET_DU_CLIENT_GOOGLE')
-    if not google_client_id or not google_client_secret:
-        raise ValueError("❌ Configuration Google OAuth incomplète")
-    application.config['GOOGLE_CLIENT_ID'] = google_client_id
-    application.config['GOOGLE_CLIENT_SECRET'] = google_client_secret
+google_client_id = os.getenv('ID_CLIENT_GOOGLE')
+google_client_secret = os.getenv('SECRET_DU_CLIENT_GOOGLE')
+if not google_client_id or not google_client_secret:
+    raise ValueError("❌ Configuration Google OAuth incomplète")
+app.config['GOOGLE_CLIENT_ID'] = google_client_id
+app.config['GOOGLE_CLIENT_SECRET'] = google_client_secret
 
-    # Initialisation extensions
-    db.init_app(application)
-    Migrate(application, db)
-    Mail(application)
+# Initialisation extensions
+db.init_app(app)
+Migrate(app, db)
+Mail(app)
 
-    login_manager = LoginManager()
-    login_manager.init_app(application)
-    login_manager.login_view = 'auth.login'
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'auth.login'
 
-    @login_manager.user_loader
-    def load_user(user_id):
-        return db.session.get(Utilisateur, int(user_id))
+@login_manager.user_loader
+def load_user(user_id):
+    return db.session.get(Utilisateur, int(user_id))
 
-    oauth = OAuth(application)
-    oauth.register(
-        name='github',
-        client_id=application.config['GITHUB_CLIENT_ID'],
-        client_secret=application.config['GITHUB_CLIENT_SECRET'],
-        access_token_url='https://github.com/login/oauth/access_token',
-        authorize_url='https://github.com/login/oauth/authorize',
-        api_base_url='https://api.github.com',
-        client_kwargs={'scope': 'user:email repo'},
-    )
-    oauth.register(
-        name='google',
-        client_id=application.config['GOOGLE_CLIENT_ID'],
-        client_secret=application.config['GOOGLE_CLIENT_SECRET'],
-        server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
-        client_kwargs={'scope': 'openid email profile'}
-    )
+oauth = OAuth(app)
+oauth.register(
+    name='github',
+    client_id=app.config['GITHUB_CLIENT_ID'],
+    client_secret=app.config['GITHUB_CLIENT_SECRET'],
+    access_token_url='https://github.com/login/oauth/access_token',
+    authorize_url='https://github.com/login/oauth/authorize',
+    api_base_url='https://api.github.com',
+    client_kwargs={'scope': 'user:email repo'},
+)
+oauth.register(
+    name='google',
+    client_id=app.config['GOOGLE_CLIENT_ID'],
+    client_secret=app.config['GOOGLE_CLIENT_SECRET'],
+    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+    client_kwargs={'scope': 'openid email profile'}
+)
 
-    # Enregistrement des blueprints
-    application.register_blueprint(auth_bp)
-    application.register_blueprint(main_bp)
-    application.register_blueprint(admin_bp)
-    application.register_blueprint(portfolio_bp)
-    application.register_blueprint(github_bp)
+# Enregistrement des blueprints
+app.register_blueprint(auth_bp)
+app.register_blueprint(main_bp)
+app.register_blueprint(admin_bp)
+app.register_blueprint(portfolio_bp)
+app.register_blueprint(github_bp)
 
-    return application
+# Initialisation de la base de données (création des tables)
+with app.app_context():
+    db.create_all()
+    # Optionnel : appeler ensure_token_column_exists() si nécessaire
+    try:
+        ensure_token_column_exists()
+    except Exception as e:
+        print(f"Note: ensure_token_column_exists a échoué: {e}")
 
-app = create_application()
-
+# Pour le développement local uniquement (ignoré sur Vercel)
 if __name__ == "__main__":
     app.run(debug=True)
