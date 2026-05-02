@@ -21,7 +21,8 @@ def create_application():
     # CONFIGURATION BASE DE DONNÉES - POSTGRESQL
     # ============================================
     
-    database_url = os.getenv("DATABASE_URL")
+  # Vercel Postgres fournit POSTGRES_URL, pas DATABASE_URL
+    database_url = os.getenv("POSTGRES_URL") or os.getenv("DATABASE_URL")
     
     # Vérification obligatoire - pas de fallback local
     if not database_url:
