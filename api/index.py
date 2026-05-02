@@ -4,7 +4,7 @@ import requests
 import secrets
 import uuid
 from datetime import datetime
-from flask import Flask, render_template, request, url_for, flash, redirect, current_app, send_from_directory, abort, session, Blueprint   # <-- Blueprint ajouté
+from flask import Flask, render_template, request, url_for, flash, redirect, current_app, send_from_directory, abort, session, Blueprint
 from flask_mail import Mail, Message
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user, UserMixin
 from flask_migrate import Migrate
@@ -18,6 +18,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import inspect, text
 import time
 import logging
+
 # Charger .env (optionnel)
 load_dotenv()
 
@@ -1401,21 +1402,27 @@ if database_url.startswith("postgres://"):
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Configuration mail
+# Configuration mail (optionnelle)
 mail_server = os.getenv('MAIL_SERVER')
 mail_port = os.getenv('MAIL_PORT')
 mail_use_tls = os.getenv('MAIL_USE_TLS')
 mail_username = os.getenv('MAIL_USERNAME')
 mail_password = os.getenv('MESSAGERIE_MOT_DE_PASSE')
 mail_default_sender = os.getenv('MAIL_DEFAULT_SENDER')
-if not all([mail_server, mail_port, mail_username, mail_password]):
-    raise ValueError("❌ Configuration email incomplète")
-app.config['MAIL_SERVER'] = mail_server
-app.config['MAIL_PORT'] = int(mail_port)
-app.config['MAIL_USE_TLS'] = mail_use_tls == 'True' if mail_use_tls else True
-app.config['MAIL_USERNAME'] = mail_username
-app.config['MAIL_PASSWORD'] = mail_password
-app.config['MAIL_DEFAULT_SENDER'] = mail_default_sender
+
+if all([mail_server, mail_port, mail_username, mail_password]):
+    app.config['MAIL_SERVER'] = mail_server
+    app.config['MAIL_PORT'] = int(mail_port)
+    app.config['MAIL_USE_TLS'] = mail_use_tls == 'True' if mail_use_tls else True
+    app.config['MAIL_USERNAME'] = mail_username
+    app.config['MAIL_PASSWORD'] = mail_password
+    app.config['MAIL_DEFAULT_SENDER'] = mail_default_sender
+    app.config['MAIL_SUPPRESS_SEND'] = False
+    print("✅ Configuration email chargée")
+else:
+    print("⚠️ Configuration email manquante – les emails ne seront pas envoyés (mode dégradé)")
+    app.config['MAIL_SUPPRESS_SEND'] = True
+    app.config['MAIL_DEFAULT_SENDER'] = 'noreply@example.com'
 
 # Sécurité et OAuth
 secret_key = os.getenv('SECRET_KEY')
@@ -1478,7 +1485,6 @@ app.register_blueprint(github_bp)
 # Initialisation de la base de données (création des tables)
 with app.app_context():
     db.create_all()
-    # Optionnel : appeler ensure_token_column_exists() si nécessaire
     try:
         ensure_token_column_exists()
     except Exception as e:
