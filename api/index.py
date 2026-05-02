@@ -4,7 +4,7 @@ import requests
 import secrets
 import uuid
 from datetime import datetime
-from flask import Flask, render_template, request, url_for, flash, redirect, current_app, send_from_directory, abort, session
+from flask import Flask, render_template, request, url_for, flash, redirect, current_app, send_from_directory, abort, session, Blueprint   # <-- Blueprint ajouté
 from flask_mail import Mail, Message
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user, UserMixin
 from flask_migrate import Migrate
@@ -18,7 +18,6 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import inspect, text
 import time
 import logging
-
 # Charger .env (optionnel)
 load_dotenv()
 
