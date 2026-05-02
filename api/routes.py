@@ -13,7 +13,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
 from urllib.parse import urlencode
 from dotenv import load_dotenv
-from models import db, Utilisateur, Projet, PortfolioConfig, AboutPage
+from .models import db, Utilisateur, Projet, PortfolioConfig, AboutPage
 from sqlalchemy import inspect, text
 import time
 import logging

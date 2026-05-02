@@ -5,8 +5,8 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
-from models import db, Utilisateur
-from routes import auth_bp, main_bp, admin_bp, portfolio_bp, github_bp
+from .models import db, Utilisateur
+from .routes import auth_bp, main_bp, admin_bp, portfolio_bp, github_bp
 
 # Charger .env.production (optionnel, Vercel utilise ses propres vars)
 # load_dotenv('.env.production')  # Commenté car Vercel injecte directement
