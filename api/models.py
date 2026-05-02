@@ -84,9 +84,9 @@ class PortfolioConfig(db.Model):
     
     # SECTION HERO
     hero_titre = db.Column(db.String(200), default="CONSTRUIRE LE FUTUR DU CODE")
+    hero_description = db.Column(db.Text, default="")
     
     # SECTION ABOUT 
-    hero_description = db.Column(db.Text, default="")
     about_titre = db.Column(db.String(200), default="Spécialiste IT multi-domaines")
     about_soustitre = db.Column(db.String(200), default="Précision. Performance. Innovation.")
     about_description = db.Column(db.Text)
@@ -101,8 +101,7 @@ class PortfolioConfig(db.Model):
     # TITRES DE SECTIONS
     projects_titre = db.Column(db.String(200), default="PROJETS RÉCENTS")
     cta_titre = db.Column(db.String(200), default="PRÊT À LANCER VOTRE PROCHAIN PROJET")
-    
-    # À ajouter dans admin/app/models.py
+
 
 class AboutPage(db.Model):
     __tablename__ = 'about_pages'

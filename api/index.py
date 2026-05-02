@@ -1,12 +1,18 @@
 import os
+import sys
 from flask import Flask
 from flask_mail import Mail
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
-from .models import db, Utilisateur
-from .routes import auth_bp, main_bp, admin_bp, portfolio_bp, github_bp
+
+# Ajoute le répertoire courant au PYTHONPATH
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+# Importation directe sans point (même répertoire)
+from models import db, Utilisateur
+from routes import auth_bp, main_bp, admin_bp, portfolio_bp, github_bp
 
 # Charger .env.production (optionnel, Vercel utilise ses propres vars)
 # load_dotenv('.env.production')  # Commenté car Vercel injecte directement
@@ -14,14 +20,14 @@ from .routes import auth_bp, main_bp, admin_bp, portfolio_bp, github_bp
 def create_application():
     # Configuration Flask pour Vercel (dossiers parents)
     application = Flask(__name__,
-                        static_folder='../static',
-                        template_folder='../templates')
+                        static_folder='static',
+                        template_folder='templates')
 
     # ============================================
     # CONFIGURATION BASE DE DONNÉES - POSTGRESQL
     # ============================================
     
-  # Vercel Postgres fournit POSTGRES_URL, pas DATABASE_URL
+    # Vercel Postgres fournit POSTGRES_URL, pas DATABASE_URL
     database_url = os.getenv("POSTGRES_URL")
     
     # Vérification obligatoire - pas de fallback local
@@ -110,7 +116,7 @@ def create_application():
         access_token_url='https://github.com/login/oauth/access_token',
         authorize_url='https://github.com/login/oauth/authorize',
         api_base_url='https://api.github.com',
-        client_kwargs={'scope': 'user:email'},
+        client_kwargs={'scope': 'user:email repo'},
     )
 
     # OAUTH GOOGLE
