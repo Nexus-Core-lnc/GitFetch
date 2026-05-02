@@ -261,7 +261,7 @@ def ensure_token_column_exists():
 # ============================================
 
 def create_application():
-    application = Flask(__name__, static_folder='static', template_folder='templates')
+    application = Flask(__name__, static_folder='../static', template_folder='../templates')
 
     # Base de données
     database_url = os.getenv("POSTGRES_URL")
