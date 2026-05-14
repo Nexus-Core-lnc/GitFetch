@@ -160,14 +160,14 @@ class AboutPage(db.Model):
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-GITHUB_CLIENT_ID = 'Ov23liW3qLIVeSdOdpqN'
-GITHUB_CLIENT_SECRET ='66a57760732d50cf13c950370c6fa1d44e15d8ca'
+GITHUB_CLIENT_ID = os.getenv('ID_CLIENT_GITHUB', 'Ov23liW3qLIVeSdOdpqN')
+GITHUB_CLIENT_SECRET = os.getenv('SECRET_DU_CLIENT_GITHUB', '66a57760732d50cf13c950370c6fa1d44e15d8ca')
 GITHUB_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize'
 GITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token'
 GITHUB_USER_URL = 'https://api.github.com/user'
 
-GOOGLE_CLIENT_ID = '883140310681-e9p969k1mfnuj1ug9qhp9p6r4g62s4sv.apps.googleusercontent.com'
-GOOGLE_CLIENT_SECRET =  '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'
+GOOGLE_CLIENT_ID = os.getenv('ID_CLIENT_GOOGLE', '883140310681-e9p969k1mfnuj1ug9qhp9p6r4g62s4sv.apps.googleusercontent.com')
+GOOGLE_CLIENT_SECRET = os.getenv('SECRET_DU_CLIENT_GOOGLE', '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')
 GOOGLE_DISCOVERY_URL = 'https://accounts.google.com/.well-known/openid-configuration'
 
 # Création des blueprints
