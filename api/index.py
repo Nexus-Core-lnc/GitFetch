@@ -160,14 +160,15 @@ class AboutPage(db.Model):
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-GITHUB_CLIENT_ID = os.getenv('GITHUB_CLIENT_ID', 'Ov23liW3qLIVeSdOdpqN')
-GITHUB_CLIENT_SECRET = os.getenv('GITHUB_CLIENT_SECRET', '66a57760732d50cf13c950370c6fa1d44e15d8ca')
+# Récupération des variables d'environnement (sans valeurs par défaut en dur)
+GITHUB_CLIENT_ID = os.getenv('GITHUB_CLIENT_ID')
+GITHUB_CLIENT_SECRET = os.getenv('GITHUB_CLIENT_SECRET')
 GITHUB_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize'
 GITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token'
 GITHUB_USER_URL = 'https://api.github.com/user'
 
-GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', '883140310681-e9p969k1mfnuj1ug9qhp9p6r4g62s4sv.apps.googleusercontent.com')
-GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET', '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')
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
 GOOGLE_DISCOVERY_URL = 'https://accounts.google.com/.well-known/openid-configuration'
 
 # Création des blueprints
@@ -1430,15 +1431,16 @@ if not secret_key:
     raise ValueError("❌ SECRET_KEY non définie")
 app.config['SECRET_KEY'] = secret_key
 
-github_client_id = os.getenv('ID_CLIENT_GITHUB')
-github_client_secret = os.getenv('SECRET_DU_CLIENT_GITHUB')
+# Utilisation des variables d'environnement avec les noms standards
+github_client_id = os.getenv('GITHUB_CLIENT_ID')
+github_client_secret = os.getenv('GITHUB_CLIENT_SECRET')
 if not github_client_id or not github_client_secret:
     raise ValueError("❌ Configuration GitHub OAuth incomplète")
 app.config['GITHUB_CLIENT_ID'] = github_client_id
 app.config['GITHUB_CLIENT_SECRET'] = github_client_secret
 
-google_client_id = os.getenv('ID_CLIENT_GOOGLE')
-google_client_secret = os.getenv('SECRET_DU_CLIENT_GOOGLE')
+google_client_id = os.getenv('GOOGLE_CLIENT_ID')
+google_client_secret = os.getenv('GOOGLE_CLIENT_SECRET')
 if not google_client_id or not google_client_secret:
     raise ValueError("❌ Configuration Google OAuth incomplète")
 app.config['GOOGLE_CLIENT_ID'] = google_client_id
