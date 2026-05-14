@@ -19,7 +19,7 @@ from sqlalchemy import inspect, text
 import time
 import logging
 
-# Charger .env (optionnel)
+# Charger .env (optionnel, mais les valeurs ci‑dessous sont en dur)
 load_dotenv()
 
 # ============================================
@@ -160,14 +160,17 @@ class AboutPage(db.Model):
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-GITHUB_CLIENT_ID = os.environ.get('ID_CLIENT_GITHUB', '')
-GITHUB_CLIENT_SECRET = os.environ.get('SECRET_DU_CLIENT_GITHUB', '')
+# --- Valeurs en dur (sauf base de données) ---
+# GitHub
+GITHUB_CLIENT_ID = "Ov23liW3qLIVeSdOdpqN"
+GITHUB_CLIENT_SECRET = "66a57760732d50cf13c950370c6fa1d44e15d8ca"
 GITHUB_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize'
 GITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token'
 GITHUB_USER_URL = 'https://api.github.com/user'
 
-GOOGLE_CLIENT_ID = os.environ.get('ID_CLIENT_GOOGLE', '')
-GOOGLE_CLIENT_SECRET = os.environ.get('SECRET_DU_CLIENT_GOOGLE', '')
+# Google
+GOOGLE_CLIENT_ID = "883140310681-e9p969k1mfnuj1ug9qhp9p6r4g62s4sv.apps.googleusercontent.com"
+GOOGLE_CLIENT_SECRET = "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"
 GOOGLE_DISCOVERY_URL = 'https://accounts.google.com/.well-known/openid-configuration'
 
 # Création des blueprints
@@ -1393,7 +1396,7 @@ app = Flask(__name__,
             static_folder='../static',
             template_folder='../templates')
 
-# Configuration base de données
+# Configuration base de données (UNIQUEMENT depuis variable d'environnement)
 database_url = os.getenv("DATABASE_URL")
 if not database_url:
     raise ValueError("❌ DATABASE_URL non définie dans les variables d'environnement Vercel")
@@ -1402,47 +1405,22 @@ if database_url.startswith("postgres://"):
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Configuration mail (optionnelle)
-mail_server = os.getenv('MAIL_SERVER')
-mail_port = os.getenv('MAIL_PORT')
-mail_use_tls = os.getenv('MAIL_USE_TLS')
-mail_username = os.getenv('MAIL_USERNAME')
-mail_password = os.getenv('MESSAGERIE_MOT_DE_PASSE')
-mail_default_sender = os.getenv('MAIL_DEFAULT_SENDER')
+# Configuration mail (valeurs en dur)
+app.config['MAIL_SERVER'] = "smtp.gmail.com"
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = "kouamdorinal9@gmail"
+app.config['MAIL_PASSWORD'] = "sfjvcgseuoichbcz"
+app.config['MAIL_DEFAULT_SENDER'] = "kouamdorinal9@gmail.com"
+app.config['MAIL_SUPPRESS_SEND'] = False
+print("✅ Configuration email chargée (valeurs intégrées)")
 
-if all([mail_server, mail_port, mail_username, mail_password]):
-    app.config['MAIL_SERVER'] = mail_server
-    app.config['MAIL_PORT'] = int(mail_port)
-    app.config['MAIL_USE_TLS'] = mail_use_tls == 'True' if mail_use_tls else True
-    app.config['MAIL_USERNAME'] = mail_username
-    app.config['MAIL_PASSWORD'] = mail_password
-    app.config['MAIL_DEFAULT_SENDER'] = mail_default_sender
-    app.config['MAIL_SUPPRESS_SEND'] = False
-    print("✅ Configuration email chargée")
-else:
-    print("⚠️ Configuration email manquante – les emails ne seront pas envoyés (mode dégradé)")
-    app.config['MAIL_SUPPRESS_SEND'] = True
-    app.config['MAIL_DEFAULT_SENDER'] = 'noreply@example.com'
-
-# Sécurité et OAuth
-secret_key = os.getenv('SECRET_KEY')
-if not secret_key:
-    raise ValueError("❌ SECRET_KEY non définie")
-app.config['SECRET_KEY'] = secret_key
-
-github_client_id = os.getenv('ID_CLIENT_GITHUB')
-github_client_secret = os.getenv('SECRET_DU_CLIENT_GITHUB')
-if not github_client_id or not github_client_secret:
-    raise ValueError("❌ Configuration GitHub OAuth incomplète")
-app.config['GITHUB_CLIENT_ID'] = github_client_id
-app.config['GITHUB_CLIENT_SECRET'] = github_client_secret
-
-google_client_id = os.getenv('ID_CLIENT_GOOGLE')
-google_client_secret = os.getenv('SECRET_DU_CLIENT_GOOGLE')
-if not google_client_id or not google_client_secret:
-    raise ValueError("❌ Configuration Google OAuth incomplète")
-app.config['GOOGLE_CLIENT_ID'] = google_client_id
-app.config['GOOGLE_CLIENT_SECRET'] = google_client_secret
+# Sécurité et OAuth (valeurs en dur)
+app.config['SECRET_KEY'] = "510274eeac165909fd5eb2fb53b25b4c0e89566bd2dd22643aa758b65441bc8e"
+app.config['GITHUB_CLIENT_ID'] = GITHUB_CLIENT_ID
+app.config['GITHUB_CLIENT_SECRET'] = GITHUB_CLIENT_SECRET
+app.config['GOOGLE_CLIENT_ID'] = GOOGLE_CLIENT_ID
+app.config['GOOGLE_CLIENT_SECRET'] = GOOGLE_CLIENT_SECRET
 
 # Initialisation extensions
 db.init_app(app)
