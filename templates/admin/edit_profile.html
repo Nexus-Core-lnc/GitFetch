@@ -43,7 +43,12 @@
                             <div class="avatar-section">
                                 <div class="avatar-container">
                                     <div class="avatar-image" id="avatar-preview"
-                                         style="background-image: url('{% if current_user.photo_profil and current_user.photo_profil != "default-avatar.jpg" %}{{ url_for('admin.serve_media', type='avatar', filename=current_user.photo_profil) }}{% else %}{{ url_for('static', filename='img/avatar.png') }}{% endif %}');">
+                                         style="background-image: url('{% if current_user.photo_profil and current_user.photo_profil != "default-avatar.jpg" %}
+                                            {{ url_for('admin.serve_media', type_media='avatar', filename=current_user.photo_profil) }}
+                                         {% else %}
+                                            {{ url_for('static', filename='img/avatar.png') }}
+                                         {% endif %}');"
+                                        >
                                     </div>
                                     <label for="avatar-upload" class="avatar-upload-btn">
                                         <i class="fas fa-camera"></i>
