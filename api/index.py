@@ -200,6 +200,16 @@ def get_media_base():
     if override:
         return override
     if is_vercel():
+        # ⚠️ /tmp est éphémère sur Vercel : tout fichier écrit ici peut disparaître
+        # dès la prochaine invocation (nouvelle instance serverless). C'est la cause
+        # la plus probable si un upload "réussit" (flash de succès, commit en base)
+        # mais que l'image ne s'affiche jamais ensuite. Il faut définir MEDIA_BASE_DIR
+        # vers un stockage persistant (S3, Cloudinary, Supabase Storage...) en prod.
+        logger.warning(
+            "⚠️ MEDIA_BASE_DIR non défini sur Vercel : utilisation de /tmp/media "
+            "(éphémère). Les fichiers uploadés (logos, couvertures...) risquent de "
+            "disparaître après un redémarrage de l'instance serverless."
+        )
         return '/tmp/media'
     return os.path.join(current_app.root_path, 'media')
 
@@ -225,18 +235,31 @@ def get_static_path():
 
 
 # Mapping type → sous-dossier (utilisé dans save/delete/serve)
+# NOTE: 'proj_cover' et 'proj_logo' pointent vers le MÊME sous-dossier physique
+# ('projects'), mais sont des clés DIFFÉRENTES : ça évite que les noms de
+# fichiers générés pour la couverture et le logo d'un même projet ne se
+# percutent (c'était le bug d'origine : les deux utilisaient la clé 'proj').
 MEDIA_SUBDIRS = {
-    'avatar': 'profiles',
-    'cover':  'covers',
-    'cv':     'docs',
-    'proj':   'projects',
-    'about':  'about',
-    'upload': 'uploads',
+    'avatar':     'profiles',
+    'cover':      'covers',
+    'cv':         'docs',
+    'proj':       'projects',   # conservé pour compat (delete_project s'en sert)
+    'proj_cover': 'projects',
+    'proj_logo':  'projects',
+    'about':      'about',
+    'upload':     'uploads',
 }
 
 
 def save_media_file(file, type_file, user_id):
-    """Sauvegarde un fichier média et retourne son nom de fichier."""
+    """Sauvegarde un fichier média et retourne son nom de fichier.
+
+    IMPORTANT : le nom généré inclut désormais un identifiant unique (uuid4)
+    en plus du type et du timestamp. Avant, deux fichiers uploadés dans la
+    même requête (ex: image de couverture + logo, envoyés la même seconde)
+    pouvaient générer EXACTEMENT le même nom de fichier et s'écraser l'un
+    l'autre sur le disque. L'uuid élimine ce risque de collision.
+    """
     subdir = MEDIA_SUBDIRS.get(type_file)
     if not subdir:
         logger.error(f"Type de média inconnu : {type_file}")
@@ -245,8 +268,9 @@ def save_media_file(file, type_file, user_id):
         return None
     media_dir = get_media_path(subdir)
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    unique_id = uuid.uuid4().hex[:8]
     original_ext = os.path.splitext(file.filename)[1] if '.' in file.filename else ''
-    filename = secure_filename(f"{type_file}_{user_id}_{timestamp}{original_ext}")
+    filename = secure_filename(f"{type_file}_{user_id}_{timestamp}_{unique_id}{original_ext}")
     try:
         file.save(os.path.join(media_dir, filename))
         return filename
@@ -918,37 +942,43 @@ def edit_project(id):
             # Gestion image couverture
             if request.form.get('delete_image') == '1':
                 if projet.image_couverture:
-                    delete_media_file(projet.image_couverture, 'proj')
+                    delete_media_file(projet.image_couverture, 'proj_cover')
                     projet.image_couverture = None
                     flash('Image de couverture supprimée', 'info')
             image_file = request.files.get('image_file')
             if image_file and image_file.filename and image_file.filename.strip():
                 ext = image_file.filename.rsplit('.', 1)[-1].lower() if '.' in image_file.filename else ''
                 if ext in {'png', 'jpg', 'jpeg', 'gif', 'webp'}:
-                    new_filename = save_media_file(image_file, 'proj', projet.id)
+                    new_filename = save_media_file(image_file, 'proj_cover', projet.id)
                     if new_filename:
                         if projet.image_couverture and projet.image_couverture != new_filename:
-                            delete_media_file(projet.image_couverture, 'proj')
+                            delete_media_file(projet.image_couverture, 'proj_cover')
                         projet.image_couverture = new_filename
                         flash('Image de couverture mise à jour', 'success')
+                    else:
+                        flash("Échec de l'enregistrement de l'image de couverture sur le serveur.", 'danger')
+                        logger.error(f"save_media_file a retourné None pour image_file (projet {projet.id})")
                 else:
                     flash('Format non supporté pour la couverture.', 'warning')
             # Gestion logo
             if request.form.get('delete_logo') == '1':
                 if projet.logo_projet:
-                    delete_media_file(projet.logo_projet, 'proj')
+                    delete_media_file(projet.logo_projet, 'proj_logo')
                     projet.logo_projet = None
                     flash('Logo supprimé', 'info')
             logo_file = request.files.get('logo_file')
             if logo_file and logo_file.filename and logo_file.filename.strip():
                 ext = logo_file.filename.rsplit('.', 1)[-1].lower() if '.' in logo_file.filename else ''
                 if ext in {'png', 'jpg', 'jpeg', 'gif', 'webp'}:
-                    new_logo = save_media_file(logo_file, 'proj', projet.id)
+                    new_logo = save_media_file(logo_file, 'proj_logo', projet.id)
                     if new_logo:
                         if projet.logo_projet and projet.logo_projet != new_logo:
-                            delete_media_file(projet.logo_projet, 'proj')
+                            delete_media_file(projet.logo_projet, 'proj_logo')
                         projet.logo_projet = new_logo
                         flash('Logo mis à jour', 'success')
+                    else:
+                        flash("Échec de l'enregistrement du logo sur le serveur.", 'danger')
+                        logger.error(f"save_media_file a retourné None pour logo_file (projet {projet.id})")
                 else:
                     flash('Format non supporté pour le logo.', 'warning')
             projet.date_mise_a_jour = datetime.utcnow()
