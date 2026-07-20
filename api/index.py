@@ -329,21 +329,18 @@ def envoyer_email(destinataire, sujet, template, **kwargs):
 
 
 def get_common_context():
-    """
-    Retourne le contexte commun à toutes les pages publiques du portfolio.
-    Récupère le premier utilisateur confirmé — renvoie {'user': None} en cas d'erreur.
-    """
     try:
+        # Récupère le premier utilisateur confirmé (par exemple le plus ancien)
         user = db.session.execute(
-            db.select(Utilisateur).filter(Utilisateur.est_confirme == True)
+            db.select(Utilisateur)
+            .filter(Utilisateur.est_confirme == True)
+            .order_by(Utilisateur.id.asc())
+            .limit(1)
         ).scalar_one_or_none()
         return {'user': user}
     except Exception as e:
         logger.error(f"Erreur get_common_context (DB): {e}")
-        try:
-            db.session.rollback()
-        except Exception:
-            pass
+        db.session.rollback()
         return {'user': None}
 
 

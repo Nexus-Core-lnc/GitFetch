@@ -30,7 +30,7 @@
                         <!-- Cover avec overlay permanent pour upload -->
                         <div class="cover-container">
                             <div class="cover-image" id="cover-preview"
-                                 style="background-image: url('{% if current_user.photo_couverture and current_user.photo_couverture != "default-cover.jpg" %}{{ url_for('admin.serve_media', type='cover', filename=current_user.photo_couverture) }}{% else %}{{ url_for('static', filename='img/default-cover.jpg') }}{% endif %}');">
+                                 style="background-image: url('{% if current_user.photo_couverture and current_user.photo_couverture != "default-cover.jpg" %}{{ url_for('admin.serve_media', type_media='cover', filename=current_user.photo_couverture) }}{% else %}{{ url_for('static', filename='img/default-cover.jpg') }}{% endif %}');">
                                 <label for="cover-upload" class="cover-upload-overlay">
                                     <i class="fas fa-camera"></i>
                                     <span>Modifier</span>
