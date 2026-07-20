@@ -721,9 +721,9 @@
             <div class="profile-container">
                 <div class="profile-photo">
                     {% if user.photo_profil and user.photo_profil != 'default-avatar.jpg' %}
-                                <img src="{{ admin_url }}/serve-static/media/profiles/{{ user.photo_profil }}" 
-                                    alt="Photo de {{ user.nom_utilisateur }}"
-                                    onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/avatar.png') }}'">
+                        <img src="{{ url_for('portfolio.serve_public_media', folder='profiles', filename=user.photo_profil) }}" 
+                            alt="Photo de {{ user.nom_utilisateur }}"
+                            onerror="this.onerror=null; this.src=`{{ url_for('static', filename='img/avatar.png') }}`">
                     {% else %}
                         <img src="{{ url_for('static', filename='img/avatar.png') }}" alt="Photo de profil">
                     {% endif %}

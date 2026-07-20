@@ -216,7 +216,7 @@
                                                 <div class="file-details">
                                                     <span class="file-name">{{ current_user.cv }}</span>
                                                     <span class="file-status">
-                                                        <a href="{{ url_for('admin.serve_media', type='cv', filename=current_user.cv) }}" target="_blank" class="download-link">
+                                                        <a href="{{ url_for('admin.serve_media', type_media='cv', filename=current_user.cv) }}" target="_blank" class="download-link">
                                                             <i class="fas fa-download"></i> Télécharger
                                                         </a>
                                                     </span>
