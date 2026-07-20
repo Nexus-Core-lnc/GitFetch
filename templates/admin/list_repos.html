@@ -1,5 +1,6 @@
-{% extends "admin/master.html" %} {% block title %}Mes Projets - GitFetch{%
-endblock %} {% block content %}
+{% extends "admin/master.html" %} 
+{% block title %}Mes Projets - GitFetch{% endblock %} 
+{% block content %}
 <!doctype html>
 <html lang="fr">
   <head>
@@ -453,7 +454,7 @@ endblock %} {% block content %}
               <img
                 src="{{ url_for('portfolio.serve_public_media', folder='projects', filename=projet.image_couverture) }}"
                 alt="{{ projet.nom }}"
-                onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/default-project.jpg') }}'"
+                onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400/cccccc/666666?text=Projet'"
               />
               {% else %}
               <div class="no-image-placeholder">
@@ -468,8 +469,8 @@ endblock %} {% block content %}
                 {{ projet.nom }}
               </h3>
 
-              {# Afficher un extrait de la description si elle existe #} {% if
-              projet.description %}
+              {# Afficher un extrait de la description si elle existe #} 
+              {% if projet.description %}
               <p>{{ projet.description|truncate(100) }}</p>
               {% endif %}
 
@@ -590,7 +591,7 @@ endblock %} {% block content %}
       // Fonction de confirmation de suppression
       function confirmDelete(projectName) {
         return confirm(
-          `Voulez-vous vraiment supprimer le projet "${projectName}" ? Cette action est irréversible.`,
+          `Voulez-vous vraiment supprimer le projet "${projectName}" ? Cette action est irréversible.`
         );
       }
     </script>
